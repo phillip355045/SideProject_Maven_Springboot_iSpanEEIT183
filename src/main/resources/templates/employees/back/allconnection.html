@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>聯絡資訊</title>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" />
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+
+		<div id="content" class="container">
+			<div align="center">
+				<h2>員工資料</h2>
+				<table id="mytable" class="display text-center" style="width: 100%">
+					<thead>
+						<tr>
+							<th>時間</th>
+							<th>姓名</th>
+							<th>連絡電話</th>
+							<th>聯絡信箱</th>
+							<th>員工編號</th>
+							<th>意見內容</th>
+							<th>回覆</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="connection : ${connections}">
+							<td th:text="${#dates.format(connection.connectTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+							<td th:text="${connection.name}"></td>
+							<td th:text="${connection.phone}"></td>
+							<td class="connection-mail" th:text="${connection.mail}"></td>
+							<td th:text="${connection.empno}"></td>
+							<td class="connection-message" th:text="${connection.message}"></td>
+							<td><a href="#"
+								class="btn btn-outline-success btn-sm reply-btn">回覆</a></td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel" aria-hidden="true">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="replyModalLabel">回覆訊息</h5>
+				      </div>
+				      <div class="modal-body">
+				        <form id="replyForm">
+				          <div class="form-group">
+				            <label for="recipientMail" class="col-form-label">收件人:</label>
+				            <input type="text" class="form-control" id="recipientMail" readonly>
+				          </div>
+				          <div class="form-group">
+				            <label for="messageText" class="col-form-label">訊息:</label>
+				            <textarea class="form-control" id="messageText"></textarea>
+				          </div>
+				        </form>
+				      </div>
+				      <div class="modal-footer">
+							<button type="button" class="btn btn-primary"
+								onclick="enter(this)">一鍵輸入</button>
+				        <button type="button" class="btn btn-primary" id="sendReply">發送</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
+</body>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	    let selectedMail = '';
+	    let selectedRow = null;
+	
+	    document.querySelector('#mytable tbody').addEventListener('click', function(event){
+            if(event.target && event.target.classList.contains('reply-btn')){
+	            event.preventDefault(); 
+
+	            selectedRow = event.target.closest('tr');
+	            selectedMail = selectedRow.querySelector('.connection-mail').textContent.trim();
+
+	            document.getElementById('recipientMail').value = selectedMail;
+
+	            $('#replyModal').modal('show');
+	        }
+	    });
+	
+	    document.getElementById('sendReply').addEventListener('click', function() {
+	        const message = document.getElementById('messageText').value.trim();
+	
+	        if (message === '') {
+	            alert('請輸入訊息');
+	            return;
+	        }
+	        axios.post('/PSNEXUS/ReplyMessage', {
+	            mail: selectedMail,
+	            message: message
+	        })
+	        .then(function(response) {
+	            console.log('Response:', response.data);
+	            alert('信件已回覆！');
+	            window.location.reload();
+	        })
+	        .catch(function(error) {
+	            console.error('Error:', error);
+	            alert('處理失敗: ' + (error.response ? error.response.data : error.message));
+	        });
+	        $('#replyModal').modal('hide');
+	    });
+	});
+	
+		function enter(button) {
+            document.querySelector('textarea[id="messageText"]').value = '感謝您提供寶貴的意見!!!!以下是我們的測試帳號及密碼:test123，謝謝!!';
+        }
+	     new DataTable('#mytable');
+</script>
+</html>

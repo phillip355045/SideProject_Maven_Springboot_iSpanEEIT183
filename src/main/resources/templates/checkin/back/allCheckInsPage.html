@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>所有打卡資料</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1">
+			<br>
+			<a th:href="@{/allCheckIns}">所有員工打卡</a>
+			<a th:href="@{/checkInSearch}">員工打卡查詢</a>
+			<a th:href="@{/addCheckInTableData}">建立打卡資料</a> 
+			<a th:href="@{/deleteCheckInByDateOrEmpno}">批量刪除打卡</a>
+		</div>
+		<div id="content" class="container">
+			<div align="center">
+				<h2>員工打卡資料</h2>
+				<form th:action="@{/allCheckIns}" method="get"
+					class="form-inline mb-3">
+					<div class="form-group mr-2">
+						<label for="size" class="mr-2">每頁顯示筆數:</label> <input
+							type="number" id="size" name="size" class="form-control" min="1"
+							th:value="${size}" value="5">
+					</div>
+					<button type="submit" class="btn btn-outline-info">確定</button>
+				</form>
+				<table class="table table-bordered">
+					<thead class="thead-light">
+						<tr>
+							<th>員工編號</th>
+							<th>日期</th>
+							<th>上班時間</th>
+							<th>下班時間</th>
+							<th>備註</th>
+							<th>忘刷/補登</th>
+							<th>刪除</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="checkin : ${checkIn.content}">
+							<td th:text="${checkin.checkInId.empno}"></td>
+							<td th:text="${checkin.checkInId.date}"></td>
+							<td th:text="${checkin.workon}"></td>
+							<td th:text="${checkin.workoff}"></td>
+							<td th:text="${checkin.note}"></td>
+							<td><a
+								th:href="@{/findUpdateCheckInData(empno=${checkin.checkInId.empno}, date=${checkin.checkInId.date})}"
+								class="btn btn-outline-success btn-sm">修改</a></td>
+							<td>
+								<form method="post" th:action="@{/deleteCheckInById}">
+									<input type="hidden" th:value="${checkin.checkInId.empno}"
+										th:name="empno"> <input type="hidden"
+										th:value="${#dates.format(checkin.checkInId.date, 'yyyy-MM-dd')}"
+										th:name="date" readonly> <input name="_method"
+										value="DELETE" type="hidden" /> <input type="submit"
+										value="刪除" class="btn btn-outline-danger btn-sm"
+										onclick="return confirm('確定刪除嗎???')" />
+								</form>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div>
+					<ul class="pagination justify-content-center">
+						<li class="page-item"
+							th:classappend="${checkIn.hasPrevious()} ? '' : 'disabled'">
+							<a class="page-link"
+							th:href="@{/allCheckIns(page=${checkIn.number}, size=${size})}">上一頁</a>
+						</li>
+						<li class="page-item"
+							th:each="i : ${#numbers.sequence(checkIn.number, checkIn.number + 4)}"
+							th:if="${i > 0 and i <= checkIn.totalPages}"><a
+							class="page-link"
+							th:href="@{/allCheckIns(page=${i}, size=${size})}" th:text="${i}"></a></li>
+						<li class="page-item"
+							th:classappend="${checkIn.hasNext()} ? '' : 'disabled'"><a
+							class="page-link"
+							th:href="@{/allCheckIns(page=${checkIn.number + 2}, size=${size})}">下一頁</a>
+						</li>
+						<li class="ps-3"><a
+							class="btn btn-outline-primary border-0 disabled"
+							th:text="'共'+${checkIn.totalPages}+'頁'"></a><input
+							id="totalPages" type="hidden" th:value="${checkIn.totalPages}"></li>
+						<li class="ml-auto">
+							<div class="form-inline">
+								<input type="number" class="form-control" id="pageNumber"
+									placeholder="跳頁" min="1" th:attr="max=${checkIn.totalPages}">
+								<a class="btn btn-outline-secondary" type="button"
+									onclick="gotoPage()">跳轉</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+
+
+
+				<p>
+				<h3>
+					共<span th:text="${checkIn.totalElements}"></span>筆員工打卡資料
+				</h3>
+			</div>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script>
+		function gotoPage() {
+		    var maxPages = document.getElementById('totalPages').value;
+		    var pageNumber = document.getElementById('pageNumber').value;
+		    var size = document.getElementById('size').value; 
+		
+		    if (pageNumber >= 1 && pageNumber <= maxPages) {
+		        window.location.href = '/PSNEXUS/allCheckIns?page=' + pageNumber + '&size=' + size;
+		    } else {
+		        alert("請輸入正確的頁碼（1 到 " + maxPages + "）。");
+		    }
+		}
+</script>
+</body>
+</html>

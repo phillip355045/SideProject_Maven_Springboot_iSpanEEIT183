@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P.S Nexus</title>
+<!-- Bootstrap -->
+
+<!-- 記得刪掉，vscode用的css -->
+<link rel="stylesheet" href="../static/css/index.css">
+<!-- 記得刪掉，vscode用的css -->
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+	crossorigin="anonymous">
+
+<link href="fontawesome-free-5.7.2-web/css/all.css" rel="stylesheet"
+	type="text/css">
+
+<link rel="stylesheet" href="./css/index.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.3/font/bootstrap-icons.min.css">
+<style>
+.group {
+	padding-top: 150px;
+	padding-bottom: 20px;
+}
+
+.p1 {
+	text-indent: 32.5px;
+	margin: 5px;
+	font-weight: normal;
+	color: #508D4E;
+	font-size: 20px;
+}
+
+.homeImg {
+	width: 50%;
+	margin: auto;
+}
+
+.member {
+	margin-top: 70px;
+	font-weight: bold;
+	color: rgb(193, 218, 219);
+}
+
+.groupName, .col-xl-4, .container .row{
+	opacity: 0;
+	transform: translateY(50px);
+	transition: opacity 2s ease-out, transform 2s ease-out;
+}
+
+.groupName.show, .col-xl-4.show, .container .row.show{
+	opacity: 1;
+	transform: translateY(0);
+}
+</style>
+</head>
+
+<body>
+
+	<div class="logo">
+		<img src="./images/logo-3.PNG" alt="">
+	</div>
+
+	<div class="myNav">
+		<ul class="navbar-menu">
+			<li><a href="#home">P.SNexus</a></li>
+			<li><a href="#employees">雅翎</a></li>
+			<li><a href="#meetingRoom">聯流</a></li>
+			<li><a href="#worklog">耑妤</a></li>
+			<li><a href="#post">彥儒</a></li>
+			<li><a href="#leaveRequest">昀恩</a></li>
+			<li><a href="#sal">和軒</a></li>
+			<li><a href="#final">結語</a></li>
+			<li><a href="#" data-bs-toggle="modal"
+				data-bs-target="#connectwithusModal">聯絡我們</a></li>
+			<li><a th:href="@{/}">Login</a></li>
+		</ul>
+	</div>
+
+
+
+
+	<!-- 背景圖' -->
+	<section id="home" class="home-section">
+		<div class="overlay">
+
+			<h1 class="group">
+				<i class="fa-solid fa-people-group"></i><i
+					class="fa-solid fa-people-group"></i>EEIT183 第一組
+			</h1>
+
+			<div class="homeImg">
+
+
+				<div id="carouselExampleIndicators"
+					class="carousel slide  carousel-fade" data-bs-ride="carousel">
+					<div class="carousel-indicators">
+						<button type="button" data-bs-target="#carouselExampleIndicators"
+							data-bs-slide-to="0" class="active" aria-current="true"
+							aria-label="Slide 1"></button>
+						<button type="button" data-bs-target="#carouselExampleIndicators"
+							data-bs-slide-to="1" aria-label="Slide 2"></button>
+						<button type="button" data-bs-target="#carouselExampleIndicators"
+							data-bs-slide-to="2" aria-label="Slide 3"></button>
+						<button type="button" data-bs-target="#carouselExampleIndicators"
+							data-bs-slide-to="3" aria-label="Slide 4"></button>
+					</div>
+					<div class="carousel-inner">
+						<div class="carousel-item active" data-bs-interval="1500">
+							<img src="./images/合照.jpg" alt="Left Side Image"
+								class="left-image" style="height:450px;">
+						</div>
+						<div class="carousel-item" data-bs-interval="1500">
+							<img src="./images/輪播合照2.jpg" alt="Left Side Image"
+								class="left-image" style="height:450px;">
+						</div>
+						<div class="carousel-item" data-bs-interval="1500">
+							<img src="./images/女生.jpg" alt="Left Side Image"
+								class="left-image" style="height:450px;">
+						</div>
+						<div class="carousel-item" data-bs-interval="1500">
+							<img src="./images/男生.jpg" alt="Left Side Image"
+								class="left-image" style="height:450px;">
+						</div>
+					</div>
+					<button class="carousel-control-prev" type="button"
+						data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Previous</span>
+					</button>
+					<button class="carousel-control-next" type="button"
+						data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Next</span>
+					</button>
+				</div>
+
+				<!-- 				<img src="../static/images/合照.jpg" alt="" class="left-image"> -->
+				<!-- 				<img src="./images/合照.jpg" alt="Left Side Image" class="left-image"> -->
+			</div>
+			<div class="groupName">
+				<div class="col-xl-12 member">
+					<h2>
+						<p>組員名單：</p>
+						<p>04黃雅翎、02王聯流、01陳彥儒、08萬和軒、12李耑妤、13李昀恩
+						<hr />
+						</p>
+					</h2>
+
+				</div>
+				<div class="col-xl-12 member">
+					<h2>
+						<p>主題：辦公室內部系統</p>
+					</h2>
+
+				</div>
+			</div>
+
+
+			<div class="col-xl-4 topicImg">
+				<H2>
+					<p style="color: #FFD18E; font-weight: bold">技術資源&主題發想：</p>
+				</H2>
+				<img src="./images/首頁東西去背.png" alt="Left Side Image"
+					class="left-image"> <img src="../static/images/首頁東西去背.png"
+					alt="" class="left-image">
+			</div>
+
+			<div class="container">
+				<div class="row">
+
+					<div class="col-xl-12 text-overlay">
+
+						<p class="p1">
+							現今台灣的企業不論大小都擁有一套自家的工作系統,因前公司的系統不常使用的功能都要去問其他常使用的同事該怎麼操作,操作上也沒有很便捷,所以我們希望可以做出一套方便使用者能夠直觀的看到所有功能,並且好學習及上手,也能協助企業在管理人力上的便利性。
+						</p>
+						<p class="p1">選擇專題方向時大家討論後覺得此題目有挑戰性,也與現階段普遍常見的商城、論壇較有差異,所以整組決定嘗試看看!!目前構想的功能皆已完善，稍後會demo給大家看!
+						</p>
+
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+	</section>
+
+	<section id="employees" class="employees-section">
+		<div class="overlayYL">
+			<div class="col-xl-4 profitImg">
+				<img src="./images/雅翎.jpg" alt="Left Side Image" class="left-image"
+					style="width: 500px; height: auto">
+			</div>
+
+			<div class="container">
+				<div class="row">
+					<div class="featureContainer-employees">
+						<div class="col-xl-12">
+							<h1>
+								<i class="fa-regular fa-user"></i>黃雅翎
+							</h1>
+							<h2>
+								<i class="fa-regular fa-envelope"></i> icreamling@gmail.com
+							</h2>
+							<h2>
+								<i class="fa-solid fa-phone"></i> 0933246977
+							</h2>
+							<br />
+							<h3>
+								<i class="fa-solid fa-screwdriver-wrench"></i>功能介紹
+							</h3>
+							<h5>功能一：登入</h5>
+							<p>前台：登入前畫面、忘記密碼重設、登入首頁版面設計、行事曆的例假日跟休假日</p>
+							<p>後台：登入依照帳號權限進入前後台</p>
+							<hr>
+							<h5>功能二：員工資料</h5>
+							<p>前台：個人資料查看[修改]</p>
+							<p>後台：所有員工資料[增、刪、改、查]、新增員工親屬資料、新增部門調動資料</p>
+							<hr>
+							<h5>功能三：打卡</h5>
+							<p>前台：員工打卡[根據是否有打卡提示]、個人打卡資料查看、下載</p>
+							<p>後台：所有員工打卡資料[增、刪、改、查]、手動建立整月打卡資料表、自動排程每天建立隔天打卡空資料、批量刪除打卡資料</p>
+							<hr>
+							<h5>功能四：聯絡我們</h5>
+							<p>前台：訪客、使用者的填寫、自動代入登入帳號</p>
+							<p>後台：意見箱查看、收到意見通知</p>
+							<hr>
+							<h5>功能五：通知</h5>
+							<p>前台：顯示未讀通知[可以跳轉頁面]、查看歷史通知[已讀、未讀]</p>
+							<p>後台：手動發送所有通知[依照部門、員工]、建立自動發送通知API、讓所有功能套用</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="meetingRoom" class="meetingRoom-section">
+		<div class="overlayLL">
+			<div class="col-xl-4 profitImg">
+				<img src="./images/王聯流.jpg" alt="Left Side Image" class="left-image"
+					style="height: auto; width: 400px;">
+			</div>
+			<div class="container">
+				<div class="row">
+					<div class="featureContainer-meeting">
+						<div class="col-xl-12">
+							<h1>
+								<i class="fa-regular fa-user"></i>王聯流
+							</h1>
+							<h2>
+								<i class="fa-regular fa-envelope"></i> s0933719354@gmail.com
+							</h2>
+							<h2>
+								<i class="fa-solid fa-phone"></i>0963143360
+							</h2>
+							<br />
+							<h3>
+								<i class="fa-solid fa-screwdriver-wrench"></i>功能介紹
+							</h3>
+							<h5>所有功能</h5>
+							<p>會議室預約系統發送信件</p>
+							<p>Spring Mail</p>
+							<p>串接Webex AP</p>
+							<hr>
+							<h5>前台</h5>
+							<p>會議室當日使用情形顯示</p>
+							<p>預約會議室</p>
+							<p>檔案上傳&下載</p>
+							<p>會議開始前通知</p>
+							<p>通知與會人員、與會人員意見填寫</p>
+							<hr>
+							<h5>後台</h5>
+							<p>會議室CRUD</p>
+							<p>會議室當前使用狀態顯示</p>
+							<p>預約會議室審核</p>
+							<p>Chart.js會議室使用分析</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section id="worklog" class="worklog-section">
+		<div class="overlayCY">
+			<div class="col-xl-4 profitImg">
+				<img src="./images/李耑妤.jpg" alt="Left Side Image" class="left-image"
+					style="height: auto; width: 500px;">
+			</div>
+			<div class="container">
+				<div class="row">
+					<div class="featureContainer-worklog">
+						<div class="col-xl-12">
+							<h1>
+								<i class="fa-regular fa-user"></i>李耑妤
+							</h1>
+							<h2>
+								<i class="fa-regular fa-envelope"></i>dolly199977@gmail.com
+							</h2>
+							<h2>
+								<i class="fa-solid fa-phone"></i>0908922617
+							</h2>
+							<br />
+							<h3>
+								<i class="fa-solid fa-screwdriver-wrench"></i>功能介紹
+							</h3>
+							<h5>所有功能</h5>
+							<p>工作日誌相關功能</p>
+							<p>聊天室</p>
+							<hr>
+							<h5>前台</h5>
+							<p>使用者新增日誌</p>
+							<p>查詢及修改日誌</p>
+							<p>聊天室功能</p>
+							<hr>
+							<h5>後台</h5>
+							<p>後台新增日誌</p>
+							<p>管理者刪除及修改、查詢日誌</p>
+							<p>主管審核工作日誌</p>
+							<p>歷史日誌總表查詢及修改(存在與否)</p>
+							<p>聊天室功能</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="post" class="post-section">
+		<div class="overlayYR">
+			<div class="col-xl-4 profitImg">
+				<img src="./images/陳彥儒.jpg" alt="Left Side Image" class="left-image"
+					style="height: auto; width: 500px;">
+			</div>
+			<div class="container">
+				<div class="row">
+					<div class="featureContainer-post">
+						<div class="col-xl-12">
+							<h1>
+								<i class="fa-regular fa-user"></i>陳彥儒
+							</h1>
+							<h2>
+								<i class="fa-regular fa-envelope"></i>phillip355045@gmail.com
+							</h2>
+							<h2>
+								<i class="fa-solid fa-phone"></i>0983938736
+							</h2>
+							<br />
+							<h3>
+								<i class="fa-solid fa-screwdriver-wrench"></i>功能介紹
+							</h3>
+							<h5>所有功能</h5>
+							<p>前台：員工貼文發表、 個人貼文、圖片管理、貼文留言與按讚互動</p>
+							<p>後台：所有文章資訊管理</p>
+							<hr>
+							<h5>功能一：貼文發佈</h5>
+							<p>個人貼文、貼文圖片CRUD、個人貼文管理</p>
+							<hr>
+							<h5>功能二：貼文瀏覽與互動</h5>
+							<p>貼文留言、按讚功能</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section id="leaveRequest" class="leaveRequest-section">
+		<div class="overlayWN">
+			<div class="col-xl-4 profitImg">
+				<img src="./images/李昀恩.jpg" alt="Left Side Image" class="left-image"
+					style="height: auto; width: 500px;">
+			</div>
+			<div class="container">
+				<div class="row">
+					<div class="featureContainer-leaveRequest">
+						<div class="col-xl-12">
+							<h1>
+								<i class="fa-regular fa-user"></i>李昀恩
+							</h1>
+							<h2>
+								<i class="fa-regular fa-envelope"></i>amber898952@gmail.com
+							</h2>
+							<h2>
+								<i class="fa-solid fa-phone"></i>0976284072
+							</h2>
+							<br />
+							<h3>
+								<i class="fa-solid fa-screwdriver-wrench"></i>功能介紹
+							</h3>
+							<h5>所有功能</h5>
+							<p>請假、請款相關功能</p>
+							<hr>
+							<h5>前台</h5>
+							<p>使用者請假、出差、請款申請</p>
+							<p>通知各級主管進行審核</p>
+							<p>區分不同權限操作功能</p>
+
+							<hr>
+							<h5>後台</h5>
+							<p>請假、出差以及請款系統CRUD</p>
+							<p>三層審核機制與一鍵審核的設置</p>
+							<p>相關證明文件的上傳與下載</p>
+							<p>使用Chart.js進行當月份請假分析</p>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+
+	<section id="sal" class="sal-section">
+		<div class="overlayHX">
+			<div class="col-xl-4 profitImg">
+				<img src="./images/萬和軒.jpg" alt="Left Side Image" class="left-image"
+					style="height: auto; width: 500px;">
+			</div>
+			<div class="container">
+				<div class="row">
+					<div class="col-xl-12 text-overlayHX">
+						<h1>
+							<i class="fa-regular fa-user"></i>萬和軒
+						</h1>
+						<h2>
+							<i class="fa-regular fa-envelope"></i>b02109003@gmail.com
+						</h2>
+						<h2>
+							<i class="fa-solid fa-phone"></i>0952452248
+						</h2>
+						<br />
+						<h3>
+							<i class="fa-solid fa-screwdriver-wrench"></i>功能介紹
+						</h3>
+						<br>
+						<h5>薪資資料處理、後台與首頁版型設計</h5>
+
+						<hr>
+						<h5>前台</h5>
+						<p>員工個人薪資單查詢</p>
+						<p>薪資相關公告瀏覽</p>
+						<p>勞健保費率試算</p>
+
+
+						<hr>
+						<h5>後台</h5>
+						<p>薪資單發送狀態管理</p>
+						<p>薪資帶入系統</p>
+						<p>薪資單資料新增與批次新增/儲存功能</p>
+						<p>薪資資料之刪除、修改、查詢</p>
+						<p>薪資資料下載</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 		<div class="featureContainer"> -->
+
+		<!-- 			<div class="feature"> -->
+		<!-- 				<h2>薪資資料錄入</h2> -->
+		<!-- 				<p>提供便捷的薪資資料錄入和更新功能，支持批量導入，方便處理大量數據。</p> -->
+		<!-- 			</div> -->
+
+		<!-- 			<div class="feature"> -->
+		<!-- 				<h2>薪資計算</h2> -->
+		<!-- 				<p>自動化薪資計算，根據考勤記錄、加班工時和請假狀況動態調整，確保準確性。</p> -->
+		<!-- 			</div> -->
+
+		<!-- 			<div class="feature"> -->
+		<!-- 				<h2>薪資發放</h2> -->
+		<!-- 				<p>多種薪資發放方式，包括銀行代發和現金支付，並生成詳細的發放記錄和報表。</p> -->
+		<!-- 			</div> -->
+
+		<!-- 			<div class="feature"> -->
+		<!-- 				<h2>薪資查詢</h2> -->
+		<!-- 				<p>員工自助查詢薪資明細和歷史記錄，提供圖形化界面，方便查看薪資變動。</p> -->
+		<!-- 			</div> -->
+
+		<!-- 			<div class="feature"> -->
+		<!-- 				<h2>報表生成</h2> -->
+		<!-- 				<p>生成豐富的薪資報表，包括薪資匯總表、個人所得稅報表等，支持多維度統計分析。</p> -->
+		<!-- 			</div> -->
+
+		<!-- 			<div class="feature"> -->
+		<!-- 				<h2>系統集成</h2> -->
+		<!-- 				<p>與考勤系統、績效管理系統無縫集成，確保數據一致性，提高工作效率。</p> -->
+		<!-- 			</div> -->
+		<!-- 		</div> -->
+	</section>
+
+
+	<section id="final" class="final-section">
+		<div class="container">
+			<div class="row">
+				<div class="featureContainer-final">
+					<h3>誠摯感謝</h3>
+					<div class="leatWord">
+					<h5>李建輝 老師－－－－－－－－－－－－－導師＆JDBC＆jQuery&Git</h5>
+					<h5>蔡昇達 老師－－－－－－－－－－－－－－－－－－－－－－Java</h5>
+					<h5>郭惠民 老師－－－－－－－－－－－－－－－－－－－SQL Server</h5>
+					<h5>潘麗珍 老師－－－－－－－－－－－－－－－－－－－－－Servlet</h5>
+					<h5>陳奕兆 老師－－－－－－－－－－－－Hibernate/Spring/SprinMVC</h5>
+					<h5>戴天恩 老師－－－－－－－－－－－ Spring Boot/RESTFul AJAX</h5>
+					<h5>紀宜昕 老師－－－－－－－－－－－－－－－－－ HTML&CSS</h5>
+					<h5>陳冠竹 老師－－－－－－－－－－－－－－－JavaScript/BootStrap</h5>
+					<h5>林志偉 老師－－－－－－－－－－－－－－－－－－－－－－助教</h5>
+					<h5>林昭吟 老師－－－－－－－－－－－－－－－－－－－－模擬面試</h5>
+					</div>
+					<br>
+					<h3>感謝全體EEIT183的同學</h3>
+					<h6>本專題僅供資展國際報告使用，非商業用途</h6>
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+
+	</section>
+
+
+
+
+
+
+
+
+	<div class="modal fade" id="connectwithusModal" tabindex="-1"
+		aria-labelledby="connectwithusModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="connectwithusModalLabel">聯絡我們</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="contactForm">
+						<div class="mb-3">
+							<div class="d-flex justify-content-between align-items-center">
+								<label for="name" class="form-label mb-0"><i
+									class="fa-solid fa-user me-2"></i>名字</label>
+							</div>
+							<input type="text" class="form-control" id="connectionname"
+								name="connectionname" autocomplete="off" placeholder="王曉明">
+						</div>
+
+						<div class="mb-3">
+							<label for="phone" class="form-label"><i
+								class="fa-solid fa-phone me-2"></i>聯絡電話</label> <input type="text"
+								class="form-control" id="connectionphone" name="connectionphone"
+								autocomplete="off" placeholder="手機/家電">
+						</div>
+						<div class="mb-3">
+							<label for="mail" class="form-label"><i
+								class="fa-solid fa-envelope me-2"></i>聯絡信箱</label> <input type="email"
+								class="form-control" id="connectionmail" name="connectionmail"
+								autocomplete="off" placeholder="example@gmail.com">
+						</div>
+						<div class="alert alert-danger d-none" id="error-msg">請輸入聯絡電話或聯絡信箱</div>
+						<hr>
+						<div class="mb-3">
+							<label for="connectionmessage" class="form-label"><i
+								class="fa-solid fa-comment me-2"></i>意見欄</label>
+							<textarea class="form-control" id="connectionmessage"
+								placeholder="請輸入內容...最多150字" autocomplete="off" maxlength="150"></textarea>
+						</div>
+						<div class="alert alert-danger d-none" id="error-msg1">請輸入意見內容</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-secondary"
+						onclick="enter(this)">一鍵輸入</button>
+					<button type="button" class="btn btn-primary" id="submitBtn">送出</button>
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal" id="close">關閉</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+ <script src="https://cdn.jsdelivr.net/npm/@mojs/core"></script>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+		crossorigin="anonymous"></script>
+
+
+	<script src="js/popper.min.js"></script>
+	<script src="js/freelancer.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script>
+		document.getElementById('submitBtn').addEventListener('click', function () {
+			const phone = document.getElementById('connectionphone').value.trim();
+			const mail = document.getElementById('connectionmail').value.trim();
+			const name = document.getElementById('connectionname').value.trim();
+			const message = document.getElementById('connectionmessage').value.trim();
+			const errorMsg = document.getElementById('error-msg');
+			const errorMsg1 = document.getElementById('error-msg1');
+			const url = "http://localhost:8088/PSNEXUS/addconnection";
+
+
+			if (phone === '' && mail === '' && message === '') {
+				errorMsg.classList.remove('d-none');
+				errorMsg1.classList.remove('d-none');
+			} else if (phone === '' && mail === '') {
+				errorMsg.classList.remove('d-none');
+				errorMsg1.classList.add('d-none');
+			} else if (message === '') {
+				errorMsg.classList.add('d-none');
+				errorMsg1.classList.remove('d-none');
+			} else {
+				errorMsg.classList.add('d-none');
+				errorMsg1.classList.add('d-none');
+				const data = {
+					name: name,
+					phone: phone,
+					mail: mail,
+					message: message
+				};
+				console.log(data)
+				axios.post(url, data)
+					.then(response => {
+						console.log('Response:', response.data);
+						document.getElementById('connectionphone').value = "";
+						document.getElementById('connectionmail').value = "";
+						document.getElementById('connectionname').value = "";
+						document.getElementById('connectionmessage').value = "";
+						document.getElementById('close').click();
+					})
+					.catch(error => {
+						console.error('Error:', error);
+					});
+			}
+		});
+
+		function enter(button) {
+			document.getElementById('connectionphone').value = '0933287659';
+			document.getElementById('connectionmail').value = "psnexus175@gmail.com";
+			document.getElementById('connectionname').value = "許瑋甯";
+			document.getElementById('connectionmessage').value = '我想要一個測試帳號，方便查看登入後的畫面及功能!!';
+		}
+		
+		
+		
+		//滾動動畫效果
+		
+		document.addEventListener("DOMContentLoaded", function() {
+    const elements = document.querySelectorAll(".groupName, .col-xl-4, .container .row");
+
+    function checkPosition() {
+        elements.forEach(el => {
+            let rect = el.getBoundingClientRect();
+            if (rect.top <= window.innerHeight - 100) {
+                el.classList.add("show");
+            }
+        });
+    }
+
+    window.addEventListener("scroll", checkPosition);
+    checkPosition();
+});
+		
+		//滑鼠動畫效果
+const SWIRL_OPTS = {
+  left: 0, top: 0,
+  fill:           '#9edbff',
+  duration:       'rand(600, 1000)',
+  radius:         'rand(10, 20)',
+  pathScale:      'rand(.5, 1)',
+  swirlFrequency: 'rand(2,4)',
+  swirlSize: 'rand(6,14)',
+}
+
+const swirl1 = new mojs.ShapeSwirl({
+  ...SWIRL_OPTS
+});
+  
+const swirl2 = new mojs.ShapeSwirl({
+  ...SWIRL_OPTS,
+  direction: -1
+});
+
+const swirl3 = new mojs.ShapeSwirl({
+  ...SWIRL_OPTS
+});
+  
+const swirl4 = new mojs.ShapeSwirl({
+  ...SWIRL_OPTS
+});
+
+document.addEventListener('click', function (e) {
+  const x = e.pageX,
+        y = { [e.pageY]: e.pageY-150 };
+  swirl1
+    .tune({ x, y })
+    .generate()
+    .replay();
+  
+  swirl2
+    .tune({ x, y })
+    .generate()
+    .replay();
+  
+  swirl3
+    .tune({ x, y })
+    .generate()
+    .replay();
+  
+  swirl4
+    .tune({ x, y })
+    .generate()
+    .replay();
+  
+});
+
+		
+		
+	</script>
+</body>
+
+</html>

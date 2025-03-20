@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #dfe9f3, #ffffff);
+            color: #333;
+        }
+
+        .content {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 1000px;
+            text-align: left;
+            background: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .content h2 {
+            color: #219ebc;
+            font-size: 22px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        th,
+        td {
+            padding: 5px;
+            text-align: center;
+
+        }
+
+        th {
+            background: #8ecae6;
+            color: #fff;
+        }
+
+        td a,
+        td form input[type="submit"] {
+            background-color: #8ecae6;
+            color: #fff;
+            padding: 5px 10px;
+            margin: 0 5px;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        td a:hover,
+        td form input[type="submit"]:hover {
+            background-color: #219ebc;
+        }
+
+        td form input[type="file"] {
+            padding: 5px;
+            margin: 5px 0;
+        }
+
+        h3 {
+            color: #219ebc;
+            text-align: center;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+    </style>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" />
+    <title>會議意見填寫</title>
+</head>
+
+<body>
+<div th:replace="~{layout/empnavbar}"></div>
+	<div class="wrap">
+    <div id="content" class="content container">
+
+        <h2>會議紀錄</h2>
+        <table border="1" id="myTable" class="display compact hover cell-border stripe">
+        	<thead>
+	            <tr>
+	            	<td>邀請人</td>
+	            	<td>會議主題</td>
+	            	<td>日期</td>
+	            	<td>開始時間</td>
+	            	<td>結束時間</td>
+	            	<td>Webex連結</td>
+	            	<td>檔案</td>
+	            	<td>意見填寫</td>
+	            </tr>
+            </thead>
+         	<tbody>
+				<tr th:each="invited : ${invitedList}">
+					<td th:text="${invited.sponsor}+${invited.sponsorName}"></td>
+					<td th:text="${invited.reserveTitle}"></td>
+					<td th:text="${invited.eventDay}"></td>
+					<td th:text="${invited.startTime}"></td>
+					<td th:text="${invited.endTime}"></td>
+					<td> <!-- th:text="${invited.onlineMeeting}" -->
+						<span th:if="${invited.onlineMeeting == null}">
+							無會議連結
+						</span>
+						<span th:if="${invited.onlineMeeting}">
+							<a th:href="${invited.onlineMeeting}"><i class="fa-solid fa-users"></i></a>
+						</span>
+					</td>		
+					<td>
+						<div th:if="!${invited.hasFile}">                   	
+							<span>無會議檔案</span>
+	                    </div>
+	                    <div th:each="file : ${files}" th:if="${file.reserveno == invited.reserveno}">
+
+	                        <a href="#" th:onclick="'downloadFile(' + ${invited.reserveno} + ')'">
+	                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 384 512">
+	                                <path
+	                                    d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z" />
+	                            </svg>
+	                        </a>	
+	                    </div>
+					
+					</td>
+					<td>
+
+						<span th:if="${!invited.completed}">
+							<button th:id="${invited.reserveno}" onclick="setReserveno(this.id)" class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">意見填寫</button>
+						</span>
+					    <span th:if="${invited.completed}">
+			                填寫完畢
+			            </span>
+					</td>		
+				</tr>
+			</tbody>
+        </table>
+
+		<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+		  <div class="offcanvas-header">
+		    <h5 class="offcanvas-title" id="offcanvasRightLabel">您對於本次會議的評價?</h5>
+		    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		  </div>
+		  <div class="offcanvas-body">
+		    <form id="surveyForm" th:action="@{/submitSurvey}" method="POST">
+		    	<input type="hidden" id="hiddenReserveno" name="reserveno"/>
+			    <div class="mb-4">
+		                <h5>Question 1: 對於會議議程安排滿意度?</h5>
+		                <div class="row">
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q1option1" name="question1" value="1">
+		                            <label class="form-check-label" for="q1option1">1</label>
+		                        </div>
+		                    </div>
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q1option2" name="question1" value="2">
+		                            <label class="form-check-label" for="q1option2">2</label>
+		                        </div>
+		                    </div>
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q1option3" name="question1" value="3">
+		                            <label class="form-check-label" for="q1option3">3</label>
+		                        </div>
+		                    </div>
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q1option4" name="question1" value="4">
+		                            <label class="form-check-label" for="q1option4">4</label>
+		                        </div>
+		                    </div>
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q1option5" name="question1" value="5">
+		                            <label class="form-check-label" for="q1option5">5</label>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		
+		            <div class="mb-4">
+		                <h5>Question 2: 本次提案已充分獲得解決?</h5>
+		                <div class="row">
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q2option1" name="question2" value="1">
+		                            <label class="form-check-label" for="q2option1">1</label>
+		                        </div>
+		                    </div>
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q2option2" name="question2" value="2">
+		                            <label class="form-check-label" for="q2option2">2</label>
+		                        </div>
+		                    </div>
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q2option3" name="question2" value="3">
+		                            <label class="form-check-label" for="q2option3">3</label>
+		                        </div>
+		                    </div>
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q2option4" name="question2" value="4">
+		                            <label class="form-check-label" for="q2option4">4</label>
+		                        </div>
+		                    </div>
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q2option5" name="question2" value="5">
+		                            <label class="form-check-label" for="q2option5">5</label>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		
+		            <div class="mb-4">
+		                <h5>Question 3: 本次會議的整體滿意度?</h5>
+		                <div class="row">
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q3option1" name="question3" value="1">
+		                            <label class="form-check-label" for="q3option1">1</label>
+		                        </div>
+		                    </div>
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q3option2" name="question3" value="2">
+		                            <label class="form-check-label" for="q3option2">2</label>
+		                        </div>
+		                    </div>
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q3option3" name="question3" value="3">
+		                            <label class="form-check-label" for="q3option3">3</label>
+		                        </div>
+		                    </div>
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q3option4" name="question3" value="4">
+		                            <label class="form-check-label" for="q3option4">4</label>
+		                        </div>
+		                    </div>
+		                    <div class="col">
+		                        <div class="form-check">
+		                            <input type="radio" class="form-check-input" id="q3option5" name="question3" value="5">
+		                            <label class="form-check-label" for="q3option5">5</label>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+			  <div class="mb-3">
+			    <div id="emailHelp" class="form-text">有沒有哪邊需要改善?</div>
+			    <textarea name="feedback" style="width:350px;height:200px;" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"></textarea>
+			  </div>
+			  <button type="submit" class="btn btn-primary">Submit</button>
+			  <button type="" id="oneClickInput" class="btn btn-primary">一鍵輸入</button>
+			</form>
+		  </div>
+		</div>
+
+    </div>
+
+</div>    
+<div th:replace="~{layout/footer}"></div>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+   <script>
+   		//信箱一鍵輸入
+		document.getElementById('oneClickInput').addEventListener('click', function (e) {
+			e.preventDefault();
+			document.getElementById('exampleInputEmail1').value = '會議時間安排洽當，演講者說話清晰有條理，本次會議收穫良多。';
+		})
+		
+  		function downloadFile(reserveno) {
+            Swal.fire({
+                title: '下載檔案?',
+                text: '將會儲存到C:\Download',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '確定',
+                cancelButtonText: '取消'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 如果用戶點擊確定，可以導向修改的 URL
+                    //window.location.href = 'GetFile.controller?reserveno=' + reserveno;
+                                        // // 如果用戶點擊確定，可以導向修改的 URL                    
+                    // window.location.href = 'GetFile.controller?reserveno=' + reserveno;
+					
+
+					axios({
+						method: 'get',
+						url: 'http://localhost:8088/PSNEXUS/GetFile.controller',
+						params: {    //data後端用responseBody來接收物件
+							reserveno: reserveno
+						}
+					})
+					.then(response => {
+						console.log('檔案下載成功')
+                        
+					})
+					.catch(error => {
+						console.error('Error downloading file:', error);
+					});
+                }
+            });
+        }
+
+	    function setReserveno(reserveno) {
+	        document.getElementById('hiddenReserveno').value = reserveno;
+	    }
+	    
+	    document.getElementById('surveyForm').addEventListener('submit',function(event){
+			const questions = ['question1', 'question2', 'question3'];
+			let allValid = true;//這邊先預設為true，如果後面沒有提交改為flase
+			let questionValid = false;
+			questions.forEach(function(question){
+				const radios=document.getElementsByName(question);//這邊把['question1', 'question2', 'question3']代入
+
+				for(let i = 0; i < radios.length; i++){
+					if(radios[i].checked){ //把每一個問題的5個checkbox取出來查看是否有選取
+						questionValid = true;
+						break;
+					}
+				}
+			})
+			if(!questionValid){
+				allValid = false;
+				alert('Please answer all questions.');
+				event.preventDefault();
+			}
+
+			if(allValid){ //如果都有填寫就可以在這邊寫入其他操作
+
+			}
+		})
+		
+		$(document).ready( function () {
+    	$('#myTable').DataTable({
+    		//中文化
+    		"language":{
+    "processing": "處理中...",
+    "loadingRecords": "載入中...",
+    "paginate": {
+        "first": "第一頁",
+        "previous": "上一頁",
+        "next": "下一頁",
+        "last": "最後一頁"
+    },
+    "emptyTable": "目前沒有資料",
+    "datetime": {
+        "previous": "上一頁",
+        "next": "下一頁",
+        "hours": "時",
+        "minutes": "分",
+        "seconds": "秒",
+        "amPm": [
+            "上午",
+            "下午"
+        ],
+        "unknown": "未知",
+        "weekdays": [
+            "週日",
+            "週一",
+            "週二",
+            "週三",
+            "週四",
+            "週五",
+            "週六"
+        ],
+        "months": [
+            "一月",
+            "二月",
+            "三月",
+            "四月",
+            "五月",
+            "六月",
+            "七月",
+            "八月",
+            "九月",
+            "十月",
+            "十一月",
+            "十二月"
+        ]
+    },
+    "searchBuilder": {
+        "add": "新增條件",
+        "condition": "條件",
+        "button": {
+            "_": "複合查詢 (%d)",
+            "0": "複合查詢"
+        },
+        "clearAll": "清空",
+        "conditions": {
+            "array": {
+                "contains": "含有",
+                "equals": "等於",
+                "empty": "空值",
+                "not": "不等於",
+                "notEmpty": "非空值",
+                "without": "不含"
+            },
+            "date": {
+                "after": "大於",
+                "before": "小於",
+                "between": "在其中",
+                "empty": "為空",
+                "equals": "等於",
+                "not": "不為",
+                "notBetween": "不在其中",
+                "notEmpty": "不為空"
+            },
+            "number": {
+                "between": "在其中",
+                "empty": "為空",
+                "equals": "等於",
+                "gt": "大於",
+                "gte": "大於等於",
+                "lt": "小於",
+                "lte": "小於等於",
+                "not": "不為",
+                "notBetween": "不在其中",
+                "notEmpty": "不為空"
+            },
+            "string": {
+                "contains": "含有",
+                "empty": "為空",
+                "endsWith": "字尾為",
+                "equals": "等於",
+                "not": "不為",
+                "notEmpty": "不為空",
+                "startsWith": "字首為",
+                "notContains": "不含",
+                "notStartsWith": "開頭不是",
+                "notEndsWith": "結尾不是"
+            }
+        },
+        "data": "欄位",
+        "leftTitle": "群組條件",
+        "logicAnd": "且",
+        "logicOr": "或",
+        "rightTitle": "取消群組",
+        "title": {
+            "_": "複合查詢 (%d)",
+            "0": "複合查詢"
+        },
+        "value": "內容",
+        "deleteTitle": "刪除篩選條件"
+    },
+    "editor": {
+        "close": "關閉",
+        "create": {
+            "button": "新增",
+            "title": "新增資料",
+            "submit": "送出新增"
+        },
+        "remove": {
+            "button": "刪除",
+            "title": "刪除資料",
+            "submit": "送出刪除",
+            "confirm": {
+                "_": "您確定要刪除您所選取的 %d 筆資料嗎？",
+                "1": "您確定要刪除您所選取的 1 筆資料嗎？"
+            }
+        },
+        "error": {
+            "system": "系統發生錯誤(更多資訊)"
+        },
+        "edit": {
+            "button": "修改",
+            "title": "修改資料",
+            "submit": "送出修改"
+        },
+        "multi": {
+            "title": "多重值",
+            "info": "您所選擇的多筆資料中，此欄位包含了不同的值。若您想要將它們都改為同一個值，可以在此輸入，要不然它們會保留各自原本的值。",
+            "restore": "復原",
+            "noMulti": "此輸入欄需單獨輸入，不容許多筆資料一起修改"
+        }
+    },
+    "autoFill": {
+        "cancel": "取消"
+    },
+    "buttons": {
+        "copySuccess": {
+            "_": "複製了 %d 筆資料",
+            "1": "複製了 1 筆資料"
+        },
+        "copyTitle": "已經複製到剪貼簿",
+        "excel": "Excel",
+        "pdf": "PDF",
+        "print": "列印",
+        "copy": "複製",
+        "colvis": "欄位顯示",
+        "colvisRestore": "重置欄位顯示",
+        "csv": "CSV",
+        "pageLength": {
+            "-1": "顯示全部",
+            "_": "顯示 %d 筆"
+        },
+        "createState": "建立狀態",
+        "removeAllStates": "移除所有狀態",
+        "removeState": "移除",
+        "renameState": "重新命名",
+        "savedStates": "儲存狀態",
+        "stateRestore": "狀態 %d",
+        "updateState": "更新",
+        "collection": "更多"
+    },
+    "searchPanes": {
+        "collapse": {
+            "_": "搜尋面版 (%d)",
+            "0": "搜尋面版"
+        },
+        "emptyPanes": "沒搜尋面版",
+        "loadMessage": "載入搜尋面版中...",
+        "clearMessage": "清空",
+        "count": "{total}",
+        "countFiltered": "{shown} ({total})",
+        "showMessage": "顯示全部",
+        "collapseMessage": "摺疊全部",
+        "title": "篩選條件 - %d"
+    },
+    "stateRestore": {
+        "emptyError": "名稱不能空白。",
+        "creationModal": {
+            "button": "建立",
+            "columns": {
+                "search": "欄位搜尋",
+                "visible": "欄位顯示"
+            },
+            "name": "名稱：",
+            "order": "排序",
+            "paging": "分頁",
+            "scroller": "卷軸位置",
+            "search": "搜尋",
+            "searchBuilder": "複合查詢",
+            "select": "選擇",
+            "title": "建立新狀態",
+            "toggleLabel": "包含："
+        },
+        "duplicateError": "此狀態名稱已經存在。",
+        "emptyStates": "名稱不可空白。",
+        "removeConfirm": "確定要移除 %s 嗎？",
+        "removeError": "移除狀態失敗。",
+        "removeJoiner": "和",
+        "removeSubmit": "移除",
+        "removeTitle": "移除狀態",
+        "renameButton": "重新命名",
+        "renameLabel": "%s 的新名稱：",
+        "renameTitle": "重新命名狀態"
+    },
+    "select": {
+        "columns": {
+            "_": "選擇了 %d 欄資料",
+            "1": "選擇了 1 欄資料"
+        },
+        "rows": {
+            "1": "選擇了 1 筆資料",
+            "_": "選擇了 %d 筆資料"
+        },
+        "cells": {
+            "1": "選擇了 1 格資料",
+            "_": "選擇了 %d 格資料"
+        }
+    },
+    "zeroRecords": "沒有符合的資料",
+    "aria": {
+        "sortAscending": "：升冪排列",
+        "sortDescending": "：降冪排列"
+    },
+    "info": "顯示第 _START_ 至 _END_ 筆結果，共 _TOTAL_ 筆",
+    "infoEmpty": "顯示第 0 至 0 筆結果，共 0 筆",
+    "infoThousands": ",",
+    "lengthMenu": "顯示 _MENU_ 筆結果",
+    "search": "搜尋：",
+    "searchPlaceholder": "請輸入關鍵字",
+    "thousands": ",",
+    "infoFiltered": "(從 _MAX_ 筆結果中篩選)"
+} 
+    	
+    	
+    	})
+ 			
+    	
+    	
+	});
+    </script>
+
+</body>
+
+</html>

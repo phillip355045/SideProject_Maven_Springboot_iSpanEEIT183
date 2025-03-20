@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+<!-- Required meta tags -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Bootstrap CSS -->
+
+<!-- 表單: backFrom-->
+<link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+<title>empSal</title>
+<style>
+@charset "BIG5";
+
+html, body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;	
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-decoration: none;
+}
+
+footer {
+	background-color: rgb(46, 46, 46);
+	color: rgb(176, 176, 176);
+	height: 50px;
+	padding: 15px;
+}
+ 
+footer a {
+	color: rgb(175, 175, 175);
+	text-decoration: none;
+	margin: 5px;
+}
+
+.back {
+	float: right;
+}
+
+footer a:hover {
+	color: rgb(79, 79, 79);
+	text-decoration: none;
+}
+
+.wrap {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	font-family: Arial, sans-serif;
+	background: linear-gradient(to right, #dfe9f3, #ffffff);
+	color: #333;
+	height:100%;
+	width: 100%;
+}
+
+.nav1 {
+	width: 260px; /* 固定寬度，可以根據需要調整 */
+	background-color: rgba(214, 214, 214, 0.6); /* 背景色，可以根據需要調整 */
+	padding: 20px;  /* 內邊距，可以根據需要調整 */
+	margin-right: 20px;
+}
+
+.nav1 a {
+	color: rgb(34, 34, 34);
+	text-decoration: none;
+	background-size: 25px;
+	display: block;
+	line-height: 40px;
+	text-align: center;
+	text-decoration: none;
+}
+
+.nav1 a:hover {
+	color: blue;
+	/* background-color: rgb(41, 39, 76); */
+}
+
+#content {
+	padding: 25px;
+	background-color: rgba(255, 255, 255, .3);
+	margin: 20px auto;
+	width: 90%;
+	max-width: 1200px;
+	text-align: center;
+	background: #fff;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.announcement {
+	background-color: rgba(255, 255, 255, .5);
+	padding: 20px;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.announcement-item {
+	margin-bottom: 20px;
+}
+
+.announcement-item+.announcement-item {
+	border-top: 1px solid #dee2e6;
+	padding-top: 20px;
+}
+
+.announcement-item:last-child {
+	margin-bottom: 0;
+}
+
+.announcement-item .date {
+	font-size: 14px;
+	color: #6c757d;
+}
+
+.announcement-item .title {
+	font-size: 18px;
+	font-weight: bold;
+	margin: 5px 0;
+}
+
+.announcement-item .content {
+	font-size: 16px;
+}
+
+
+ /* 彥儒的css */
+
+.post-container { 
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	min-width: 800px;
+}
+
+.post {
+	background-color: #ffffff;
+	padding: 20px;
+	margin-bottom: 20px;
+	border-radius: 10px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	width: 100%;
+	border: none;
+	text-align: left;
+	position: relative;
+}
+
+.post-title {
+	font-size: 18px;
+	margin: 0 0 10px;
+	font-weight: bold;
+}
+
+.post-body {
+	font-size: 14px;
+	color: #555;
+	margin-bottom: 10px;
+}
+
+.post-footer {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	font-size: 14px;
+	color: #999;
+}
+
+.post-footer span {
+	margin-right: 20px;
+	display: flex;
+	align-items: center;
+}
+
+.post-footer span i {
+	margin-right: 5px;
+}
+
+.post-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.post-header .post-date {
+	font-size: 14px;
+	color: #999;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	position: relative;
+}
+
+.header .title {
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.header .actions {
+	display: flex;
+	align-items: center;
+}
+
+.header .actions button, .header .actions input[type="text"] {
+	margin-left: 10px;
+}
+
+.header .actions button {
+	padding: 5px 10px;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.header .actions input[type="text"] {
+	padding: 5px;
+	font-size: 14px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+.pagination {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	margin-top: 20px;
+}
+
+.page-item {
+	margin: 0 5px;
+	cursor: pointer;
+	border: none;
+	background: none;
+	color: inherit;
+	padding: 5px 10px;
+}
+
+.page-item.active {
+	font-weight: bold;
+	color: #007bff;
+}
+
+.page-item button {
+	border: none;
+	background: none;
+	color: inherit;
+	padding: 5px 10px;
+	border-radius: 5px;
+}
+
+.page-item button:hover {
+	background-color: #f8f9fa;
+	border: none;
+}
+
+.custom-modal-width {
+	min-width: 80%;
+}
+</style>
+</head>
+
+<body>
+
+	<div th:replace="~{layout/empnavbar}"></div>
+	<div class="wrap">
+
+
+
+
+		<!--	<div class="heading">
+			<div class="mask">
+				<a th:href="@{/empsal}">薪資管理系統</a>
+			</div>
+		</div> -->
+
+
+
+		<div class="nav1">
+			<a th:href="@{/empsal}">薪資單管理系統</a> <a th:href="@{/getOneEmpSal.controller}">查詢個人薪資資料</a>
+			 <a th:href="@{/toGetInsurance}">勞健保額度試算</a>
+			<!--<a th:href="@{/empSalfront}">測試</a>
+			 <a th:href="@{/toGetEmpsal}">查詢薪資資料</a> 
+				<a th:href="@{/toInsertEmpSal}">新增薪資資料</a> 
+			
+				<a href="">個人績效獎金</a> <a href="">個人年度自付保費核對表</a> <a href="">津貼規章/獎金辦法</a>
+			<a href="">薪資等級試算</a>   -->
+		</div>
+
+  <div id="content" class="container">
+            <h1 class="title">布告欄</h1>
+            <div class="header">
+                <div class="actions">
+                    <button type="button" class="btn btn-primary" id="loadBtnB">
+                        新增貼文
+                    </button>
+                    <form th:action="@{#}" method="get" style="margin: 0;">
+                        <input type="text" name="query" placeholder="搜尋..." onclick="showSearchModal()">
+                    </form>
+                </div>
+                <div class="pagination" id="pagination">
+                    <!-- 分頁按鈕會在這裡生成 -->
+                </div>
+            </div>
+            <main class="post-container" id="post-container">
+                <form th:each="post : ${posts}" th:action="@{/findPostById.controller(postId=${post.postId})}" method="post" class="post">
+                    <div class="post-header">
+                        <h3 class="post-title" th:text="${post.postTitle}"></h3>
+                        <span class="post-date" th:text="${post.postDateTime}"></span>
+                    </div>
+                    <p class="post-body" th:text="${post.postContent}"></p>
+                    <div class="post-footer">
+                        <span th:text="${post.postCategory}"></span>
+                        <i class="fas fa-thumbs-up"></i> <span th:text="${post.likeCounts}">0</span>
+       					<i class="fas fa-comment"></i> <span th:text="${post.commentCounts}">0</span>
+                        
+                    </div>
+                    <input type="hidden" name="id" th:value="${post.postId}" />
+                    <button type="submit" style="all: unset; cursor: pointer; width: 100%; height: 100%; position: absolute; top: 0; left: 0;"></button>
+                </form>
+            </main>
+        </div>
+<!-- 		<div id="content"> -->
+<!-- 			<h2 style="text-align: center; margin: 20px; margin-bottom: 40px;">歡迎來到薪資管理系統</h2> -->
+<!-- 			<div class="announcement"> -->
+
+<!-- 				<div class="announcement-item"> -->
+<!-- 					<div class="announcement-date">2024-05-28</div> -->
+<!-- 					<div class="announcement-title">系統維護通知</div> -->
+<!-- 					<div class="announcement-content">本系統將於2024年6月1日進行維護，屆時系統將暫停服務。</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="announcement-item"> -->
+<!-- 					<div class="announcement-date">2024-05-15</div> -->
+<!-- 					<div class="announcement-title">薪資調整通知</div> -->
+<!-- 					<div class="announcement-content">2024年7月起，員工薪資將進行調整，詳情請參閱公司內部信件。</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="announcement-item"> -->
+<!-- 					<div class="announcement-date">2024-05-01</div> -->
+<!-- 					<div class="announcement-title">勞健保費率調整</div> -->
+<!-- 					<div class="announcement-content">自2024年6月起，勞健保費率將進行調整，請員工留意。</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+
+<!-- 		</div> -->
+<!-- 		<hr> -->
+
+		<!-- <p>
+            <img class="myphoto2" src="https://truth.bahamut.com.tw/s01/202201/78eb807a59adcd9aa4c96aac199feaa9.JPG"
+                alt="">
+        </p> -->
+
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+
+
+
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+
+
+ <!-- 分頁 JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var posts = Array.from(document.querySelectorAll('.post-container .post'));
+            var postsPerPage = 3; 
+            var currentPage = 1;
+            var totalPages = Math.ceil(posts.length / postsPerPage);
+
+            function showPage(page) {
+                var start = (page - 1) * postsPerPage;
+                var end = start + postsPerPage;
+
+                posts.forEach((post, index) => {
+                    if (index >= start && index < end) {
+                        post.style.display = 'block';
+                    } else {
+                        post.style.display = 'none';
+                    }
+                });
+
+                currentPage = page;
+                updatePagination();
+            }
+
+            function updatePagination() {
+                var pagination = document.getElementById('pagination');
+                pagination.innerHTML = '';
+
+                for (var i = 1; i <= totalPages; i++) {
+                    var pageItem = document.createElement('button');
+                    pageItem.textContent = i;
+                    pageItem.classList.add('page-item');
+                    if (i === currentPage) {
+                        pageItem.classList.add('active');
+                    }
+
+                    pageItem.addEventListener('click', (function(page) {
+                        return function() {
+                            showPage(page);
+                        };
+                    })(i));
+
+                    pagination.appendChild(pageItem);
+                }
+            }
+
+            showPage(currentPage);
+        });
+    </script>
+</body>
+
+</html>

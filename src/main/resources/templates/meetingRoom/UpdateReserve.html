@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" >
+<head>
+<meta charset="UTF-8">
+    <link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+  <style>
+ body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #dfe9f3, #ffffff);
+            color: #333;
+        }
+
+        .content {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            text-align: left;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .content h2 {
+            color: #219ebc;
+            font-size: 22px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+        form {
+            text-align: left;
+        }
+        form input[type="text"], form select, form input[type="date"], form input[type="time"], form input[type="file"] {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin: 5px 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        form input[type="submit"] {
+            background-color: #8ecae6;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        form input[type="submit"]:hover {
+            background-color: #219ebc;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+        .form-container {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+<title>修改預約資料</title>
+</head>
+<body>
+<div th:replace="~{layout/empnavbar}"></div>
+<div class="wrap">  
+	<div id="content" class="content container">
+	<h2>修改預約資料</h2>
+	<form method="post" action="UpdateForReserve.controller" enctype="multipart/form-data" id="inspection">
+			<input type="hidden" name="fakeDelete" value="0"/>
+			<input type="hidden" name="status" value="未審核"/>
+
+			預約代號:<input type="text" name="reserveno" readonly th:value="${reserve.reserveno}"/><br>	
+			會議名稱:<input type="text" name="reserveTitle" th:value="${reserve.reserveTitle}"/><br>	
+			會議室:<input type="text" name="roomName" readonly th:value="${reserve.roomName}"/><br>		
+			預約人員編號:<input type="text" name="empno" readonly th:value="${reserve.empno}"/><br>		
+			會議日期:<input type="date" name="eventDay" th:value="${reserve.eventDay}"/><br>
+			會議開始時間:<input type="time" name="startTime" id="startTime" step="3600" th:value="${reserve.startTime}" required/><br>
+			會議結束時間:<input type="time" name="endTime" id="endTime" step="3600" th:value="${reserve.endTime}" required/><br>
+			
+			<div class="error" id="error"></div>
+		<input type="submit" value="確定" />
+	</form>
+		<div id="reservations"></div>
+	</div>
+</div>	
+<div th:replace="~{layout/footer}"></div>
+	<script>
+		
+        function adjustFormTimes() {
+	        const startTimeInput = document.getElementById('startTime');
+	        const endTimeInput = document.getElementById('endTime');
+
+            startTimeInput.value = adjustToHour(startTimeInput.value);
+            endTimeInput.value = adjustToHour(endTimeInput.value);
+        }
+        document.getElementById('startTime').addEventListener('input', function() {
+            this.value = adjustToHour(this.value);
+        });
+
+        document.getElementById('endTime').addEventListener('input', function() {
+            this.value = adjustToHour(this.value);
+        });
+
+	      function adjustToHour(time) {
+	           const [hours, minutes] = time.split(':');
+	           return `${hours.padStart(2, '0')}:00:00`;
+	       }      
+		$(function(){
+
+           let startTime;
+           let endTime;
+           let errorMessage;
+           $("#inspection").on("submit", function(event){
+        	   event.preventDefault();
+        	   
+        	   startTime = $('#startTime').val();
+        	   endTime = $('#endTime').val();
+        	   errorMessage = $('#error');
+	           errorMessage.text("");
+	           if(startTime === endTime){
+	        	   errorMessage.text("時間不可相同").css("color", "red");;
+	        	   return;
+	           }
+	           if(startTime > endTime){
+	        	   errorMessage.text("開始時間需要早於結束時間").css("color", "red");;
+	        	   return;
+	           }
+	           alert('預約完成');
+	            // 验证通过后提交表单
+	            this.submit();
+           });
+           
+			
+		});
+	</script>
+</body>
+</html>

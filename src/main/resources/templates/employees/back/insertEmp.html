@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert Employee data</title>
+<link rel="stylesheet"
+	href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/css/bootstrap.min.css">
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<style>
+body {
+	background: url('images/cat5.jpg') no-repeat center center fixed;
+	background-size: cover;
+	background-position: center;
+	font-family: Arial, sans-serif;
+	margin: 0;
+	transition: margin-left 0.3s;
+}
+
+.container {
+	max-width: 800px;
+	margin: 15px auto 20px;
+	padding: 20px;
+	background-color: rgba(255, 255, 255, 0.8);
+	border-radius: 10px;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+	transition: margin-left 0.3s;
+}
+
+h2 {
+	color: #333;
+	margin-bottom: 20px;
+}
+
+.form-group {
+	margin-bottom: 15px;
+}
+
+label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+input[type="text"], input[type="password"], input[type="file"], select {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+}
+
+input[type="submit"], input[type="button"] {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	background-color: rgb(128, 128, 255);
+	color: white;
+	transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover, input[type="button"]:hover {
+	background-color: #2980b9;
+}
+</style>
+</head>
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1">
+			<br> <a th:href="@{/getAllEmployees}">所有員工資料</a> <a
+				th:href="@{/insertEmp}">新增員工資料</a> <a th:href="@{/getEmpsByCol}">查詢員工資料</a>
+			<a th:href="@{/familyMemberInsert}">新增親屬資料</a> <a
+				th:href="@{/departmentTransferInsert}">新增部門調動</a> <a
+				th:href="@{/alldepartmentTransfer}">所有部門調動</a>
+		</div>
+		<div id="content" class="container">
+			<h2>新增員工資料</h2>
+			<form method="post" th:action="@{/insertEmpData}"
+				enctype="multipart/form-data">
+				<input name="_method" value="PUT" type="hidden" />
+				<div class="row">
+					<!-- Left Column -->
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="empno">輸入員工編號:</label> <input type="text" id="empno"
+								name="empno" th:value="${nextEmpno}" readonly />
+						</div>
+						<div class="form-group">
+							<label for="job">選擇職稱:</label> <select id="job" name="job"
+								class="form-control">
+								<option value="assistant">Assistant</option>
+								<option value="leader">Leader</option>
+								<option value="manager">Manager</option>
+								<option value="boss">Boss</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="name">輸入員工姓名:</label> <input type="text" id="name"
+								name="name" autocomplete="off" />
+						</div>
+						<div class="form-group">
+							<label for="mgr">輸入直屬主管:</label> <input type="text" id="mgr"
+								name="mgr" placeholder="依照選取部門存檔後自動代入" readonly />
+						</div>
+						<div class="form-group">
+
+
+							<label for="deptno">選擇部門:</label><br> <input type="radio"
+								id="D01" name="deptno" value="D01" checked /> <label for="D01">行政部門</label>
+							<input type="radio" id="D02" name="deptno" value="D02" /> <label
+								for="D02">財務部門</label> <input type="radio" id="D03"
+								name="deptno" value="D03" /> <label for="D03">行銷部門</label> <input
+								type="radio" id="D04" name="deptno" value="D04" /> <label
+								for="D04">技術部門</label> <input type="radio" id="D05"
+								name="deptno" value="D05" /> <label for="D05">人力資源部門</label>
+
+
+						</div>
+						<div class="form-group">
+							<!-- <label for="deptTransferID">輸入部門調動編號:</label> -->
+							<input type="hidden" id="deptTransferID" name="deptTransferID" />
+						</div>
+						<p>輸入出生日期:</p>
+						<input type="text" id="datepicker" name="birthDate"
+							autocomplete="off" />
+						<p />
+						<div class="form-group">
+							<label for="password">輸入密碼:</label> <input type="password"
+								id="password" name="password" placeholder="預設西元生日-yyyy-MM-dd"
+								readonly />
+						</div>
+						<div class="form-group">
+							<label for="identityID">輸入身分證字號:</label> <input type="text"
+								id="identityID" name="identityID" autocomplete="off" />
+						</div>
+						<div class="form-group">
+							<label for="gender">選擇性別:</label><br> <input type="radio"
+								id="male" name="gender" value="男性" checked> <label
+								for="男性">男性</label> <input type="radio" id="female"
+								name="gender" value="女性"> <label for="female">女性</label><br>
+						</div>
+						<div class="form-group">
+							<label for="phone">輸入手機號碼:</label> <input type="text" id="phone"
+								name="phone" placeholder="09123456789" autocomplete="off" />
+						</div>
+
+
+					</div>
+					<!-- Right Column -->
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="file">上傳照片:</label> <input type="file" name="file"
+								id="photoInput"> <input type="hidden" name="photo"
+								id="photo" value="null">
+						</div>
+						<div class="form-group">
+							<label>選擇縣市:</label><br> <input type="radio" id="taipei"
+								name="city" value="台北市" checked /> <label for="taipei">台北市</label>
+
+							<input type="radio" id="newtaipei" name="city" value="新北市" /> <label
+								for="newtaipei">新北市</label> <input type="radio" id="taoyuan"
+								name="city" value="桃園市" /> <label for="taoyuan">桃園市</label> <input
+								type="radio" id="hsinchu" name="city" value="新竹市" /> <label
+								for="hsinchu">新竹市</label> <input type="radio" id="miaoli"
+								name="city" value="苗栗縣" /> <label for="miaoli">苗栗縣</label> <input
+								type="radio" id="taichung" name="city" value="台中市" /> <label
+								for="taichung">台中市</label> <input type="radio" id="keelung"
+								name="city" value="基隆市" /> <label for="keelung">基隆市</label> <input
+								type="radio" id="yilan" name="city" value="宜蘭縣" /> <label
+								for="yilan">宜蘭縣</label>
+						</div>
+						<div class="form-group">
+							<label for="address">輸入住址:</label><input type="text" id="address"
+								name="address" placeholder="中壢區新生路二段421號" autocomplete="off" />
+						</div>
+						<div class="form-group">
+							<label for="citizenship">輸入國籍:</label> <input type="text"
+								id="citizenship" name="citizenship" placeholder="TW"
+								autocomplete="off" />
+						</div>
+
+						<div class="form-group">
+							<label for="telPhone">輸入家電:</label> <input type="text"
+								id="telPhone" name="telPhone" autocomplete="off" />
+						</div>
+						<div class="form-group">
+							<label for="mail">輸入員工信箱:</label> <input type="text" id="mail"
+								name="mail" placeholder="example@gmail.com" autocomplete="off" />
+						</div>
+						<div class="form-group">
+							<label for="emergencyContact">輸入緊急聯絡人:</label> <input type="text"
+								id="emergencyContact" name="emergencyContact" autocomplete="off" />
+						</div>
+						<div class="form-group">
+							<label for="hiredate">進公司日期:</label> <input type="text"
+								id="hiredate" name="hiredate" th:value="${today}" readonly />
+						</div>
+						<div class="form-group">
+							<label for="salGrade">輸入薪資等級:</label> <input type="text"
+								id="salGrade" name="salGrade" />
+						</div>
+						<div class="form-group">
+							<label for="empnoStatus">人員狀態:</label> <select id="empnoStatus"
+								name="empnoStatus" class="form-control">
+								<option value="Active">Active</option>
+								<option value="Resigned">Resigned</option>
+								<option value="Terminated">Terminated</option>
+								<option value="Retired">Retired</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<!-- 
+						<label for="departureDate">輸入離退日期:</label>  -->
+							<input id="departureDate" name="departureDate" type="hidden" />
+						</div>
+						<div class="form-group">
+							<!--<label for="lastTimeLogin">輸入最後一次登入時間:</label>   -->
+							<input type="hidden" id="lastTimeLogin" name="lastTimeLogin" />
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<input type="button" value="確定" th:action="@{/updateEmpData}"
+						class="insert-btn" /> <input type="button" value="取消"
+						th:action="@{/HomePage}" />
+					<button type="button" class="btn btn-outline-warning"
+						onclick="enter(this)">一鍵輸入</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+
+	<script>
+	    $(function () {
+	        $("#datepicker").datepicker({
+	            dateFormat: "yy-mm-dd",
+	            showOtherMonths: true,
+	            selectOtherMonths: true,
+	            changeMonth: true,
+	            changeYear: true,
+	            yearRange: "1911:2200"
+	        });
+	
+	        $('#photoInput').on('change', function () {
+	            var filename = $(this).val().split('\\').pop();
+	            $('#photo').val(filename);
+	        });
+	
+	        $('#datepicker').on('change', function () {
+	            var birthday = $(this).val();
+	            var parts = birthday.split("-");
+	            var formattedDate = parts[0] + parts[1] + parts[2];
+	            $('#password').val(formattedDate);
+	        });
+	    });
+	    
+		$(document).ready(function() {
+		    $(document).on('click', '.insert-btn', function() {
+		        var $button = $(this);
+		        var $form = $button.closest('form');
+		
+		        Swal.fire({
+		            title: '是否確定新增',
+		            text: '麻煩請再次確認！',
+		            icon: 'info',
+		            showCancelButton: true,
+		            confirmButtonText: '是！',
+		            cancelButtonText: '再檢查一下'
+		        }).then((result) => {
+		            if (result.isConfirmed) {
+		                $form.submit();
+		            }
+		        });
+		    });
+		});	    
+		function enter(button) {
+	            document.querySelector('input[name="name"]').value = '邱澤';
+	            document.querySelector('input[name="identityID"]').value = 'A123456789';
+	            document.querySelector('input[name="birthDate"]').value = '1981-10-14';
+	            document.querySelector('input[name="phone"]').value = '0912345678';
+	            document.querySelector('input[name="salGrade"]').value = '3';
+	            document.querySelector('input[name="emergencyContact"]').value = '許瑋甯';
+	            document.querySelector('input[name="citizenship"]').value = 'TW';
+	            document.querySelector('input[name="mail"]').value = 'ROYCHIU@example.com';
+	            document.querySelector('input[name="address"]').value = '中壢區新生路二段421號';
+	            document.querySelector('input[name="telPhone"]').value = '0223456789';
+	    }
+</script>
+</body>
+</html>

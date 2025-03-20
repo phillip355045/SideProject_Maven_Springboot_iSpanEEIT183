@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+<!-- Required meta tags -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- 表單: backFrom-->
+    <link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+
+
+<title>getEmpSal</title>
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-decoration: none;
+}
+
+body {
+	background-color: rgb(235, 226, 247);
+}
+
+.headimg {
+	margin-bottom: 30px;
+	text-align: center;
+}
+
+.headimg a {
+	text-decoration: none;
+}
+
+.headimg img {
+	width: 100%;
+}
+
+.about {
+	position: relative;
+	width: 100%;
+	height: 280px;
+	margin-bottom: 30px;
+}
+
+.about img {
+	width: 100%;
+	height: 280px;
+	position: absolute;
+}
+
+.about .mask {
+	background-color: rgba(133, 201, 169, 0.6);
+	width: 100%;
+	height: 280px;
+	line-height: 200px;
+	position: absolute;
+}
+
+.about .mask h1 {
+	color: aliceblue;
+	font-size: 30px;
+	text-align: center;
+	padding-top: 30px;
+}
+
+.about .mask p {
+	line-height: 1.3;
+	text-align: justify;
+	margin-bottom: 10px;
+	color: aliceblue;
+	font-size: 20px;
+	margin: 30px;
+}
+
+.roll {
+	margin-bottom: 30px;
+}
+
+.row {
+	margin-bottom: 30px;
+}
+
+.box-content {
+	margin-bottom: 30px;
+}
+
+small {
+	font-size: 14px;
+}
+
+footer {
+	background-color: rgb(46, 46, 46);
+	color: rgb(176, 176, 176);
+	height: 50px;
+	padding: 15px;
+}
+
+footer a {
+	color: rgb(175, 175, 175);
+	text-decoration: none;
+	margin: 5px;
+}
+
+.back {
+	float: right;
+}
+
+footer a:hover {
+	color: rgb(79, 79, 79);
+	text-decoration: none;
+}
+
+
+
+.heading {
+	position: relative;
+	width: 100%;
+	height: 180px;
+}
+
+.heading a {
+	text-decoration: none;
+	color: aliceblue;
+	font-size: 30px;
+	padding: 30px;
+}
+
+.heading .mask {
+	background-color: rgba(141, 112, 199, 0.6);;
+	width: 100%;
+	height: 100%;
+	line-height: 240px;
+	position: absolute;
+}
+
+.heading .mask a {
+	color: aliceblue;
+	font-size: 30px;
+	padding: 30px;
+}
+
+.heading:hover a {
+	color: rgb(205, 252, 183);
+}
+
+
+.navbar-nav {
+	padding-right: 80px;
+	/* �վ�k�����Z�� */
+}
+
+.nav1 {
+	width: 260px; /* 固定寬度，可以根據需要調整 */
+	background-color: rgba(214, 214, 214, 0.6); /* 背景色，可以根據需要調整 */
+	padding: 20px;  /* 內邊距，可以根據需要調整 */
+	margin-right: 20px;
+}
+
+.nav1 a {
+	color: rgb(34, 34, 34);
+	text-decoration: none;
+	background-size: 25px;
+	display: block;
+	line-height: 40px;
+	text-align: center;
+	text-decoration: none;
+}
+
+.nav1 a:hover {
+	color: blue;
+	/* background-color: rgb(41, 39, 76); */
+}
+
+#content {
+	width: 600px;
+	padding: 25px;
+	margin: auto;
+	margin-left: 30%;
+	background-color: rgba(255, 255, 255, .3);
+}
+
+footer {
+	background-color: black;
+	color: rgb(176, 176, 176);
+	height: 50px;
+	padding: 15px;
+}
+
+.announcement {
+	background-color: rgba(255, 255, 255, .5);
+	padding: 20px;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.announcement-item {
+	margin-bottom: 20px;
+}
+
+.announcement-item+.announcement-item {
+	border-top: 1px solid #dee2e6;
+	padding-top: 20px;
+}
+
+.announcement-item:last-child {
+	margin-bottom: 0;
+}
+
+.announcement-item .date {
+	font-size: 14px;
+	color: #6c757d;
+}
+
+.announcement-item .title {
+	font-size: 18px;
+	font-weight: bold;
+	margin: 5px 0;
+}
+
+.announcement-item .content {
+	font-size: 16px;
+}
+
+.container {
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	max-width: 800px;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+h1 {
+	color: #d4a373;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.form-group {
+	margin-bottom: 15px;
+}
+
+.form-group label {
+	font-weight: bold;
+}
+
+.form-control {
+	border-radius: 5px;
+	border: 1px solid #d0d0d0;
+	box-shadow: none;
+}
+
+.btn {
+	padding: 10px 15px;
+	border-radius: 5px;
+}
+
+.btn-primary {
+	background-color: #d4a373;
+	border-color: #d4a373;
+}
+
+.btn-primary:hover {
+	background-color: #b2835e;
+	border-color: #b2835e;
+}
+
+.btn-secondary {
+	background-color: #f0e0d6;
+	border-color: #f0e0d6;
+}
+
+.btn-secondary:hover {
+	background-color: #d6c4b2;
+	border-color: #d6c4b2;
+}
+
+.btn img {
+	height: 20px;
+}
+
+.result-table {
+	width: 100%;
+	margin-top: 20px;
+}
+
+.result-table th, .result-table td {
+	padding: 10px;
+	text-align: left;
+	border: 1px solid #d0d0d0;
+}
+
+.result-table th {
+	background-color: #f9f9f9;
+	color: #d4a373;
+}
+
+.result-table td {
+	background-color: #fff;
+}
+
+.result-table tr:nth-child(even) td {
+	background-color: #f9f9f9;
+}
+
+.result-table td {
+	vertical-align: middle;
+}
+</style>
+</head>
+
+<body>
+	<div th:replace="~{layout/empnavbar}"></div>
+	<div class="wrap">
+
+
+		<div class="container">
+			<div th:if="${salary != null}">
+				<h2 class="my-4">勞健保計算結果</h2>
+				<div class="row">
+					<div class="col-md-6">
+						<h3>員工負擔</h3>
+						<table class="result-table">
+							<tbody>
+								<tr>
+									<th>月薪總額</th>
+									<td>NT$<span th:text="${salary}"></span></td>
+								</tr>
+								<tr>
+									<th>勞保費</th>
+									<td>NT$<span th:text="${laborInsuranceSelf}"></span></td>
+								</tr>
+								<tr>
+									<th>健保費</th>
+									<td>NT$<span th:text="${healthInsuranceSelf}"></span></td>
+								</tr>
+								<tr>
+									<th>總負擔</th>
+									<td>NT$<span th:text="${totalSelf}"></span></td>
+								</tr>
+								<tr>
+									<th>員工實領</th>
+									<td>NT$<span th:text="${employeeNetIncome}"></span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-md-6">
+						<h3>雇主負擔</h3>
+						<table class="result-table">
+							<tbody>
+								<tr>
+									<th>勞保費</th>
+									<td>NT$<span th:text="${laborInsuranceEmployer}"></span></td>
+								</tr>
+								<tr>
+									<th>健保費</th>
+									<td>NT$<span th:text="${healthInsuranceEmployer}"></span></td>
+								</tr>
+								<tr>
+									<th>退休金</th>
+									<td>NT$<span th:text="${pensionEmployer}"></span></td>
+								</tr>
+								<tr>
+									<th>總負擔</th>
+									<td>NT$<span th:text="${totalEmployer}"></span></td>
+								</tr>
+								<tr>
+									<th>雇主實際支付</th>
+									<td>NT$<span th:text="${employerTotalCost}"></span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="form-group">
+					<input type="button" value="上一頁" onclick="history.back();"
+						class="btn btn-secondary" />
+				</div>
+			</div>
+
+
+
+
+		</div>
+
+		<footer>
+			&copy; 2024 PolarStar Nexus All Rights Reserved
+			<div class="back">
+				<a href="note.html">員工須知</a><a href="#">線上諮詢</a> <a href="#">back
+					to top</a>
+			</div>
+		</footer>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

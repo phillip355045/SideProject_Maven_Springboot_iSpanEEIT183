@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<title>empSal</title>
+<style>
+@charset "BIG5";
+
+* {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-decoration: none;
+}
+
+body {
+	background-color: rgb(235, 226, 247);
+}
+
+.headimg {
+	margin-bottom: 30px;
+	text-align: center;
+}
+
+.headimg a {
+	text-decoration: none;
+}
+
+.headimg img {
+	width: 100%;
+}
+
+.about {
+	position: relative;
+	width: 100%;
+	height: 280px;
+	margin-bottom: 30px;
+}
+
+.about img {
+	width: 100%;
+	height: 280px;
+	position: absolute;
+}
+
+.about .mask {
+	background-color: rgba(133, 201, 169, 0.6);
+	width: 100%;
+	height: 280px;
+	line-height: 200px;
+	position: absolute;
+}
+
+.about .mask h1 {
+	color: aliceblue;
+	font-size: 30px;
+	text-align: center;
+	padding-top: 30px;
+}
+
+.about .mask p {
+	line-height: 1.3;
+	text-align: justify;
+	margin-bottom: 10px;
+	color: aliceblue;
+	font-size: 20px;
+	margin: 30px;
+}
+
+.roll {
+	margin-bottom: 30px;
+}
+
+.row {
+	margin-bottom: 30px;
+}
+
+.box-content {
+	margin-bottom: 30px;
+}
+
+small {
+	font-size: 14px;
+}
+
+footer {
+	background-color: rgb(46, 46, 46);
+	color: rgb(176, 176, 176);
+	height: 50px;
+	padding: 15px;
+}
+
+footer a {
+	color: rgb(175, 175, 175);
+	text-decoration: none;
+	margin: 5px;
+}
+
+.back {
+	float: right;
+}
+
+footer a:hover {
+	color: rgb(79, 79, 79);
+	text-decoration: none;
+}
+
+@import
+	url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500&display=swap')
+	;
+
+.heading {
+	position: relative;
+	width: 100%;
+	height: 80px;
+}
+
+.heading .mask {
+	background-color: rgba(214, 214, 214, 0.6);
+	width: 100%;
+	height: 100%;
+	line-height: 90px;
+	position: absolute;
+}
+
+.heading .mask a {
+	color: rgb(7, 7, 7);
+	font-size: 30px;
+	padding: 30px;
+	text-decoration: none;
+}
+
+.heading:hover a {
+	color: rgb(58, 58, 58);
+}
+
+.wrap {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	background: linear-gradient(to right, #dfe9f3, #ffffff);
+	color: #333;
+}
+
+.navbar-nav {
+	padding-right: 80px;
+}
+
+.nav1 {
+	float: left;
+}
+
+.nav1 a {
+	color: rgb(34, 34, 34);
+	text-decoration: none;
+	background-color: rgba(214, 214, 214, 0.6);
+	background-size: 25px;
+	display: block;
+	width: 200px;
+	border-top: 1px dashed rgb(2, 2, 2);
+	line-height: 40px;
+	text-align: center;
+}
+
+.nav1 a:hover {
+	color: rgb(228, 228, 251);
+	background-color: rgb(41, 39, 76);
+}
+
+#content {
+	width: 600px;
+	padding: 25px;
+	margin: auto;
+	margin-left: 30%;
+	background-color: rgba(255, 255, 255, .3);
+	margin: 20px auto;
+	width: 90%;
+	max-width: 1200px;
+	text-align: center;
+	background: #fff;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+footer {
+	background-color: black;
+	color: rgb(176, 176, 176);
+	height: 50px;
+	padding: 15px;
+}
+
+.announcement {
+	background-color: rgba(255, 255, 255, .5);
+	padding: 20px;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.announcement-item {
+	margin-bottom: 20px;
+}
+
+.announcement-item+.announcement-item {
+	border-top: 1px solid #dee2e6;
+	padding-top: 20px;
+}
+
+.announcement-item:last-child {
+	margin-bottom: 0;
+}
+
+.announcement-item .date {
+	font-size: 14px;
+	color: #6c757d;
+}
+
+.announcement-item .title {
+	font-size: 18px;
+	font-weight: bold;
+	margin: 5px 0;
+}
+
+.announcement-item .content {
+	font-size: 16px;
+}
+
+body {
+	background: url('images/cat5.jpg') no-repeat center center fixed;
+	background-size: cover;
+	background-position: center;
+	font-family: Arial, sans-serif;
+	margin: 0;
+	transition: margin-left 0.3s;
+}
+
+.container {
+	max-width: 75%;
+	margin: 15px auto 20px;
+	padding: 20px;
+	background-color: rgba(255, 255, 255, 0.8);
+	border-radius: 10px;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+	transition: margin-left 0.3s;
+}
+
+h2 {
+	color: #333;
+	margin-bottom: 20px;
+}
+
+.form-group {
+	margin-bottom: 15px;
+}
+
+label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+input[type="text"], input[type="password"], input[type="file"], input[type="month"],
+	select {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+}
+
+input[type="submit"], input[type="button"], input[type="reset"] {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	background-color: #3498db;
+	color: white;
+	transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover, input[type="button"]:hover, input[type="reset"]:hover
+	{
+	background-color: #2980b9;
+}
+
+.table-form {
+	width: 100%;
+}
+
+.table-form td {
+	padding: 10px;
+}
+
+.table-form input {
+	width: 100%;
+}
+
+.autocomplete {
+	position: relative;
+	display: inline-block;
+}
+
+.autocomplete-items {
+	position: absolute;
+	border: 1px solid #d4d4d4;
+	border-bottom: none;
+	border-top: none;
+	z-index: 99;
+	top: 100%;
+	left: 0;
+	right: 0;
+}
+
+.autocomplete-item {
+	padding: 10px;
+	cursor: pointer;
+	background-color: #fff;
+	border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-item:hover {
+	background-color: #e9e9e9;
+}
+</style>
+</head>
+
+<body>
+	<div th:replace="~{layout/empnavbar}"></div>
+	<div class="wrap">
+
+
+
+
+		<div class="nav1">
+			<a th:href="@{/getAllEmpSal.controller}">薪資管理系統</a> <a
+				th:href="@{/toInsertEmpSal}">新增薪資資料</a>
+
+
+			<!--<a href="">個人績效獎金</a>
+			<a href="">個人年度自付保費核對表</a>
+			<a href="">津貼規章/獎金辦法</a> <a href="">薪資等級試算</a>  -->
+
+		</div>
+
+
+		<div id="content" align="center">
+
+			<h2>新增薪資資料</h2>
+			<div class="container">
+				<form id="empSalForm" method="get" th:action="@{/insertEmpSal}">
+					<table class="table-form">
+						<tr>
+							<td><label for="month">發放月份：</label></td>
+							<td><input type="month" id="month" name="month"
+								th:value="${emp.month}" required /></td>
+						</tr>
+						<tr>
+							<td><label for="empno">員工編號：</label></td>
+							<td>
+								<div class="autocomplete">
+									<input type="text" id="empno" name="empno"
+										th:value="${emp.empno}" required />
+									<div id="empno-autocomplete-list" class="autocomplete-items"></div>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td><label for="name">姓名：</label></td>
+							<td>
+								<div class="autocomplete">
+									<input type="text" id="name" name="name" th:value="${emp.name}" />
+									<div id="name-autocomplete-list" class="autocomplete-items"></div>
+								</div>
+							</td>
+							<td><input type="submit" value="確認資料" /></td>
+						</tr>
+					</table>
+					<hr>
+					<table class="table-form">
+						<tr>
+							<td>發放金額：</td>
+							<td></td>
+							<td></td>
+							<td>扣除金額：</td>
+						</tr>
+						<tr>
+							<td><label for="sal">本薪：</label></td>
+							<td><input type="text" id="baseSalary" name="baseSalary"
+								th:value="${emp.baseSalary}" disabled /></td>
+							<td><label for="laborInsurance">勞保費：</label></td>
+							<td><input type="text" id="laborInsurance"
+								name="laborInsurance" th:value="${emp.laborInsurance}" disabled /></td>
+						</tr>
+						<tr>
+							<td><label for="mgrAllowance">主管津貼：</label></td>
+							<td><input type="text" id="supervisorAllowance"
+								name="supervisorAllowance" th:value="${emp.supervisorAllowance}"
+								disabled /></td>
+							<td><label for="healthInsurance">健保費：</label></td>
+							<td><input type="text" id="healthInsurance"
+								name="healthInsurance" th:value="${emp.healthInsurance}"
+								disabled /></td>
+						</tr>
+						<tr>
+							<td><label for="foodAllowance">伙食津貼：</label></td>
+							<td><input type="text" id="foodAllowance"
+								name="foodAllowance" th:value="${emp.foodAllowance}" /></td>
+							<td><label for="leave">缺勤扣薪：</label></td>
+							<td><input type="text" id="leave" name="leave"
+								th:value="${emp.leave}" /></td>
+						</tr>
+						<tr>
+							<td><label for="trafficAllowance">交通津貼：</label></td>
+							<td><input type="text" id="transportAllowance"
+								name="transportAllowance" th:value="${emp.transportAllowance}" /></td>
+						</tr>
+						<tr>
+							<td><label for="holidayAllowance">節日禮金：</label></td>
+							<td><input type="text" id="holidayAllowance"
+								name="holidayAllowance" th:value="${emp.holidayAllowance}" /></td>
+						</tr>
+						<tr>
+							<td><label for="overtimePay">加班費：</label></td>
+							<td><input type="text" id="overtimePay" name="overtimePay"
+								th:value="${emp.overtimePay}" /></td>
+						</tr>
+						<tr>
+							<td><label for="attendanceBonus">全勤獎金：</label></td>
+							<td><input type="text" id="attendanceBonus"
+								name="attendanceBonus" th:value="${emp.attendanceBonus}" /></td>
+						</tr>
+						<tr>
+							<td><label for="totalPayment">發放合計：</label></td>
+							<td><input type="text" id="totalPayment" name="totalPayment"
+								th:value="${emp.totalPayment}" disabled /></td>
+							<td><label for="totalDeduction">扣除合計：</label></td>
+							<td><input type="text" id="totalDeduction"
+								name="totalDeduction" th:value="${emp.totalDeduction}" disabled /></td>
+						</tr>
+					</table>
+					<hr>
+					<table class="table-form">
+						<tr>
+							<td><label for="netSalary">實發金額：</label></td>
+							<td><input type="text" id="netSalary" name="netSalary"
+								th:value="${emp.netSalary}" disabled /></td>
+						</tr>
+					</table>
+					<div align="center" style="margin-top: 20px;">
+						<input type="submit" value="確定"/> <input type="reset"
+							value="清除" /> <input type="button" value="上一頁"
+							onclick="history.back();" />
+					</div>
+				</form>
+
+			</div>
+			<hr>
+		</div>
+
+		<!-- <p>
+            <img class="myphoto2" src="https://truth.bahamut.com.tw/s01/202201/78eb807a59adcd9aa4c96aac199feaa9.JPG"
+                alt="">
+        </p> -->
+
+		<footer>
+			&copy; 2024 資展專題呈現 All Rights Reserved
+			<div class="back">
+				<a href="note.html">員工須知</a><a href="#">線上諮詢</a> <a href="#">back
+					to top</a>
+			</div>
+		</footer>
+		<script>
+		
+			
+			
+    </script>
+	</div>
+</body>
+
+</html>

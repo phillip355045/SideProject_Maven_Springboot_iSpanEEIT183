@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title>貼文總覽</title>
+<style>
+    .wrap {
+        padding: 20px;
+        background-color: #f9f9f9;
+    }
+
+    .container {
+        background-color: #ffffff;
+        padding: 20px;
+        margin: 20px auto;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        max-width: 1200px;
+    }
+
+    .h3-class {
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .ul-class {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .ul-class li {
+        margin-bottom: 15px;
+    }
+
+    .label {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 5px;
+        text-align: left;
+    }
+
+    .input-class,
+    .textarea-class,
+    select {
+        width: calc(100% - 60px);
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        display: block;
+        margin-top: 5px;
+        margin-left: 20px;
+        box-sizing: border-box;
+    }
+
+    .input-class[readonly] {
+        background-color: #f0f0f0;
+        color: #6c757d;
+    }
+
+    .textarea-class {
+        height: 200px;
+    }
+
+    .button-container {
+        text-align: center;
+    }
+
+    .button-container button,
+    .button-container input[type="submit"],
+    .button-container .return-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        margin: 10px;
+    }
+
+    .return-button {
+        text-decoration: none;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .return-button:hover {
+        background-color: #0056b3;
+    }
+
+    .input-submit {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .input-submit:hover {
+        background-color: #218838;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .image-gallery {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .image-gallery .image-container {
+        display: inline-block;
+        margin: 20px;
+        padding: 15px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .image-gallery img {
+        max-width: 100%;
+        max-height: 100%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(255, 0, 0, 0.7);
+        border: none;
+        color: #fff;
+        font-size: 12px;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .file-upload-wrapper {
+        margin-top: 20px;
+    }
+
+    .file-upload-input {
+        display: none;
+    }
+
+    .file-upload-label {
+        background-color: #6c757d;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        display: inline-block;
+        padding: 10px 20px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .file-upload-label:hover {
+        background-color: #5a6268;
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="container">
+    <h3 class="h3-class">貼文資訊-請調整欲更新項目</h3>
+
+    <form method="post" th:action="@{/updatePostById.controller}" enctype="multipart/form-data" id="updatePostForm">
+        <ul class="ul-class">
+            <li><span class="label">貼文編號:</span> <input class="input-class" type="text" name="postId" readonly th:value="${post.postId}"></li>
+            <li><span class="label">貼文發布日期:</span> <input class="input-class" type="text" name="postDate" readonly th:value="${post.postDate}"></li>
+            <li><span class="label">貼文標題:</span> <input class="input-class" type="text" name="postTitle" readonly th:value="${post.postTitle}"></li>
+            <li><span class="label">貼文狀態:</span> 
+                <select class="input-class" name="postStatus">
+                    <option th:value="true" th:selected="${post.postStatus == true}">可瀏覽</option>
+                    <option th:value="false" th:selected="${post.postStatus == false}">不可瀏覽</option>
+                </select>
+            </li>
+            <li><span class="label">貼文分類:</span> 
+                <select class="input-class" name="postCategory">
+                    <option th:value="'一般'" th:selected="${post.postCategory == '一般'}">一般</option>
+                    <option th:value="'活動'" th:selected="${post.postCategory == '活動'}">活動</option>
+                    <option th:value="'考勤'" th:selected="${post.postCategory == '考勤'}">考勤</option>
+                    <option th:value="'薪資'" th:selected="${post.postCategory == '薪資'}">薪資</option>
+                    <option th:value="'福利'" th:selected="${post.postCategory == '福利'}">福利</option>
+                </select>
+            </li>
+            <li><span class="label">貼文內容:</span> <textarea class="textarea-class" name="postContent" th:text="${post.postContent}"></textarea></li>
+            <li><span class="label">發文者編號:</span> <input class="input-class" type="text" name="postEmp" readonly th:value="${post.postEmp}"></li>
+        </ul>
+
+        <!-- 貼文圖片展示區域 -->
+        <div class="image-gallery">
+            <h3 class="h3-class">貼文圖片</h3>
+            <div th:if="${images.size() > 0}">
+                <div th:each="image : ${images}" class="image-container">
+                    <img th:src="${image.base64ImageData}" alt="Post Image" th:data-image-id="${image.postImageId}"/>
+                    <button type="button" class="remove-btn" th:data-image-id="${image.postImageId}" onclick="deleteImage(this)">X</button>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="h3-class">新增圖片</h3>
+        <button type="button" class="file-upload-label" onclick="addImageInput()">新增圖片</button>
+        <div id="newImageInputs" class="file-upload-wrapper"></div>
+
+        <!-- 新增圖片預覽區域 -->
+        <div id="image-preview" class="image-gallery"></div>
+
+        <input type="hidden" name="isImageUpdated" value="false" id="isImageUpdated">
+        <input type="hidden" name="updateActions" id="updateActions">
+        <input type="hidden" name="postImageIds" id="postImageIds">
+
+        <div class="button-container">
+            <input type="submit" value="更新" class="input-submit update-button" /> 
+            <a th:href="@{/findAllPosts.controller}" class="return-button">返回</a>
+        </div>
+    </form>
+</div>
+</div>
+<script>
+let updateActions = [];
+let postImageIds = [];
+
+function addImageInput() {
+    const container = document.getElementById('newImageInputs');
+    const fileUploadWrapper = document.createElement('div');
+    fileUploadWrapper.classList.add('file-upload-wrapper');
+
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.name = 'imageFiles';
+    input.classList.add('file-upload-input');
+    input.id = 'imageFiles-' + Date.now();
+    fileUploadWrapper.appendChild(input);
+
+    const label = document.createElement('label');
+    label.classList.add('file-upload-label');
+    label.innerText = '選擇檔案';
+    label.htmlFor = input.id;
+    fileUploadWrapper.appendChild(label);
+
+    container.appendChild(fileUploadWrapper);
+
+    input.addEventListener('change', function(event) {
+        const files = event.target.files;
+        const previewContainer = document.getElementById('image-preview');
+
+        Array.from(files).forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewItem = document.createElement('div');
+                previewItem.classList.add('image-container');
+                
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                previewItem.appendChild(img);
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.innerText = 'X';
+                removeBtn.classList.add('remove-btn');
+                removeBtn.addEventListener('click', () => {
+                    previewItem.remove();
+                    // 移除該文件在 input.files 中的對應項
+                    const dt = new DataTransfer();
+                    Array.from(files)
+                        .filter((_, i) => i !== index)
+                        .forEach(file => dt.items.add(file));
+                    input.files = dt.files;
+                });
+
+                previewItem.appendChild(removeBtn);
+                previewContainer.appendChild(previewItem);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    updateActions.push("新增");
+    postImageIds.push(""); // 新增的圖片ID會在後端生成，可以設置為空
+    document.getElementById('isImageUpdated').value = "true";
+}
+
+function deleteImage(button) {
+    const imageId = button.getAttribute('data-image-id');
+    updateActions.push("刪除");
+    postImageIds.push(imageId);
+    document.getElementById('isImageUpdated').value = "true";
+    button.parentElement.remove();
+}
+
+document.getElementById('updatePostForm').addEventListener('submit', function(event) {
+    document.getElementById('updateActions').value = updateActions.join(",");
+    document.getElementById('postImageIds').value = postImageIds.join(",");
+});
+</script>
+</body>
+</html>

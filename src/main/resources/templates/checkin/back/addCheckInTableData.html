@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>新增每月打卡資料表</title>
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<style>
+html,body{
+    height: 97%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.wrap{
+    height: 100%;
+    width: 100%;
+}
+.form-container {
+	max-width: 400px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: #f9f9f9;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.container input[type="submit"] {
+	margin-top:10px;
+	width: calc(100% - 20px);
+	padding: 10px;
+	margin-bottom: 20px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+	background-color:#B5C0D0;
+	color: white;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+.container input[type="submit"]:hover {
+	background-color: #CCD3CA;
+}
+</style>
+</head>
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+
+		<div class="nav1">
+			<br>
+			<a th:href="@{/allCheckIns}">所有員工打卡</a>
+			<a th:href="@{/checkInSearch}">員工打卡查詢</a>
+			<a th:href="@{/addCheckInTableData}">建立打卡資料</a> 
+			<a th:href="@{/deleteCheckInByDateOrEmpno}">批量刪除打卡</a>
+		</div>
+		<div id="content" class="container">
+			<div class="form-container">
+				<h2 class="text-center">新增打卡資料表日期</h2>
+				<form th:action="@{/checkin/generate}" method="post">
+					<div class="form-group mb-3 mt-3">
+						<label for="year">年份:</label> <input type="number"
+							class="form-control" id="year" name="year" required>
+					</div>
+					<div class="form-group">
+						<label for="month">月份:</label> <input type="number"
+							class="form-control" id="month" name="month" min="1" max="12"
+							required>
+					</div>
+					<div class="text-center">
+						<Input type="submit" value="建立打卡資料">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var today = new Date();
+            var currentYear = today.getFullYear();
+            var currentMonth = today.getMonth() + 2; //預設為下個月份
+
+            document.getElementById('year').value = currentYear;
+            document.getElementById('month').value = currentMonth;
+        });
+        
+        const urlParams = new URLSearchParams(window.location.search);
+			if (urlParams.has('success')) {
+				Swal.fire({
+		            title: '成功新增資料!!!',
+		            icon: 'success',
+		            showCancelButton: false,
+		            confirmButtonText: 'OK！'
+		        }).then((result) => {
+		            if (result.isConfirmed) {
+		                $form.submit();
+		            }
+		        });
+			}
+    </script>
+</body>
+</html>

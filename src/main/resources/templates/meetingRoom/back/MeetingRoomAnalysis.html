@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+    <meta charset="UTF-8">
+    <title>後台分析</title>
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        #content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height:140%;
+            width: 55%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            height: 800px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        .content h2 {
+            color: #219ebc;
+            font-size: 22px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        .container div {
+            flex: 1;
+            min-width: 300px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        canvas {
+            width: 100% !important;
+            height: 400px 
+        }
+        .leave-analysis {
+            width: 100%;
+            height: 500px !important;
+            max-width: 1000px;
+            text-align: center;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+        .title-center {
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div th:replace="~{layout/backEmpNavbar}"></div>
+<div class="wrap">
+   	<div id="content" class="content container" align="center">
+	<h2>會議室使用分析</h2>
+	    <div class="container">
+	        <div>
+	            <canvas id="myBarChart"></canvas>
+	        </div>
+	
+	        <div>
+	            <canvas id="myPieChart"></canvas>
+	        </div>
+	    </div>
+	    <div class="leave-analysis" th:if="${session.job == 'boss'}">
+                <h2 class="title-center">當月份請假分析</h2>
+                <canvas id="leaveChart"></canvas>
+        </div>
+	</div>
+</div>
+<div th:replace="~{layout/footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script th:inline="javascript">
+        
+        document.addEventListener('DOMContentLoaded', (event) => {
+        	console.log('DOMContentLoaded event fired');
+            axios.get('http://localhost:8088/PSNEXUS/FrontGetAllReservation.controller')
+                .then(response => {
+                    console.log(response.data)
+                    let reservations = response.data;
+                    const timeSlots = [
+                        '08:00', '09:00', '10:00', '11:00', '12:00', '13:00',
+                        '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'
+                    ];
+                    const counts = Array(timeSlots.length).fill(0);
+
+                    reservations.forEach(reservation => {
+                        const startHour = parseInt(reservation.startTime.split(':')[0]);//只取出小時的部分
+                        const endHour = parseInt(reservation.endTime.split(':')[0]);
+                        
+                        for(let i = startHour; i<endHour; i++){
+                            const index = timeSlots.indexOf(i.toString().padStart(2,'0') + ':00');
+                            if(index !== -1){
+                                counts[index]++;
+                            }
+                        }
+                    })
+                    const myBarChart = document.getElementById('myBarChart')
+                    new Chart(myBarChart, {
+                        type: 'bar',
+                        data: {
+                            labels:timeSlots,
+                            datasets: [{
+                                label: '會議熱門時段',
+                                data: counts,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks:{
+                                    	stepSize:1,
+                                    	callback:function(value,index,values){
+                                    		return value + '次';
+                                    	}
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+	        axios.get('http://localhost:8088/PSNEXUS/GetReserveCount')
+	       		.then(response => {
+	       			const data = response.data;
+                    const labels = data.map(item => item.roomName);//轉換成陣列
+                    const counts = data.map(item => item.count);
+                    console.log(data)
+			        const myPieChart = document.getElementById('myPieChart')
+			        new Chart(myPieChart, {
+			            type: 'pie',
+			            data: {
+			                labels:labels,
+			                datasets: [{
+			                    label: '會議室使用次數',
+			                    data: counts,
+			                    borderWidth: 1
+			                }]
+			            }
+			        });
+		        })
+		        .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+            
+            // 當月份請假分析數據
+            axios.get('http://localhost:8088/PSNEXUS/LeaveRequestAnalysis')
+                .then(response => {
+                    const categorizedLeaves = response.data;
+                    console.log('categorizedLeaves:', categorizedLeaves);
+
+                    const leaveLabels = Object.keys(categorizedLeaves);
+                    const leaveData = leaveLabels.map(label => categorizedLeaves[label].length);
+                    console.log('leaveLabels:', leaveLabels);
+                    console.log('leaveData:', leaveData);
+
+                    const leaveChartElement = document.getElementById('leaveChart');
+                    if (!leaveChartElement) {
+                        console.error('leaveChart canvas element not found');
+                        return;
+                    }
+
+                    const leaveChartCtx = leaveChartElement.getContext('2d');
+                    if (!leaveChartCtx) {
+                        console.error('leaveChart context not found');
+                        return;
+                    }
+
+                    new Chart(leaveChartCtx, {
+                        type: 'line',
+                        data: {
+                            labels: leaveLabels,
+                            datasets: [{
+                                label: '請假次數總數',
+                                data: leaveData,
+                                lineTension: 0,
+                                backgroundColor: '#F0F0F0',
+                                borderColor: '#ADADAD',
+                                fill: false,
+                                borderWidth: 2,
+                                pointRadius: 5,
+                                pointHoverRadius: 7
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        stepSize: 1,
+                                        callback: function(value) {
+                                            return value + '次';
+                                        }
+                                    }
+                                }
+                            },
+                            responsive: false
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching leave data:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>

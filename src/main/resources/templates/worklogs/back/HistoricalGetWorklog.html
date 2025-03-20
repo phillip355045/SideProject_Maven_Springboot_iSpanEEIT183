@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>工作日誌詳細資訊</title>
+	<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+
+	<style>
+		h2 {
+			color: #333333;
+			margin-bottom: 20px;
+			font-size: 24px;
+		}
+		html,
+		body {
+			height: 97%;
+			width: 100%;
+		}
+
+		.wrap {
+			height: 100%;
+			width: 100%;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: black;
+			margin: 20px 0;
+			table-layout: fixed;
+		}
+
+		th,
+		td {
+			padding: 12px;
+			border-bottom: 1px solid #dddddd;
+			text-align: center;
+			font-size: 16px;
+		}
+
+		.th {
+			background-color: #BBBFCA;
+			color: black;
+			white-space: nowrap;
+			text-align: center;
+		}
+
+		.btn {
+			padding: 5px 8px;
+			text-decoration: none;
+			background-color: #BBBFCA;
+			color: black;
+			border-radius: 5px;
+			margin: 0 4px;
+			font-size: 14px;
+		}
+
+		.btn.All {
+			display: inline-block;
+			width: 80px;
+			height: 30px;
+			text-align: center;
+			padding: 5px 8px;
+			text-decoration: none;
+			background-color: #BBBFCA;
+			color: black;
+			border-radius: 5px;
+			font-size: 14px;
+			margin-top: 20px;
+		}
+
+		.row {
+			display: flex;
+		}
+
+		.col {
+			padding: 10px;
+		}
+
+		.details-table {
+			max-width: 300px;
+			word-break: keep-all;
+		}
+
+		.items-table {
+			max-width: 100%;
+			/* 讓下方表格寬度與上方表格一致 */
+			word-break: keep-all;
+		}
+
+		.items-table th,
+		.items-table td {
+			text-align: center;
+		}
+
+		.items-table td.hours {
+			width: 80px;
+			word-break: keep-all;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1"> <br>
+			<a th:href="@{/GetAllWorklogs}">管理日誌總表</a>
+			<a th:href="@{/ReviewAllWorklogs}">審核日誌總表</a>
+			<a th:href="@{/HistoricalAllWorklogs}">歷史日誌總表</a>
+			<a th:href="@{/InsertWorklog}">新增工作日誌</a>
+
+		</div>
+		<div id="content" class="container">
+			<h2>工作日誌詳細資訊</h2>
+
+			<div class="row">
+				<div class="col details-table">
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<td>工作日誌編號</td>
+								<td th:text="${worklog.worklogid}"></td>
+							</tr>
+							<tr>
+								<td>部門</td>
+								<td th:text="${worklog.department.deptno}+'-'+${worklog.department.deptname}"></td>
+							</tr>
+							<tr>
+								<td>員工</td>
+								<td th:text="${worklog.employees.empno}+'-'+${worklog.employees.name}"></td>
+							</tr>
+							<tr>
+								<td>工作日期</td>
+								<td th:text="${#dates.format(worklog.worklogdate, 'yyyy-MM-dd')}"></td>
+							</tr>
+							<tr>
+								<td>審核狀態</td>
+								<td th:text="${worklog.reviewstatus}"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<h2>工作項目</h2>
+			<table class="table table-bordered items-table">
+				<thead>
+					<tr class="th">
+						<th style="width: 130px;">需求部門</th>
+						<th style="width: 130px;">工作類型</th>
+						<th style="width: 320px;">工作內容說明</th>
+						<th class="hours" style="width: 100px;">正常工時</th>
+						<th class="hours" style="width: 100px;">加班工時</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${worklog.worklogItems}">
+						<td th:text="${item.deptname}"></td>
+						<td th:text="${item.jobType}"></td>
+						<td th:text="${item.jobDescription}"></td>
+						<td class="hours" th:text="${#numbers.formatDecimal(item.regularHours, 2, 2)}"></td>
+						<td class="hours" th:text="${#numbers.formatDecimal(item.overtimeHours, 2, 2)}"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<a href="#" th:href="@{/HistoricalAllWorklogs}" class="btn All">回上一頁</a>
+		</div>
+	</div>
+
+	<div th:replace="~{layout/footer}"></div>
+</body>
+
+</html>

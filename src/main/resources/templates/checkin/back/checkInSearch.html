@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>HomePage</title>
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<style>
+html,body{
+    height: 97%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.wrap{
+    height: 100%;
+    width: 100%;
+}
+.form-container {
+	max-width: 400px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: #f9f9f9;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.container input[type="submit"] {
+	width: calc(100% - 20px);
+	padding: 10px;
+	margin-bottom: 20px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+	background-color:#B5C0D0;
+	color: white;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+.container input[type="submit"]:hover {
+	background-color: #CCD3CA;
+}
+</style>
+</head>
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1">
+			<br>
+			<a th:href="@{/allCheckIns}">所有員工打卡</a>
+			<a th:href="@{/checkInSearch}">員工打卡查詢</a>
+			<a th:href="@{/addCheckInTableData}">建立打卡資料</a> 
+			<a th:href="@{/deleteCheckInByDateOrEmpno}">批量刪除打卡</a>
+		</div>
+		<div id="content" class="container">
+
+			<div class="form-container shadow p-3 mb-5 bg-white rounded">
+				<h2 class="mb-4 text-center">打卡記錄查詢</h2>
+				<form method="post" th:action="@{/getCheckInByCol}"
+					class="needs-validation" novalidate>
+					<div class="form-group mt-3 mb-3">
+						<label for="col">輸入查詢欄位:</label> <select name="col"
+							class="form-control" id="col">
+							<option value="checkInId.empno">員工編號</option>
+							<option value="checkInId.date">日期</option>
+						</select>
+					</div>
+					<div class="form-group mb-3">
+						<label for="colvalue">輸入查詢條件:</label> <input type="text"
+							id="colvalue" name="colvalue" class="form-control"
+							autocomplete="off" required>
+						<div class="invalid-feedback">請輸入查詢條件.</div>
+					</div>
+					<input type="submit" class="search" value="查詢">
+				</form>
+			</div>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+	<script>
+    $(function() {
+        if ($('#col').val() === "checkInId.date") {
+            $('#colvalue').datepicker({
+                dateFormat: "yy-mm-dd",
+                showOtherMonths: true,
+                selectOtherMonths: true,
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "1911:2200"
+            });
+        }
+
+        $('#col').change(function() {
+            let selectedValue = $(this).val();
+            if (selectedValue === "checkInId.date") {
+                $('#colvalue').datepicker({
+                    dateFormat: "yy-mm-dd",
+                    showOtherMonths: true,
+                    selectOtherMonths: true,
+                    changeMonth: true,
+                    changeYear: true,
+                    yearRange: "1911:2200"
+                });
+            } else {
+                $('#colvalue').datepicker("destroy");
+                $('.colvalue').html(
+                    '<label for="colvalue">輸入查詢條件:</label>' +
+                    '<input type="text" id="colvalue" name="colvalue" autocomplete="off"/>'
+                );
+            }
+        });
+
+        if ($('#col').val() !== "checkInId.date") {
+            $('.colvalue').html(
+                '<label for="colvalue">輸入查詢條件:</label>' +
+                '<input type="text" id="colvalue" name="colvalue" autocomplete="off"/>'
+            );
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title>P.S Nexus - 員工登入</title>
+<style>
+body {
+	background: url('images/cat1.jpg') no-repeat center center fixed;
+	background-size: cover;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	margin: 0;
+	font-family: Arial, sans-serif;
+}
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.5);
+	backdrop-filter: blur(10px);
+	z-index: -1;
+}
+
+.login-container {
+	background-color: rgba(255, 255, 255, 0.9);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 30px;
+	max-width: 400px;
+	width: 100%;
+	text-align: center;
+	position: relative;
+	z-index: 2;
+}
+
+.login-container h1 {
+	margin-bottom: 20px;
+	color: #333;
+}
+
+.login-container label {
+	display: block;
+	text-align: left;
+	margin: 10px 0 5px;
+	color: #555;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+	width: calc(100% - 20px);
+	padding: 10px;
+	margin-bottom: 20px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+}
+
+.login-container input[type="submit"] {
+	background-color: cornflowerblue;
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+.login-container input[type="submit"]:hover {
+	background-color: #6495ed;
+}
+
+.switch-login {
+	text-align: center;
+	margin-top: 20px;
+}
+
+.switch-login a {
+	color: #666;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.switch-login a:hover {
+	color: #333;
+}
+
+.imgs {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	z-index: 2;
+}
+
+.imgs img {
+	width: 200px;
+	border-radius: 5%;
+	border: 2px solid #fff;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+</style>
+</head>
+
+<body>
+    <div class="imgs">
+        <img src="images/Logo-1.jpg">
+    </div>
+    <div class="login-container">
+        <h1>員工登入</h1>
+        <form id="accountLoginForm" th:action="@{/checklogin}" method="post">
+            <label for="account">帳號：</label>
+            <input type="text" id="account" name="empno" autocomplete="off">
+            <label for="password">密碼：</label>
+            <input type="password" id="password" name="password">
+            <input type="submit" value="登入">
+            
+            <p class="red" th:text="${errorMsg}?${errorMsg}"></p>
+        </form>
+    </div>
+    <div class="overlay"></div>
+</body>
+</html>

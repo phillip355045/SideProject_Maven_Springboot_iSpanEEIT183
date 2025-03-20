@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+
+	<meta charset="UTF-8">
+	<title>工作日誌後台</title>
+	<style>
+		h2 {
+			color: #333333;
+			margin-bottom: 20px;
+			font-size: 24px;
+		}
+		html,
+		body {
+			height: 97%;
+			width: 100%;
+		}
+
+		.wrap {
+			height: 100%;
+			width: 100%;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 20px 0;
+			table-layout: fixed;
+		}
+
+		th,
+		td {
+			padding: 12px;
+			border-bottom: 1px solid #dddddd;
+			text-align: center;
+			font-size: 16px;
+		}
+
+		th {
+			background-color: #BBBFCA;
+			color: black;
+			white-space: nowrap;
+		}
+
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+
+		tr:hover {
+			background-color: #e9f5ff;
+		}
+
+		.btn {
+			padding: 5px 8px;
+			text-decoration: none;
+			border-radius: 5px;
+			margin: 0 4px;
+			font-size: 14px;
+			transition: background-color 0.3s ease;
+			white-space: nowrap;
+		}
+
+		.btn.btn-info {
+			background-color: #EEEDED;
+			color: #333;
+			border: none;
+			outline: none;
+			box-shadow: none;
+		}
+
+
+		.btn.btn-info:focus,
+		.btn.btn-info:active {
+			outline: none;
+			box-shadow: none;
+		}
+
+		.btn.modify {
+			background-color: #F9E2AF;
+		}
+
+		.btn.update {
+			background-color: #EBD5D5;
+		}
+
+		.pagination {
+			margin-top: 20px;
+		}
+
+		.form-group {
+			display: inline-block;
+			margin-right: 10px;
+			margin-left: 0;
+		}
+
+		.form-group label {
+			margin-right: 5px;
+			font-weight: bold;
+		}
+
+		.form-group input[type="number"] {
+			width: 70px;
+			text-align: center;
+			padding: 5px;
+		}
+
+		.form-group button {
+			margin-left: 10px;
+			transition: background-color 0.3s ease;
+		}
+
+		.form-group button:hover {
+			background-color: #EBD5D5;
+			color: white;
+		}
+
+		.form-inline {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 100%;
+		}
+
+		.pagination .page-link {
+			color: black;
+		}
+
+		.pagination .page-item.active .page-link {
+			background-color: #BBBFCA;
+			color: black;
+		}
+
+		.pagination .page-item.disabled .page-link {
+			background-color: #E0E0E0;
+			color: #B0B0B0;
+		}
+
+		.pagination-info .btn-outline-primary {
+			background-color: #BBBFCA;
+			color: black !important;
+			border: none;
+			box-shadow: none;
+			outline: none;
+		}
+
+		.pagination .page-item.active .page-link {
+			background-color: #BBBFCA;
+			color: black;
+			border: none;
+			outline: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1"> <br>
+			<a th:href="@{/GetAllWorklogs}">管理日誌總表</a>
+			<a th:href="@{/ReviewAllWorklogs}">審核日誌總表</a>
+			<a th:href="@{/HistoricalAllWorklogs}">歷史日誌總表</a>
+			<a th:href="@{/InsertWorklog}">新增工作日誌</a>
+
+		</div>
+		<div id="content" class="container">
+			<h2>歷史工作日誌</h2>
+			<div class="form-inline">
+				<!-- 每頁顯示筆數設置表單 -->
+				<form th:action="@{/HistoricalAllWorklogs}" method="get" class="form-group d-flex align-items-center">
+					<label for="size" class="mr-2">每頁顯示筆數</label>
+					<input type="number" id="size" name="size" class="form-control" min="1" th:value="${size}"
+						value="5">
+					<button type="submit" class="btn btn-info ml-2">確定</button>
+				</form>
+				<!-- 查詢表單 -->
+				<form id="searchForm" method="get" th:action="@{/WorklogsSearch2}"
+					class="form-group d-flex align-items-center">
+					<input type="text" name="keyword" placeholder="查詢" th:value="${keyword}" required
+						class="form-control">
+					<button type="submit" class="btn btn-info ml-2">查詢</button>
+				</form>
+			</div>
+
+			<table>
+				<thead>
+					<tr>
+						<th>工作日誌編號</th>
+						<th>部門編號</th>
+						<th>員工編號</th>
+						<th>工作日期</th>
+						<th>審核狀態</th>
+						<th>資料狀態</th>
+						<th style="width: 250px;">操作</th>
+					</tr>
+				</thead>
+				<tbody th:if="${not #lists.isEmpty(worklogsPage.content)}">
+					<tr th:each="worklog : ${worklogsPage.content}">
+						<td th:text="${worklog.worklogid}"></td>
+						<td th:text="${worklog.department.deptno}+'-'+${worklog.department.deptname}"></td>
+						<td th:text="${worklog.employees.empno}+'-'+${worklog.employees.name}"></td>
+						<td th:text="${#dates.format(worklog.worklogdate, 'yyyy-MM-dd')}"></td>
+						<td th:text="${worklog.reviewstatus}"></td>
+						<td th:text="${worklog.fakeDelete == '0' ? '存在' : '刪除'}"></td>
+
+
+						<td>
+							<a th:href="@{/HistoricalGetWorklog(worklogid=${worklog.worklogid})}"
+								class="btn modify">查看</a>
+							<a th:href="@{/HistoricalUpdateWorklog(worklogid=${worklog.worklogid})}"
+								class="btn update">修改</a>
+							<!-- <a th:href="@{/delete/{id}(id=${worklog.worklogid})}" class="btn delete" onclick="return confirm('確定要刪除這筆日誌嗎？\n 提醒：刪除日誌後，項目也將刪除')">刪除</a> -->
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<ul class="pagination justify-content-center">
+				<li class="page-item" th:classappend="${!worklogsPage.hasPrevious()} ? 'disabled'">
+					<a class="page-link" th:if="${keyword != null}"
+						th:href="@{/WorklogsSearch2(keyword=${keyword}, page=${worklogsPage.number}, size=${worklogsPage.size})}">上一頁</a>
+					<a class="page-link" th:if="${keyword == null}"
+						th:href="@{/HistoricalAllWorklogs(page=${worklogsPage.number}, size=${worklogsPage.size})}">上一頁</a>
+				</li>
+				<li class="page-item" th:each="i : ${#numbers.sequence(1, worklogsPage.totalPages)}"
+					th:classappend="${worklogsPage.number == (i - 1)} ? 'active' : ''">
+					<a class="page-link" th:if="${keyword != null}"
+						th:href="@{/WorklogsSearch2(keyword=${keyword}, page=${i}, size=${worklogsPage.size})}"
+						th:text="${i}"></a>
+					<a class="page-link" th:if="${keyword == null}"
+						th:href="@{/HistoricalAllWorklogs(page=${i}, size=${worklogsPage.size})}" th:text="${i}"></a>
+				</li>
+				<li class="page-item" th:classappend="${!worklogsPage.hasNext()} ? 'disabled'">
+					<a class="page-link" th:if="${keyword != null}"
+						th:href="@{/WorklogsSearch2(keyword=${keyword}, page=${worklogsPage.number + 2}, size=${worklogsPage.size})}">下一頁</a>
+					<a class="page-link" th:if="${keyword == null}"
+						th:href="@{/HistoricalAllWorklogs(page=${worklogsPage.number + 2}, size=${worklogsPage.size})}">下一頁</a>
+				</li>
+			</ul>
+
+			<div class="pagination-info">
+				<a class="btn btn-outline-primary border-0 disabled"
+					th:text="'共 ' + ${worklogsPage.totalPages} + ' 頁'"></a>
+				<input id="totalPages" type="hidden" th:value="${worklogsPage.totalPages}">
+			</div>
+
+			<!-- <div class="count">
+        共 <span th:text="${worklogsPage.totalElements}"></span> 筆工作日誌資料
+    </div> -->
+
+			<br>
+			<!--<a href="#" th:href="@{/WorklogsHomePage}" class="btn HomePage">回到主畫面</a>-->
+		</div>
+	</div>
+
+	<div th:replace="~{layout/footer}"></div>
+	<script th:inline="javascript">
+		function gotoPage() {
+			var maxPages = document.getElementById('totalPages').value;
+			var size = document.getElementById('size').value;
+			var pageNumber = document.getElementById('pageNumber').value;
+
+
+		}
+	</script>
+
+</body>
+
+</html>

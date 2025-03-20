@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title>貼文查詢</title>
+    <style>
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background-color: #fdf5e6;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+h2 {
+	color: #28a745;
+	font-size: 1.5em;
+	margin-bottom: 20px;
+}
+
+.div {
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border: 3px solid #ffc107;
+	text-align: center;
+	margin-top: 70px;
+	/* Adjust this value based on the height of your navbar */
+}
+
+input[type="text"], select {
+	width: calc(100% - 24px);
+	padding: 10px;
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
+
+.button-container {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+
+input[type="submit"], .back-button {
+	background-color: #28a745;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 1em;
+	text-decoration: none;
+	display: inline-block;
+	text-align: center;
+}
+
+input[type="submit"]:hover, .back-button:hover {
+	background-color: #218838;
+}
+
+.error-message {
+	color: red;
+}
+
+.navbar {
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: #fff;
+	border-bottom: 3px solid #ffc107;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	z-index: 1000;
+}
+
+select option {
+	text-align: center; /* 讓下拉列表中的文字居中 */
+}
+</style>
+</head>
+<body>
+    <div class="navbar" th:replace="~{layout/empnavbar}"></div>
+    <div class="div">
+        <form method="post" th:action="@{/findPostById.controller}">
+            <h2>想顯示哪篇貼文?</h2>
+            
+            <label for="postId">輸入貼文編號:</label> 
+            <input type="text" name="postId" />
+            <br>
+            
+            <label for="postStatusString">輸入貼文瀏覽狀態:</label>
+            <br>
+            <select id="postStatusString" name="postStatusString">
+				<option value="">-- Select Status --</option>
+				<option value="true">可瀏覽</option>
+				<option value="false">不可瀏覽</option>
+			</select>
+			<br>
+			
+			<label for="postCategory">輸入貼文分類:</label>
+			<br>
+            <select name="postCategory">
+            	<option value="">-- Select Category --</option>
+                <option value="一般">一般  </option>
+                <option value="活動">活動  </option>
+                <option value="考勤">考勤  </option>
+                <option value="薪資">薪資  </option>
+                <option value="福利">福利  </option>
+            </select>
+            <br>
+            
+            <label for="postTitle">輸入貼文標題:</label>
+            <br>
+            <input type="text" name="postTitle" />
+            <br>
+            
+            <label for="postStatus">輸入發文者編號:</label>
+            <br>
+            <input type="text" name="postEmp" />
+            <br>
+           
+            <div class="button-container">
+                <input type="submit" value="確定" /> 
+                <a th:href="@{/postpage.controller}" class="back-button">返回首頁</a>
+            </div>
+            <br>
+            <div class="error-message" th:text="${notFound}"></div>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</body>
+</html>
+
+<!-- 
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title>貼文查詢</title>
+<style>
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background-color: #fdf5e6;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	color: #333;
+}
+
+h2 {
+	color: #28a745;
+	font-size: 1.5em;
+	margin-bottom: 20px;
+}
+
+.div {
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border: 3px solid #ffc107;
+	text-align: center;
+}
+
+input[type="text"] {
+	width: calc(100% - 24px);
+	padding: 10px;
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
+
+.button-container {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+
+input[type="submit"], .back-button {
+	background-color: #28a745;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 1em;
+	text-decoration: none; /* For <a> tag styling */
+	display: inline-block; /* For <a> tag styling */
+	text-align: center; /* For <a> tag styling */
+}
+
+input[type="submit"]:hover, .back-button:hover {
+	background-color: #218838;
+}
+.error-message {
+            color: red;
+}
+</style>
+
+</head>
+<body>
+<div th:replace="~{layout/empnavbar}"></div>
+    <div class="div">
+        <form method="post" th:action="@{/findPostById.controller}">
+            <h2>想顯示哪篇貼文?</h2>
+            <label for="postId">輸入貼文編號:</label> 
+            <input type="text" id="postId" name="postId" />
+            <div class="button-container">
+                <input type="submit" value="確定" /> 
+                <a th:href="@{/postpage.controller}" class="back-button">返回首頁</a>
+            </div>
+            <br>
+            <div class="error-message" th:text="${notFound}"></div>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</body>
+</html>
+ -->

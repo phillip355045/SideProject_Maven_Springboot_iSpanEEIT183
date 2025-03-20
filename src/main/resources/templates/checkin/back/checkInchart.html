@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>員工打卡圖表</title>
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" />
+    <link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+</head>
+<body>
+
+    <div th:replace="~{layout/backEmpNavbar}"></div>
+    <div class="wrap">
+        <div class="nav1">
+            <br> <a th:href="@{/allCheckIns}">所有員工打卡</a> <a
+                th:href="@{/checkInSearch}">員工打卡查詢</a> <a
+                th:href="@{/addCheckInTableData}">建立打卡資料</a> <a
+                th:href="@{/deleteCheckInByDateOrEmpno}">批量刪除打卡</a>
+        </div>
+        <div id="content" class="container">
+            <div align="center">
+                <h2>員工打卡圖表</h2>
+                <canvas id="workOnChart" width="400" height="200"></canvas>
+                <canvas id="workOffChart" width="400" height="200"></canvas>
+                <canvas id="totalHoursChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{layout/footer}"></div>
+
+<script th:inline="javascript">
+    /* 將Thymeleaf數據轉換為JavaScript變量 */
+    const checkInData = /*[[${checkIn}]]*/ [];
+
+    console.log(checkInData); // 測試輸出檢查數據
+
+    // 處理數據以適合Chart.js
+    const empData = {};
+
+    checkInData.forEach(checkin => {
+        const empno = checkin.checkInId.empno;
+        console.log(empno);
+        if (!empData[empno]) {
+            empData[empno] = {
+                workOnTimes: [],
+                workOffTimes: [],
+                totalHours: []
+            };
+        }
+        const workOn = new Date(`1970-01-01T${checkin.workon}`);
+        const workOff = checkin.workoff ? new Date(`1970-01-01T${checkin.workoff}`) : null;
+        console.log("Work On:", checkin.workon);
+        console.log("Work Off:", checkin.workoff);
+
+        const workOnHours = workOn.getHours() + workOn.getMinutes() / 60 + workOn.getSeconds() / 3600;
+        const workOffHours = workOff ? workOff.getHours() + workOff.getMinutes() / 60 + workOff.getSeconds() / 3600 : null;
+
+        empData[empno].workOnTimes.push(workOnHours);
+        if (workOffHours !== null) {
+            empData[empno].workOffTimes.push(workOffHours);
+        }
+
+        if (workOffHours !== null) {
+            const diff = workOffHours - workOnHours; // 小時差
+            empData[empno].totalHours.push(diff);
+        }
+    });
+
+    const labels = Object.keys(empData);
+    const avgWorkOnTimes = labels.map(empno => {
+        const times = empData[empno].workOnTimes;
+        return times.reduce((a, b) => a + b, 0) / times.length;
+    });
+    const avgWorkOffTimes = labels.map(empno => {
+        const times = empData[empno].workOffTimes;
+        return times.length > 0 ? times.reduce((a, b) => a + b, 0) / times.length : null;
+    });
+    const avgTotalHours = labels.map(empno => {
+        const hours = empData[empno].totalHours;
+        return (hours.reduce((a, b) => a + b, 0) / hours.length)-1;
+    });
+
+    console.log(avgWorkOnTimes);
+    console.log(avgWorkOffTimes);
+    console.log(avgTotalHours);
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // 上班時間圖表
+        const ctxWorkOn = document.getElementById('workOnChart').getContext('2d');
+        new Chart(ctxWorkOn, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '上班打卡時間',
+                    data: avgWorkOnTimes,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: false,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '員工編號'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: '平均上班打卡時間 (小時)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 下班時間圖表
+        const ctxWorkOff = document.getElementById('workOffChart').getContext('2d');
+        new Chart(ctxWorkOff, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '下班打卡時間',
+                    data: avgWorkOffTimes.filter(time => time !== null),
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    fill: false,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '員工編號'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: '平均下班打卡時間 (小時)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 總工時圖表
+        const ctxTotalHours = document.getElementById('totalHoursChart').getContext('2d');
+        new Chart(ctxTotalHours, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '平均總工時',
+                    data: avgTotalHours,
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                    fill: false,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '員工編號'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: '平均總工時 (小時)'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+
+</body>
+</html>

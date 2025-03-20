@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+    <meta charset="UTF-8">
+    <title>當月份請假分析</title>
+    <link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            padding-top: 20px;
+        }
+
+        .content h2 {
+            color: #219ebc;
+            font-size: 22px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+
+        .container .box {
+            flex: 1;
+            width: 100%;
+            max-width: 1000px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #leaveChart {
+            width: 100%;
+            height: 400px;
+        }
+
+        .title-center {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{layout/backEmpNavbar}"></div>
+
+    <div class="wrap">
+        <div class="nav1"> <br>
+            <a th:href="@{/GetAllLeaveRequest.front}">請假申請紀錄</a>
+            <a th:href="@{/GetAllLeaveRequestToReview.front}">請假審核總表</a>
+            <a th:href="@{/GetAllLeaveRequestToReviewHistrory.front}">請假審核歷史紀錄</a>
+            <a th:href="@{/LeaveRequestAnalysis}">當月份請假分析</a>
+        </div>
+
+        <div id="content" class="container">
+            <div class="box">
+                <h2 class="title-center">當月份請假分析</h2>
+                <canvas id="leaveChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{layout/footer}"></div>
+
+    <script th:inline="javascript">
+        //當html解析完畢後，便會觸發DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function () {
+            //解析從後端傳過來的資料(categorizedLeaves轉換為js物件)
+            const categorizedLeaves = /*[[${categorizedLeaves}]]*/ 'default';
+
+            //抓取labels資料(抓key)
+            const labels = Object.keys(categorizedLeaves);
+
+            //抓取data資料
+            const data = labels.map(label => categorizedLeaves[label].length);
+
+            //開始設定Chart的資料(要加上.getContext('2d')->二維圖)
+            const leaveChart = document.getElementById('leaveChart').getContext('2d');
+
+            let chart = new Chart(leaveChart, {
+                type: 'line',
+                data: {
+                    labels: labels, //每個長條圖的名稱
+                    datasets: [{
+                        label: '請假次數總數',
+                        data: data,
+                        // Line
+                        lineTension: 0,
+                        backgroundColor: '#F0F0F0',
+                        borderColor: '#ADADAD',
+                        fill: false,
+                        borderWidth: 2,
+                        // Point
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    return value + '次';
+                                }
+                            }
+                        }
+                    },
+                    categoryPercentage: 1, // 分類比例
+                    barPercentage: 0.3, // 柱狀比例
+                    title: {
+                        display: true,
+                        text: 'Traffic Volume',
+                        position: 'bottom',
+                        fontSize: 24,
+                        fontStyle: 'normal',
+                        fontFamily: 'Century Gothic'
+                    },
+                    legend: {
+                        display: false
+                    },
+                    responsive: false
+                },
+            });
+        });
+    </script>
+</body>
+
+</html>

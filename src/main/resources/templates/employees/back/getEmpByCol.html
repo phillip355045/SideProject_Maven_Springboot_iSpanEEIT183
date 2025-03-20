@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>HomePage</title>
+<link rel="stylesheet"
+	href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<style>
+html,body {
+	background-size: cover;
+	justify-content: center;
+	align-items: center;
+    height: 97%;
+    width: 100%;
+	font-family: Arial, sans-serif;
+	position: relative;
+	z-index: 1;
+    margin: 0;
+    padding: 0;
+}
+.wrap{
+    height: 100%;
+    width: 100%;
+}
+.container {
+	background-color: rgba(255, 255, 255, 0.8);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	margin: 10px;
+	width: calc(100% - 80px);
+	max-width: 300px;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.container h2 {
+	margin-bottom: 20px;
+	color: #333;
+}
+
+.container label {
+	display: block;
+	text-align: left;
+	margin: 10px 0 5px;
+	color: #555;
+}
+
+.container select, .container input[type="text"], .container input[type="submit"]
+	{
+	width: calc(100% - 20px);
+	padding: 10px;
+	margin-bottom: 20px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+}
+
+.container input[type="submit"] {
+	background-color:#B5C0D0;
+	color: white;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+.container input[type="submit"]:hover {
+	background-color: #CCD3CA;
+}
+
+.colvalue {
+	margin-bottom: 20px;
+}
+.form-container {
+	max-width: 400px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: #f9f9f9;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+</style>
+</head>
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1">
+			<br> <a th:href="@{/getAllEmployees}">所有員工資料</a> <a
+				th:href="@{/insertEmp}">新增員工資料</a> <a th:href="@{/getEmpsByCol}">查詢員工資料</a>
+			<a th:href="@{/familyMemberInsert}">新增親屬資料</a> <a
+				th:href="@{/departmentTransferInsert}">新增部門調動</a> <a
+				th:href="@{/alldepartmentTransfer}">所有部門調動</a>
+		</div>
+		<div id="content" class="container">
+			<div class="form-container shadow p-3 mb-5 bg-white rounded">
+				<h2>查詢員工資料</h2>
+				<div class="absolute1">
+					<form th:action="@{/getEmployeesByCol}" method="post">
+						<label for="col">輸入查詢欄位:</label> <select name="col" id="col"
+							class="select" onchange="toggleInput(this.value)">
+							<option value="empno" selected>員工編號</option>
+							<option value="job">職稱</option>
+							<option value="name">員工姓名</option>
+							<option value="mgr">直屬主管</option>
+							<option value="deptno">部門編號</option>
+							<option value="deptTransferID">部門調動編號</option>
+							<option value="identityID">身分證字號</option>
+							<option value="birthDate">出生日期</option>
+							<option value="gender">性別</option>
+							<option value="citizenship">國籍</option>
+							<option value="phone">手機號碼</option>
+							<option value="telPhone">家電</option>
+							<option value="mail">員工信箱</option>
+							<option value="emergencyContact">緊急聯絡人</option>
+							<option value="address">住址</option>
+							<option value="hiredate">進公司日期</option>
+							<option value="salGrade">薪資等級</option>
+							<option value="empnoStatus">人員狀態</option>
+						</select><br> <span class="colvalue"> <label for="colvalue">輸入查詢條件:</label>
+							<input type="text" name="colvalue" id="colvalue" />
+						</span> <input type="submit" value="查詢" />
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+	<script>
+    function toggleInput(selectedValue) {
+    const colvalueField = document.getElementById('colvalue');
+    colvalueField.parentNode.removeChild(colvalueField); 
+    const container = document.querySelector('.colvalue'); 
+    let newColvalueField;
+
+    if (selectedValue === 'deptno') {
+        newColvalueField = document.createElement('select');
+        newColvalueField.name = 'colvalue';
+        newColvalueField.id = 'colvalue';
+        newColvalueField.innerHTML = '<option value="D01">行政部門</option>'
+            + '<option value="D02">財務部門</option>'
+            + '<option value="D03">行銷部門</option>'
+            + '<option value="D04">技術部門</option>'
+            + '<option value="D05">人力資源部門</option>';
+    } else if (selectedValue === 'empnoStatus') {
+        newColvalueField = document.createElement('select');
+        newColvalueField.name = 'colvalue';
+        newColvalueField.id = 'colvalue';
+        newColvalueField.innerHTML = '<option value="Active">在職中</option>'
+            + '<option value="Resigned">離職</option>'+ '<option value="Retired">退休</option>'+ '<option value="Terminated">合約終止</option>';
+    } else if (selectedValue === 'salGrade') {
+        newColvalueField = document.createElement('select');
+        newColvalueField.name = 'colvalue';
+        newColvalueField.id = 'colvalue';
+        newColvalueField.innerHTML = '<option value="1">1</option>'
+            + '<option value="2">2</option>'
+            + '<option value="3">3</option>'
+            + '<option value="4">4</option>'
+            + '<option value="5">5</option>';
+    } else if (selectedValue === 'gender') {
+        newColvalueField = document.createElement('select');
+        newColvalueField.name = 'colvalue';
+        newColvalueField.id = 'colvalue';
+        newColvalueField.innerHTML = '<option value="女性">女性</option>'
+            + '<option value="男性">男性</option>';
+    }else {
+        newColvalueField = document.createElement('input');
+        newColvalueField.type = 'text';
+        newColvalueField.name = 'colvalue';
+        newColvalueField.id = 'colvalue';
+    }
+
+    container.appendChild(newColvalueField);
+}
+
+</script>
+</body>
+</html>

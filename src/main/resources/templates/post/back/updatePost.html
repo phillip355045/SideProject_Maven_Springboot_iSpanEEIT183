@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<title>貼文總覽</title>
+<style>
+.h3-class {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.ul-class {
+    list-style-type: none;
+    padding: 0;
+}
+
+.ul-class li {
+    margin-bottom: 15px;
+}
+
+.label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+.input-class, .textarea-class, select {
+    width: calc(100% - 60px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: block;
+    margin-top: 5px;
+    margin-left: 20px;
+    box-sizing: border-box;
+}
+
+.input-class[readonly] {
+    background-color: #f0f0f0;
+    color: #6c757d;
+}
+
+.textarea-class {
+    height: 200px;
+}
+
+.button-container {
+    text-align: center;
+}
+
+.button-container button, .button-container input[type="submit"], .button-container .return-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+.return-button {
+    text-decoration: none;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+}
+
+.return-button:hover {
+    background-color: #0056b3;
+}
+
+.input-submit {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 10px;
+    color: #fff;
+    background-color: #6682FF;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.input-submit:hover {
+    background-color: #4f66cc;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    text-align: center;
+}
+
+.image-gallery {
+    text-align: center;
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.image-container {
+    display: inline-block;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+}
+
+.image-gallery img {
+    max-width: 100%;
+    max-height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 0, 0, 0.7);
+    border: none;
+    color: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.file-upload-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.file-upload-input {
+    display: none;
+}
+
+.file-upload-label {
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    display: inline-block;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.file-upload-label:hover {
+    background-color: #5a6268;
+}
+</style>
+</head>
+<body>
+    <div th:replace="~{layout/backEmpNavbar}"></div>
+    <div class="wrap">
+        <div class="nav1">
+            <br> 
+            <a th:href="@{/postsWithCategory(postCategory='一般')}">總覽: 一般類別</a> 
+            <a th:href="@{/postsWithCategory(postCategory='活動')}">總覽: 活動類別</a> 
+            <a th:href="@{/postsWithCategory(postCategory='考勤')}">總覽: 考勤類別</a> 
+            <a th:href="@{/postsWithCategory(postCategory='薪資')}">總覽: 薪資類別</a> 
+            <a th:href="@{/postsWithCategory(postCategory='福利')}">總覽: 福利類別</a>
+        </div>
+
+        <div id="content" class="container">
+            <h3 class="h3-class">貼文資訊-請調整欲更新項目</h3>
+
+            <form method="post" th:action="@{/updatePostById.controller}" enctype="multipart/form-data" id="updatePostForm">
+                <ul class="ul-class">
+                    <li><span class="label">貼文編號:</span> <input class="input-class" type="text" name="postId" readonly th:value="${post.postId}"></li>
+                    <li><span class="label">貼文發布日期:</span> <input class="input-class" type="text" name="postDate" readonly th:value="${post.postDate}"></li>
+                    <li><input class="input-class" type="hidden" name="postExpiryDate" readonly th:value="${post.postExpiryDate}"></li>
+                    <li><span class="label">貼文標題:</span> <input class="input-class" type="text" name="postTitle" readonly th:value="${post.postTitle}"></li>
+                    <li><span class="label">貼文狀態:</span> 
+                        <select class="input-class" name="postStatus">
+                            <option th:value="true" th:selected="${post.postStatus == true}">可瀏覽</option>
+                            <option th:value="false" th:selected="${post.postStatus == false}">不可瀏覽</option>
+                        </select>
+                    </li>
+                    <li><span class="label">貼文分類:</span> 
+                        <select class="input-class" name="postCategory">
+                            <option th:value="'一般'" th:selected="${post.postCategory == '一般'}">一般</option>
+                            <option th:value="'活動'" th:selected="${post.postCategory == '活動'}">活動</option>
+                            <option th:value="'考勤'" th:selected="${post.postCategory == '考勤'}">考勤</option>
+                            <option th:value="'薪資'" th:selected="${post.postCategory == '薪資'}">薪資</option>
+                            <option th:value="'福利'" th:selected="${post.postCategory == '福利'}">福利</option>
+                        </select>
+                    </li>
+                    <li><span class="label">發文者:</span> <input class="input-class" type="text" name="postEmpName" readonly th:value="${post.postEmpName}"></li>
+                    <li><span class="label">貼文內容:</span> <textarea id="postContent" class="textarea-class" name="postContent" th:text="${post.postContent}"></textarea></li>
+                    <li><input class="input-class" type="hidden" name="postEmp" readonly th:value="${post.postEmp}"></li>
+                    <li><button type="button" class="file-upload-label" onclick="fillExampleData()">修改貼文範例</button></li>
+                </ul>
+
+                <!-- 貼文圖片展示區域 -->
+                <div class="image-gallery">
+                    <h3 class="h3-class">貼文圖片</h3>
+                    <div th:if="${images.size() > 0}">
+                        <div th:each="image : ${images}" class="image-container">
+                            <img th:src="${image.base64ImageData}" alt="Post Image" th:data-image-id="${image.postImageId}" />
+                            <button type="button" class="remove-btn" th:data-image-id="${image.postImageId}" onclick="deleteImage(this)">X</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="file-upload-label" onclick="addImageInput()">新增圖片</button>
+                <!-- 新增圖片區域 -->
+                <div id="newImageInputs" class="file-upload-wrapper"></div>
+                <!-- 新增圖片預覽區域 -->
+                <div id="image-preview" class="image-gallery"></div>
+
+                <input type="hidden" name="isImageUpdated" value="false" id="isImageUpdated">
+                <input type="hidden" name="updateActions" id="updateActions">
+                <input type="hidden" name="postImageIds" id="postImageIds">
+
+				<div class="button-container">
+					<input type="button" value="更新" class="input-submit update-button" onclick="confirmUpdate()" />
+ 					<a th:href="@{/findPostById.manager(postId=${post.postId})}" class="input-submit return-button">返回</a>
+				</div>
+			</form>
+        </div>
+    </div>
+
+    <div th:replace="~{layout/footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+<script type="text/javascript">
+<!-- Sweet Alert2 -->
+ function confirmUpdate() {
+ 	  Swal.fire({
+           title: '確定要修改嗎？',
+           text: "修改即將送出",
+           icon: 'info',
+           showCancelButton: true,
+           confirmButtonColor: '#3085d6',
+           cancelButtonColor: '#d33',
+           confirmButtonText: '是的，請更新！',
+           cancelButtonText: '取消'
+       }).then((result) => {
+           if (result.isConfirmed) {
+               // 提交表單
+               document.getElementById('updatePostForm').submit();
+           }
+       });
+   }
+ </script>
+
+<script>    
+//一鍵輸入修改貼文範例
+function fillExampleData() {
+            //一般的html, css輸入框
+            document.getElementById('postContent').value = '修改內容: \n----------------------------------------------\n以下是舊貼文內容:\n----------------------------------------------\n這是一個預設的貼文內容範例。今天的天氣非常好，陽光明媚，讓人感到心情愉快。早上我去公園散步，看到很多人也在享受這美好的時光。公園裡的花朵盛開，五顏六色，非常漂亮。午後我在咖啡館讀了一本書，感受到一種難得的寧靜。生活中的小確幸往往就在這些平凡的瞬間，希望大家也能珍惜每天的美好時光。';
+        }
+    
+    
+let updateActions = [];
+let postImageIds = [];
+
+function addImageInput() {
+    const container = document.getElementById('newImageInputs');
+    const fileUploadWrapper = document.createElement('div');
+    fileUploadWrapper.classList.add('file-upload-wrapper');
+
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.name = 'imageFiles';
+    input.classList.add('file-upload-input');
+    input.id = 'imageFiles-' + Date.now();
+    input.style.display = 'none'; // 隱藏文件上傳按鈕
+    fileUploadWrapper.appendChild(input);
+
+    container.appendChild(fileUploadWrapper);
+
+    input.addEventListener('change', function(event) {
+        const files = event.target.files;
+
+        if (!files || files.length === 0) {
+            return; // 如果沒有選擇文件，則退出
+        }
+
+        // 動態創建 previewContainer 及其內容
+        const previewContainer = document.createElement('div');
+        previewContainer.classList.add('image-container');
+        previewContainer.id = 'preview-' + input.id;
+
+        const img = document.createElement('img');
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(files[0]);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.innerText = 'X';
+        removeBtn.classList.add('remove-btn');
+        removeBtn.addEventListener('click', () => {
+            previewContainer.remove();
+            fileUploadWrapper.remove();
+            // 移除對應的操作和ID
+            const idx = updateActions.indexOf("新增");
+            if (idx > -1) {
+                updateActions.splice(idx, 1);
+                postImageIds.splice(idx, 1);
+            }
+            document.getElementById('isImageUpdated').value = updateActions.length > 0;
+        });
+
+        previewContainer.appendChild(img);
+        previewContainer.appendChild(removeBtn);
+        document.getElementById('image-preview').appendChild(previewContainer);
+
+        updateActions.push("新增");
+        postImageIds.push(""); // 新增的圖片ID會在後端生成，可以設置為空
+        document.getElementById('isImageUpdated').value = "true";
+    });
+
+    input.addEventListener('blur', function() {
+        // 檢查文件選擇對話框是否關閉，如果未選擇文件則移除預覽區塊
+        setTimeout(() => {
+            if (!input.files.length || !input.files[0].size) {
+                const previewContainer = document.getElementById('preview-' + input.id);
+                if (previewContainer) {
+                    previewContainer.remove();
+                }
+                fileUploadWrapper.remove();
+            }
+        }, 200); // 延迟以确保文件选择对话框关闭
+    });
+
+    // 模擬點擊觸發文件選擇對話框
+    input.click();
+}
+
+function deleteImage(button) {
+    const imageId = button.getAttribute('data-image-id');
+    updateActions.push("刪除");
+    postImageIds.push(imageId);
+    document.getElementById('isImageUpdated').value = "true";
+    button.parentElement.remove();
+}
+
+document.getElementById('updatePostForm').addEventListener('click', function(event) {
+    document.getElementById('updateActions').value = updateActions.join(",");
+    document.getElementById('postImageIds').value = postImageIds.join(",");
+});
+
+
+
+
+
+</script>
+</body>
+</html>

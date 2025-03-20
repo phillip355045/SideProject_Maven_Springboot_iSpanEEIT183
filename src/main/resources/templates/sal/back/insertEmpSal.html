@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- 表單: backFrom、表格：backSheet-->
+	<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+
+	<!-- 專門給vscode讀取修改用，改完記得刪掉-->
+	<!-- <link rel="stylesheet" href="../../../static/css/backFrom.css"> -->
+
+	<!-- 使用fontawesome插件的話-->
+	<link th:href="@{/fontawesome-free-5.7.2-web/css/all.css}" rel="stylesheet" type="text/css">
+
+	<title>新增薪資資料</title>
+	<style>
+		.hidden-row {
+			display: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:replace="~{layout/backEmpnavbar}"></div>
+	<div class="wrap">
+
+
+
+
+		<div class="nav1">
+			<br> <a th:href="@{/getAllEmpSal.controller}">薪資管理系統</a> <a th:href="@{/toInsertEmpSal}">新增薪資單</a> <a
+				th:href="@{/toInsertEmpSalBatch}">批次新增薪資單</a>
+
+		</div>
+		<!--<a href="">個人績效獎金</a>
+			<a href="">個人年度自付保費核對表</a>
+			<a href="">津貼規章/獎金辦法</a> <a href="">薪資等級試算</a>  -->
+
+
+
+
+		<div id="content" class="container">
+			<h2>新增薪資資料</h2>
+
+			<form id="empSalForm" method="post" th:action="@{/insertEmpSal}">
+
+				<table class="table-form">
+
+					<!--		<tr>
+						<td><label for="month">發放月份：</label></td>
+						<td><input type="month" id="month" name="month" required /></td>
+					</tr> -->
+
+					<tr>
+						<td><label for="year">發放年份：</label></td>
+						<td><input type="number" id="year" name="year" th:value="2024" step="1" required /></td>
+					</tr>
+					<tr>
+						<td><label for="month">發放月份：</label></td>
+						<td><select type="text" id="month" name="month" required>
+								<option value="01">1月</option>
+								<option value="02">2月</option>
+								<option value="03">3月</option>
+								<option value="04">4月</option>
+								<option value="05">5月</option>
+								<option value="06">6月</option>
+								<option value="07">7月</option>
+								<option value="08">8月</option>
+								<option value="09">9月</option>
+								<option value="10">10月</option>
+								<option value="11">11月</option>
+								<option value="12">12月</option>
+							</select></td>
+					</tr>
+
+
+					<tr>
+						<td><label for="empno1">員工姓名/編號：</label></td>
+						<td>
+							<div class="autocomplete">
+								<input type="text" id="empno1" name="empno1" required oninput="validateForm()" />
+								<div id="empno-autocomplete-list" class="autocomplete-items"></div>
+							</div>
+						</td>
+						<td><input class="confirmButton" type="button" value="確認資料" onclick="confirmData()" /></td>
+
+					</tr>
+					<!--	<tr>
+						<td><label for="name">姓名：</label></td>
+						<td>
+							<div class="autocomplete">
+								<input type="text" id="name" name="name" />
+								<div id="name-autocomplete-list" class="autocomplete-items"></div>
+							</div>
+						</td>
+					</tr>-->
+				</table>
+				<hr>
+
+
+
+
+				<table class="table-form">
+
+
+					<tr class="hidden-row">
+						<td><label for="laborIhealthLevelId">勞健保等級：</label></td>
+						<td><input type="text" id="laborIhealthLevelId" name="laborIhealthLevelId" /></td>
+					</tr>
+					<tr>
+						<td><label for="name">姓名確認：</label></td>
+						<td><input type="text" id="name" name="name" /></td>
+					</tr>
+					<tr>
+						<td><label for="halfpaidHours">病假時數：</label></td>
+						<td><input type="text" id="halfpaidHours" name="halfpaidHours" readonly /></td>
+
+						<td><label for="unpaidHours">事假時數：</label></td>
+						<td><input type="text" id="unpaidHours" name="unpaidHours" readonly /></td>
+					</tr>
+					<tr>
+						<td><label for="fullpaidHours">其他假別時數：</label></td>
+						<td><input type="text" id="fullpaidHours" name="fullpaidHours" readonly /></td>
+
+						<td><label for="totalOvertimeHours">加班時數：</label></td>
+						<td><input type="text" id="totalOvertimeHours" name="totalOvertimeHours" readonly /></td>
+					</tr>
+
+				</table>
+				<hr>
+				<table class="table-form">
+					<tr>
+						<td>發放金額：</td>
+						<td></td>
+						<td></td>
+						<td>扣除金額：</td>
+
+					</tr>
+					<tr>
+						<td><label for="sal">本薪：</label></td>
+						<td><input type="text" id="sal" name="sal" readonly /></td>
+						<td><label for="laborInsurance">勞保費：</label></td>
+						<td><input type="text" id="laborInsurance" name="laborInsurance" readonly /></td>
+					</tr>
+
+					<tr>
+						<td><label for="mgrAllowance">主管津貼：</label></td>
+						<td><input type="text" id="mgrAllowance" name="mgrAllowance" readonly /></td>
+						<td><label for="healthInsurance">健保費：</label></td>
+						<td><input type="text" id="healthInsurance" name="healthInsurance" readonly /></td>
+					</tr>
+
+
+					<tr>
+						<td><label for="foodAllowance">伙食津貼：</label></td>
+						<td><input type="text" autofocus placeholder="預設值:1000" id="foodAllowance"
+								name="foodAllowance" /></td>
+						<td><label for="leavePay">缺勤扣薪：</label></td>
+						<td><input type="text" id="leavePay" name="leavePay" /></td>
+					</tr>
+					<tr>
+						<td><label for="trafficAllowance">交通津貼：</label></td>
+						<td><input type="text" id="trafficAllowance" name="trafficAllowance" /></td>
+					</tr>
+					<tr>
+						<td><label for="holidayAllowance">節日禮金：</label></td>
+						<td><input type="text" id="holidayAllowance" name="holidayAllowance" /></td>
+					</tr>
+					<tr>
+						<td><label for="overtimePay">加班費：</label></td>
+						<td><input type="text" id="overtimePay" name="overtimePay" /></td>
+					</tr>
+					<tr>
+						<td><label for="attendanceBonus">全勤獎金：</label></td>
+						<td><input type="text" id="attendanceBonus" name="attendanceBonus" /></td>
+					</tr>
+
+					<!-- 隱藏欄位 -->
+					<!--<table style="display: none;">-->
+					<tr class="hidden-row">
+						<td><label for="deptno">部門編號：</label></td>
+						<td><input type="text" id="deptno" name="deptno" /></td>
+					</tr>
+					<tr class="hidden-row">
+						<td><label for="job">職位：</label></td>
+						<td><input type="text" id="job" name="job" /></td>
+					</tr>
+					<tr class="hidden-row">
+						<td><label for="mgr">直屬主管：</label></td>
+						<td><input type="text" id="mgr" name="mgr" /></td>
+					</tr>
+
+					<tr class="hidden-row">
+						<td><label for="status">發佈狀態：</label></td>
+						<td><input type="text" id="status" name="status" value="" /></td>
+					</tr>
+
+					<tr class="hidden-row">
+						<td><label for="invoice">請款：</label></td>
+						<td><input type="text" id="invoice" name="invoice" /></td>
+					</tr>
+					<tr class="hidden-row">
+						<td><label for="laborInsuranceCompany">公司負擔勞保額：</label></td>
+						<td><input type="text" id="laborInsuranceCompany" name="laborInsuranceCompany" /></td>
+					</tr>
+					<tr class="hidden-row">
+						<td><label for="healthInsuranceCompany">公司負擔健保額：</label></td>
+						<td><input type="text" id="healthInsuranceCompany" name="healthInsuranceCompany" /></td>
+					</tr>
+
+
+
+
+					<tr>
+						<td><label for="totalPayment">發放合計：</label></td>
+						<td><input type="text" id="totalPayment" name="totalPayment" disabled /></td>
+						<td><label for="totalDeduction">扣除合計：</label></td>
+						<td><input type="text" id="totalDeduction" name="totalDeduction" disabled /></td>
+					</tr>
+				</table>
+				<hr>
+				<table class="table-form">
+					<tr>
+						<td><label for="netSalary">實發金額：</label></td>
+						<td><input type="text" id="netSalary" name="netSalary" oninput="validateForm()" readonly />
+						<td><input type="reset" value="清除" style="width: 100px;" /></td>
+					</tr>
+
+				</table>
+
+				<input type="hidden" value="薪資單匯入" name="category" id="category">
+				<input type="hidden" name="notifyEmpno" id="notifyEmpno" value="" />
+
+				<div align="center" style="margin-top: 20px;">
+					<input type="button" value="取消" onclick="history.back();" />
+					<!-- 					<input type="submit" value="確定" /> -->
+					<input type="button" id="saveButton" value="儲存" onclick="setStatusAndSubmit('未發送')" /> <input
+						type="button" id="publishButton" value="發佈" onclick="setStatusAndSubmit('已發送')" />
+				</div>
+			</form>
+		</div>
+		<hr>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+
+	<!-- <p>
+            <img class="myphoto2" src="https://truth.bahamut.com.tw/s01/202201/78eb807a59adcd9aa4c96aac199feaa9.JPG"
+                alt="">
+        </p> -->
+	<script th:src="@{/js/axios.min.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script>
+
+
+
+		//通知+status功能
+		function setStatusAndSubmit(status) {
+			// 取得 empno 的值
+			var empno = document.getElementById("empno1").value;
+
+			// 設定狀態欄位
+			document.getElementById("status").value = status;
+
+
+			// 判斷是否需要設定 notifyEmpno 隱藏欄位的值
+			if (status === '已發送') {
+				document.getElementById("notifyEmpno").value = empno;
+			}
+
+			// 提交表單
+			document.getElementById("empSalForm").submit();
+		}
+
+		//status設置
+		//  function setStatusAndSubmit(status) {
+		// Set the status value in the hidden input field
+		// document.getElementById('status').value = status;
+
+		// Submit the form
+		// document.getElementById('empSalForm').submit();
+		//}
+
+
+		//ajax傳值
+		function confirmData() {
+			var empno = document.getElementById("empno1").value;
+			var month = document.getElementById("month").value;
+			var year = document.getElementById("year").value;
+			var xhr = new XMLHttpRequest();
+
+
+			xhr.open("GET", "/PSNEXUS/fetchSalaryData?empno=" + empno + "&year=" + year + "&month=" + month, true);
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState == 4 && xhr.status == 200) {
+					var fetchedData = JSON.parse(xhr.responseText);
+					if (fetchedData) {
+						document.getElementById("sal").value = fetchedData.sal;
+						document.getElementById("laborInsurance").value = fetchedData.laborInsurance;
+						document.getElementById("mgrAllowance").value = fetchedData.mgrAllowance;
+						document.getElementById("healthInsurance").value = fetchedData.healthInsurance;
+						document.getElementById("foodAllowance").value = fetchedData.foodAllowance;
+						document.getElementById("leavePay").value = fetchedData.leavePay;
+						document.getElementById("trafficAllowance").value = fetchedData.trafficAllowance;
+						document.getElementById("holidayAllowance").value = fetchedData.holidayAllowance;
+						document.getElementById("overtimePay").value = fetchedData.overtimePay;
+						document.getElementById("attendanceBonus").value = fetchedData.attendanceBonus;
+
+
+						document.getElementById("deptno").value = fetchedData.deptno;
+						document.getElementById("job").value = fetchedData.job;
+						document.getElementById("mgr").value = fetchedData.mgr;
+						document.getElementById("name").value = fetchedData.name;
+						document.getElementById("status").value = fetchedData.status;
+						document.getElementById("totalOvertimeHours").value = fetchedData.totalOvertimeHours;
+						document.getElementById("laborIhealthLevelId").value = fetchedData.laborIhealthLevelId;
+						document.getElementById("halfpaidHours").value = fetchedData.halfpaidHours;
+						document.getElementById("fullpaidHours").value = fetchedData.fullpaidHours;
+						document.getElementById("unpaidHours").value = fetchedData.unpaidHours;
+						document.getElementById("invoice").value = fetchedData.invoice;
+						document.getElementById("laborInsuranceCompany").value = fetchedData.laborInsuranceCompany;
+						document.getElementById("healthInsuranceCompany").value = fetchedData.healthInsuranceCompany;
+
+						/* document.getElementById("totalPayment").value = fetchedData.totalPayment;
+						  document.getElementById("totalDeduction").value = fetchedData.totalDeduction;
+						  document.getElementById("netSalary").value = fetchedData.netSalary; */
+
+						// 調用 calculateTotals 函數以更新合計
+						calculateTotals();
+					} else {
+						console.error("No data found for the given parameters.");
+					}
+				}
+			};
+
+			xhr.send();
+		}
+
+
+
+		//合計加總
+		function calculateTotals() {
+			const sal = parseFloat(document.getElementById('sal').value) || 0;
+			const mgrAllowance = parseFloat(document.getElementById('mgrAllowance').value) || 0;
+			const foodAllowance = parseFloat(document.getElementById('foodAllowance').value) || 0;
+			const trafficAllowance = parseFloat(document.getElementById('trafficAllowance').value) || 0;
+			const holidayAllowance = parseFloat(document.getElementById('holidayAllowance').value) || 0;
+			const overtimePay = parseFloat(document.getElementById('overtimePay').value) || 0;
+			const attendanceBonus = parseFloat(document.getElementById('attendanceBonus').value) || 0;
+
+			const laborInsurance = parseFloat(document.getElementById('laborInsurance').value) || 0;
+			const healthInsurance = parseFloat(document.getElementById('healthInsurance').value) || 0;
+			const leavePay = parseFloat(document.getElementById('leavePay').value) || 0;
+
+			const totalPayment = sal + mgrAllowance + foodAllowance + trafficAllowance + holidayAllowance + overtimePay + attendanceBonus;
+			const totalDeduction = laborInsurance + healthInsurance + leavePay;
+			const netSalary = totalPayment - totalDeduction;
+
+			document.getElementById('totalPayment').value = totalPayment.toFixed(2);
+			document.getElementById('totalDeduction').value = totalDeduction.toFixed(2);
+			document.getElementById('netSalary').value = netSalary.toFixed(2);
+		}
+
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('input[type="text"]').forEach(input => {
+				input.addEventListener('input', calculateTotals);
+			});
+		});
+
+
+		//自動帶入員工編號
+
+		document.addEventListener('DOMContentLoaded', () => {
+			const empnoInput = document.getElementById('empno1');
+			const nameInput = document.getElementById('name');
+			const empnoAutocompleteList = document.getElementById('empno-autocomplete-list');
+			const nameAutocompleteList = document.getElementById('name-autocomplete-list');
+			const form = document.getElementById('empSalForm');
+
+			function performSearch(query, callback) {
+				const url = "http://localhost:8088/PSNEXUS/GetEmployeesByEmpnoAndNameFuzzySearchForSal"; // 確保這個URL與你的後端匹配
+				axios.get(url, {params: {query: query}})
+					.then(response => {
+						callback(response.data);
+					})
+					.catch(error => {
+						console.error('Error fetching employees:', error);
+					});
+			}
+
+			function createAutocompleteItems(list, employees, inputField, isEmpnoField) {
+				list.innerHTML = '';
+				employees.forEach(employee => {
+					const item = document.createElement('div');
+					item.classList.add('autocomplete-item');
+					if (isEmpnoField) {
+						item.textContent = `${employee.empno} - ${employee.name}`;
+						item.addEventListener('click', () => {
+							inputField.value = employee.empno;
+							list.innerHTML = '';
+
+							// Populate salary details based on selected employee
+							document.getElementById('sal').value = employee.sal || '';
+							document.getElementById('laborInsurance').value = employee.laborInsurance || '';
+							document.getElementById('mgrAllowance').value = employee.mgrAllowance || '';
+							document.getElementById('healthInsurance').value = employee.healthInsurance || '';
+							document.getElementById('foodAllowance').value = employee.foodAllowance || '';
+							document.getElementById('leavePay').value = employee.leavePay || '';
+							document.getElementById('trafficAllowance').value = employee.trafficAllowance || '';
+							document.getElementById('holidayAllowance').value = employee.holidayAllowance || '';
+							document.getElementById('overtimePay').value = employee.overtimePay || '';
+							document.getElementById('attendanceBonus').value = employee.attendanceBonus || '';
+							calculateTotals();
+						});
+					} else {
+						item.textContent = `${employee.name}`;
+						item.addEventListener('click', () => {
+							inputField.value = employee.name;
+							list.innerHTML = '';
+						});
+					}
+					list.appendChild(item);
+				});
+			}
+
+			empnoInput.addEventListener('input', () => {
+				const query = empnoInput.value;
+				if (!query) {
+					empnoAutocompleteList.innerHTML = '';
+					return;
+				}
+				performSearch(query, employees => {
+					createAutocompleteItems(empnoAutocompleteList, employees, empnoInput, true);
+				});
+			});
+
+			nameInput.addEventListener('input', () => {
+				const query = nameInput.value;
+				if (!query) {
+					nameAutocompleteList.innerHTML = '';
+					return;
+				}
+				performSearch(query, employees => {
+					createAutocompleteItems(nameAutocompleteList, employees, nameInput, false);
+				});
+			});
+		});
+	</script>
+
+</body>
+
+</html>

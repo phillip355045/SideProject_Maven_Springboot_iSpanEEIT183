@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+.input-long {
+	width: 100%;
+	max-width: 500px;
+}
+
+.radio-container {
+	display: inline-block;
+}
+
+.radio-container label {
+	margin-right: 10px;
+}
+
+.form-group {
+	margin-top: 15px; /* 设置上间距 */
+}
+</style>
+
+<title>搜尋貼文牆</title>
+</head>
+<body>
+    <h3>貼文牆-搜尋條件輸入</h3>
+    <form action="/PSNEXUS/searchPostWallByKeyWords" method="get">
+        <div class="form-group">
+            <label for="keyword1">關鍵字內容:</label>
+            <input type="text" id="keyword1" class="input-long" name="keyword1" placeholder="可輸入發文者姓名、工號、或貼文標題節錄(三選一)">
+        </div>
+        <div class="form-group">
+            <label>貼文分類:</label>
+            <div class="radio-container">
+                <label>
+                    <input type="radio" name="keyword2" value="一般"> 一般
+                </label>
+                <label>
+                    <input type="radio" name="keyword2" value="活動"> 活動
+                </label>
+                <label>
+                    <input type="radio" name="keyword2" value="考勤"> 考勤
+                </label>
+                <label>
+                    <input type="radio" name="keyword2" value="薪資"> 薪資
+                </label>
+                <label>
+                    <input type="radio" name="keyword2" value="福利"> 福利
+                </label>
+            </div>
+        </div>
+        <button type="submit" class="form-group">搜尋</button>
+    </form>
+
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>新增工作日誌結果</title>
+	<link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+
+	<style>
+		.container1 {
+			background-color: #ffffff;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			padding: 20px;
+			border-radius: 8px;
+			width: 80%;
+			max-width: 1000px;
+			margin: auto;
+			/* container1區塊置中 */
+		}
+
+		h2 {
+			color: #333333;
+			margin-bottom: 20px;
+			font-size: 24px;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: black;
+			margin: 20px 0;
+			table-layout: fixed;
+		}
+
+		th,
+		td {
+			padding: 12px;
+			border-bottom: 1px solid #dddddd;
+			text-align: center;
+			font-size: 16px;
+		}
+
+		.th {
+			background-color: #46A3FF;
+			color: white;
+			white-space: nowrap;
+			text-align: center;
+			/* 表頭文字置中 */
+		}
+
+		.btn {
+			padding: 5px 8px;
+			text-decoration: none;
+			background-color: #007BFF;
+			color: white;
+			border-radius: 5px;
+			margin: 0 4px;
+			font-size: 14px;
+		}
+
+		.btn.HomePage {
+			background-color: #84C1FF;
+		}
+
+		.navbar-container {
+			width: 100%;
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 1000;
+			/* 確保在最上方 */
+			color: white;
+			text-align: center;
+			padding: 0;
+		}
+
+		.navbar-container div {
+			color: white;
+		}
+
+		html,
+		body {
+			height: 97%;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+		}
+
+		.wrap {
+			height: 100%;
+			width: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="navbar-container">
+		<div th:replace="~{layout/empnavbar}"></div>
+	</div>
+	<div class="wrap">
+
+		<div class="container1">
+			<h2>新增工作日誌結果</h2>
+			<table class="table table-bordered">
+				<tbody>
+					<tr>
+						<td>部門</td>
+						<td th:text="${worklogs.department.deptname}"></td>
+					</tr>
+					<tr>
+						<td>員工編號</td>
+						<td th:text="${worklogs.employees.empno}"></td>
+					</tr>
+					<tr>
+						<td>工作日期</td>
+						<td th:text="${#dates.format(worklogs.worklogdate, 'yyyy-MM-dd')}"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h2>工作項目</h2>
+			<table class="table table-bordered">
+				<thead>
+					<tr class="th">
+						<th style="width: 130px;">需求部門</th>
+						<th style="width: 130px;">工作類型</th>
+						<th style="width: 320px;">工作內容說明</th>
+						<th class="hours" style="width: 100px;">正常工時</th>
+						<th class="hours" style="width: 100px;">加班工時</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${worklogs.worklogItems}">
+						<td th:text="${item.deptname}"></td>
+						<td th:text="${item.jobType}"></td>
+						<td th:text="${item.jobDescription}"></td>
+						<td class="hours" th:text="${item.regularHours}"></td>
+						<td class="hours" th:text="${item.overtimeHours}"></td>
+					</tr>
+				</tbody>
+			</table>
+
+
+		</div>
+	</div>
+
+
+	<div th:replace="~{layout/footer}"></div>
+</body>
+
+</html>

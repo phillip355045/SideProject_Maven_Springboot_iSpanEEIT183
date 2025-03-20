@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>批量刪除打卡資料</title>
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<style>
+html,body{
+    height: 97%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.wrap{
+    height: 100%;
+    width: 100%;
+}
+.form-container {
+	max-width: 400px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: #f9f9f9;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.container input[type="button"] {
+	margin-top:10px;
+	width: calc(100% - 20px);
+	padding: 10px;
+	margin-bottom: 20px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+	background-color:#B5C0D0;
+	color: white;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+.container input[type="button"]:hover {
+	background-color: #CCD3CA;
+}
+</style>
+</head>
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1">
+			<br>
+			<a th:href="@{/allCheckIns}">所有員工打卡</a>
+			<a th:href="@{/checkInSearch}">員工打卡查詢</a>
+			<a th:href="@{/addCheckInTableData}">建立打卡資料</a> 
+			<a th:href="@{/deleteCheckInByDateOrEmpno}">批量刪除打卡</a>
+		</div>
+		<div id="content" class="container">
+			<div class="form-container shadow p-3 mb-5 bg-white rounded">
+				<h2 class="text-center">批量刪除打卡資料</h2>
+				<form th:action="@{/deleteCheckInByCol}" method="post">
+					<div class="form-group mb-3">
+						<label for="col">輸入查詢欄位:</label> <select name="col"
+							class="form-control" id="col">
+							<option value="checkInId.empno" th:name="checkInId.empno">員工編號</option>
+							<option value="checkInId.date" th:name="checkInId.date">日期</option>
+						</select>
+					</div>
+					<div class="form-group mb-3" id="operator-group"
+						style="display: none;">
+						<label for="operator">運算符號:</label> <select name="operator"
+							class="form-control" id="operator">
+							<option value="=">等於</option>
+							<option value="!=">不等於</option>
+							<option value=">">大於</option>
+							<option value="<">小於</option>
+							<option value=">=">大於等於</option>
+							<option value="<=">小於等於</option>
+						</select>
+					</div>
+					<div class="form-group mb-3">
+						<label for="colvalue">輸入刪除條件:</label> <input type="text"
+							id="colvalue" name="colvalue" class="form-control"
+							autocomplete="off" required>
+						<div class="invalid-feedback">請輸入刪除條件</div>
+					</div>
+					<input type="button" value="刪除打卡資料"
+						class="delete-btn">
+				</form>
+			</div>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+    $(function() {
+        $('#col').change(function() {
+            let selectedValue = $(this).val();
+            if (selectedValue === "checkInId.date") {
+                $('#operator-group').show();
+                $('#colvalue').datepicker({
+                    dateFormat: "yy-mm-dd",
+                    showOtherMonths: true,
+                    selectOtherMonths: true,
+                    changeMonth: true,
+                    changeYear: true,
+                    yearRange: "1911:2200"
+                });
+            } else {
+                $('#operator-group').hide();
+                $('#colvalue').datepicker("destroy");
+            }
+        });
+        
+       const urlParams = new URLSearchParams(window.location.search);
+			if (urlParams.has('success')) {
+					Swal.fire({
+		            title: '刪除成功!!!',
+		            icon: 'success',
+		            showCancelButton: false,
+		            confirmButtonText: 'OK！'
+		        }).then((result) => {
+		            if (result.isConfirmed) {
+		                $form.submit();
+		            }
+		        });
+			}
+    });
+    	$(document).ready(function() {
+		    $(document).on('click', '.delete-btn', function() {
+		        var $button = $(this);
+		        var $form = $button.closest('form');
+		        var $tr = $button.closest('tr'); 
+		
+		        Swal.fire({
+		            title: '是否確定刪除選擇的紀錄',
+		            text: '麻煩請再次確認！',
+		            icon: 'warning',
+		            showCancelButton: true,
+		            confirmButtonText: '刪除！',
+		            cancelButtonText: '取消'
+		        }).then((result) => {
+		            if (result.isConfirmed) {
+		                $form.submit();
+		            }
+		        });
+		    });
+		});
+	</script>
+</body>
+</html>

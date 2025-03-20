@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>請假表單申請</title>
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
+        .content {
+            padding-top: 80px;
+        }
+        .navbar-container {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
+        .autocomplete-items {
+            border: none;
+            z-index: 99;
+            position: absolute;
+            left: 0;
+            right: 0;
+        }
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+        }
+        .autocomplete-item:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+<body>
+<div class="navbar-container">
+    <div class="container-fluid" th:replace="~{layout/empnavbar}"></div>
+</div>
+<div class="content d-flex justify-content-center mt-5">
+    <div class="container bg-white p-4 rounded shadow-sm">
+        <h5 class="text-center">請假表單申請</h5>
+        <form id="leaveForm" method="post" th:action="@{/InsertLeaveRequest.front}" enctype="multipart/form-data">
+             <input type="hidden" value="管理者新增一筆員工的請假資料" name="category" id="category">
+    		 
+        	
+            <div class="form-row mb-3">
+                <div class="col autocomplete">
+                    <label for="empno">員工編號:</label>
+                    <input id="empno" name="empno" type="text" placeholder="輸入員工編號或姓名" th:value="${empno}" class="form-control">
+                    <div id="autocomplete-list-empno" class="autocomplete-items"></div>
+                </div>
+                <div class="col">
+                    <label for="requestTypeID">請假假別:</label>
+                    <select id="requestTypeID" name="requestTypeID" class="form-control" required>
+                        <option value="">選擇假別</option>
+                        <option value="1">病假</option>
+                        <option value="2">事假</option>
+                        <option value="3">年假</option>
+                        <option value="4">婚假</option>
+                        <option value="5">產假</option>
+                        <option value="6">喪假</option>
+                    </select>
+                </div>
+                <div class="col autocomplete">
+                    <label for="delegateID">職務代理人:</label>
+                    <input id="delegateID" name="delegateID" type="text" placeholder="輸入員工編號或姓名" class="form-control">
+                    <div id="autocomplete-list-delegateID" class="autocomplete-items"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="reason">請假原因:</label>
+                <input type="text" id="reason" name="reason" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="startTime">請假開始時間:</label>
+                <input type="datetime-local" id="startTime" name="startTime" class="form-control" required />
+                <div id="startTimeError" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="endTime">請假結束時間:</label>
+                <input type="datetime-local" id="endTime" name="endTime" class="form-control" required />
+                <div id="endTimeError" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="totalHours">請假時數:</label>
+                <div class="d-flex align-items-center">
+                    <input type="text" id="totalHours" name="totalHours" class="form-control" readonly />
+                    <span>小時</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="documents">相關證明文件:</label>
+                <input type="file" name="file" id="photoInput" class="form-control">
+            </div>
+            
+            <div class="d-grid gap-2 mt-3">
+	            <input id="mybtn" type="submit" value="確定" class="btn btn-primary" />
+	            <button type="button" class="btn btn-secondary" onclick="enter(this)">一鍵輸入</button>
+	        </div>  
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const job = /*[[${job}]]*/ 'defaultJob';
+    const empno = /*[[${empno}]]*/ 'defaultEmpno';
+    /*]]>*/
+</script>
+<script>
+    // 計算小時數
+    document.addEventListener('DOMContentLoaded', function () {
+        const startTimeInput = document.getElementById('startTime');
+        const endTimeInput = document.getElementById('endTime');
+        const totalHoursInput = document.getElementById('totalHours');
+        const startTimeError = document.getElementById('startTimeError');
+        const endTimeError = document.getElementById('endTimeError');
+
+        function calculateHours() {
+            startTimeError.textContent = '';
+            endTimeError.textContent = '';
+
+            const startTime = new Date(startTimeInput.value);
+            const endTime = new Date(endTimeInput.value);
+
+            if (startTime && endTime) {
+                if (startTime >= endTime) {
+                    startTimeError.textContent = '開始時間不能晚於結束時間';
+                    endTimeError.textContent = '結束時間不能早於開始時間';
+                    totalHoursInput.value = '';
+                    return;
+                }
+
+                let totalHours = 0;
+                let current = new Date(startTime);
+
+                while (current < endTime) {
+                    const currentHour = current.getHours();
+                    if (currentHour >= 9 && currentHour < 18) {
+                        totalHours += 1;
+                    }
+                    current.setHours(currentHour + 1);
+                }
+
+                totalHoursInput.value = totalHours;
+            }
+        }
+
+        startTimeInput.addEventListener('change', calculateHours);
+        endTimeInput.addEventListener('change', calculateHours);
+        
+        //將前端所輸入的員工編號存入notifyEmpno的變數之中
+        let empnoInput = document.getElementById('empno').value;
+        let notifyEmpnoInput = document.getElementById('notifyEmpno');
+		console.log(`有無抓到值 : ${empnoInput}`)
+        empnoInput.addEventListener('input',function(){
+            notifyEmpnoInput.value = empnoInput.value;
+        })
+        
+        console.log(`有無抓到值 : ${notifyEmpnoInput}`)
+      
+
+
+    });
+
+    // 函數：設置模糊查詢邏輯
+    function setupAutocomplete(inputId, listId, url) {
+        const input = document.getElementById(inputId);
+        const list = document.getElementById(listId);
+
+        input.addEventListener('input', async () => {
+            const query = input.value;
+            if (!query) {
+                list.innerHTML = '';
+                return;
+            }
+
+            try {
+                const response = await axios.get(url, { params: { query: query } });
+                const employees = response.data;
+
+                list.innerHTML = '';
+                employees.forEach(employee => {
+                    const item = document.createElement('div');
+                    item.classList.add('autocomplete-item');
+                    item.textContent = `${employee.empno} - ${employee.name}`;
+                    item.addEventListener('click', () => {
+                        input.value = employee.empno; // 只填入員工編號
+                        list.innerHTML = '';
+                    });
+                    list.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Error fetching employees:', error);
+            }
+        });
+
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Backspace' && input.value === '') {
+                input.value = '';
+                list.innerHTML = '';
+            }
+        });
+    }
+
+    // 為每個需要模糊查詢的欄位設置對應的事件監聽器
+    const url = "http://localhost:8088/PSNEXUS/GetEmployeesByEmpnoAndNameFuzzySearch";
+    setupAutocomplete('empno', 'autocomplete-list-empno', url);
+    setupAutocomplete('delegateID', 'autocomplete-list-delegateID', url);
+    setupAutocomplete('approvalNo1ID', 'autocomplete-list-approvalNo1ID', url);
+    setupAutocomplete('approvalNo2ID', 'autocomplete-list-approvalNo2ID', url);
+    setupAutocomplete('approvalNo3ID', 'autocomplete-list-approvalNo3ID', url);
+    
+     
+     
+     function enter(button) {
+	    // 設置文本輸入框的值
+	    document.querySelector('input[name="empno"]').value = 'A0002';
+	    document.querySelector('input[name="delegateID"]').value = 'A0003';
+	    document.querySelector('input[name="reason"]').value = '身體發燒，下吐下瀉，請假一天';
+	
+	    // 設置日期時間輸入框的值，格式需正確
+	    document.querySelector('input[name="startTime"]').value = '2024-08-10T08:00';
+	    document.querySelector('input[name="endTime"]').value = '2024-08-10T18:00';
+	
+	    // 設置下拉選單的值
+	    document.querySelector('select[name="requestTypeID"]').value = '1'; // 假設 '1' 是病假的值
+	
+	    // 觸發變更事件以確保表單正確更新
+	    document.querySelector('input[name="startTime"]').dispatchEvent(new Event('change'));
+	    document.querySelector('input[name="endTime"]').dispatchEvent(new Event('change'));
+	    
+	    // 更新隱藏的輸入框值
+        document.getElementById('notifyEmpno').value = empnoInput.value;
+	  }
+	
+
+</script>
+</body>
+</html>

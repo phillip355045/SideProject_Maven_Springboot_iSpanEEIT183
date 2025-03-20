@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #dfe9f3, #ffffff);
+            color: #333;
+        }
+
+        .content {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 1000px;
+            text-align: left;
+            background: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .content h2 {
+            color: #219ebc;
+            font-size: 22px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        th,
+        td {
+            padding: 5px;
+            text-align: center;
+
+        }
+
+        th {
+            background: #8ecae6;
+            color: #fff;
+        }
+
+        td a,
+        td form input[type="submit"] {
+            background-color: #8ecae6;
+            color: #fff;
+            padding: 5px 10px;
+            margin: 0 5px;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        td a:hover,
+        td form input[type="submit"]:hover {
+            background-color: #219ebc;
+        }
+
+        td form input[type="file"] {
+            padding: 5px;
+            margin: 5px 0;
+        }
+
+        h3 {
+            color: #219ebc;
+            text-align: center;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+    </style>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" />
+    
+    <title>預約紀錄</title>
+</head>
+
+<body>
+<div th:replace="~{layout/empnavbar}"></div>
+<div class="wrap">
+    <div id="content" class="content container" align="center">
+
+        <button class="btn btn-danger" onclick="deleteSelected()">批次刪除</button>
+        <h2>預約紀錄</h2>
+        <table border="1" id="myTable"  class="display compact hover cell-border stripe">
+        	<thead>
+	            <tr>
+	            	<th width="5px"><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"></th>
+	                <th>編號</th>
+	                <th>名稱</th>
+	                <th>主題</th>
+<!-- 	                <th>員編</th> -->
+	                <th width="100px">日期</th>
+	                <th>開始</th>
+	                <th>結束</th>
+	                <th width="150px">文件</th>
+	                <th>審核</th>
+	                <th width="80px">狀態</th>
+	                <th>功能</th>
+	            </tr>
+            </thead>
+         	<tbody>
+	            <tr th:each="reserve:${roomReserves}">
+	            	<td><input type="checkbox" class="deleteCheckbox" th:value="${reserve.reserveno}"></td>
+	                <td th:text="${reserve.reserveno}" th:id="'reserveno_' + ${reserve.reserveno}"></td>
+	                <td>
+	                	<span th:if="${reserve.onlineMeeting}">
+	                		<a th:href="${reserve.onlineMeeting}" th:text="${reserve.roomName}"></a>
+	                	</span>
+	                	<span th:unless="${reserve.onlineMeeting}" th:text="${reserve.roomName}"></span>
+	                </td>
+	                <td th:text="${reserve.reserveTitle}"></td>
+<!-- 	                <td th:text="${reserve.empno}"></td> -->
+	                <td th:text="${reserve.eventDay}"></td>
+	                <td th:text="${reserve.startTime}"></td>
+	                <td th:text="${reserve.endTime}"></td>
+	
+	                <td style="text-align: center; vertical-align: middle;">
+	                    <div th:if="!${reserve.hasFile}">                   	
+	                    	<form id="upload" method="post" th:action="@{/UploadFile.controller}" enctype="multipart/form-data">
+	                    		<input type="hidden" name="reserveno" th:value="${reserve.reserveno}" />
+	                            <input type="file" name="document" multiple class="form-control  form-control-sm"/>
+	                            <button type="submit" class="btn btn-primary btn-sm">送出</button>
+	                    	</form>
+	                    </div>
+	                    <!--  
+	                    <div th:if="${reserve.status != '取消'}">
+	                    -->
+		                    <div th:each="file : ${files}" th:if="${file.reserveno == reserve.reserveno}">
+
+		                        <a href="#" th:onclick="'downloadFile(' + ${reserve.reserveno} + ')'">
+		                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 384 512">
+		                                <path
+		                                    d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z" />
+		                            </svg>
+		                        </a>
+	                            <a href="#" th:onclick="'deleteFile(' + ${reserve.reserveno} + ')'">
+		                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 384 512">
+		                                <path
+		                                    d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z" />
+		                            </svg>
+		                        </a>
+		
+		                    </div>
+						<!-- </div> -->
+	                </td>
+	
+	                <td th:if="${reserve.status == '未審核'}">
+	                    <span>未審核</span>
+	                </td>
+	                <td th:if="${reserve.status == '放行'}">
+	                    <span>放行</span>
+	                </td>
+	                <td th:if="${reserve.status == '退回'}">
+	                    <span>退回</span>
+	                </td>
+	                <td th:if="${reserve.status == '取消'}">
+	                    <span>取消</span>
+	                </td>
+	                <td th:id="'status_' + ${reserve.reserveno}"></td>
+	                <td>
+	                    <a href="#" th:if="${reserve.status == '未審核'}"
+	                        th:onclick="'CancelReservation('+ ${reserve.reserveno} + ')'">取消預約</a>
+	                    <a th:if="${reserve.status == '退回'}"
+	                        th:href="'UpdateReserve.controller?reserveno=' + ${reserve.reserveno}">重新預約</a>
+	 
+	                    <a th:if="${reserve.status == '放行'}" 
+	                    	th:href="'MeetingInfo.controller?reserveno=' + ${reserve.reserveno}">通知與會人員</a>
+	                 
+	                </td>
+	            </tr>
+			</tbody>
+        </table>
+           
+    </div>
+  </div>
+    <div th:replace="~{layout/footer}"></div>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+<!--     <script src="/js/jquery-3.7.1.js"></script> -->
+    <script>
+    	$(document).ready( function () {
+    	$('#myTable').DataTable({
+    		//中文化
+    		"language":{
+			    "processing": "處理中...",
+			    "loadingRecords": "載入中...",
+			    "paginate": {
+			        "first": "第一頁",
+			        "previous": "上一頁",
+			        "next": "下一頁",
+			        "last": "最後一頁"
+			    },
+			    "emptyTable": "目前沒有資料",
+			    "datetime": {
+			        "previous": "上一頁",
+			        "next": "下一頁",
+			        "hours": "時",
+			        "minutes": "分",
+			        "seconds": "秒",
+			        "amPm": [
+			            "上午",
+			            "下午"
+			        ],
+			        "unknown": "未知",
+			        "weekdays": [
+			            "週日",
+			            "週一",
+			            "週二",
+			            "週三",
+			            "週四",
+			            "週五",
+			            "週六"
+			        ],
+			        "months": [
+			            "一月",
+			            "二月",
+			            "三月",
+			            "四月",
+			            "五月",
+			            "六月",
+			            "七月",
+			            "八月",
+			            "九月",
+			            "十月",
+			            "十一月",
+			            "十二月"
+			        ]
+			    },
+			    "searchBuilder": {
+			        "add": "新增條件",
+			        "condition": "條件",
+			        "button": {
+			            "_": "複合查詢 (%d)",
+			            "0": "複合查詢"
+			        },
+			        "clearAll": "清空",
+			        "conditions": {
+			            "array": {
+			                "contains": "含有",
+			                "equals": "等於",
+			                "empty": "空值",
+			                "not": "不等於",
+			                "notEmpty": "非空值",
+			                "without": "不含"
+			            },
+			            "date": {
+			                "after": "大於",
+			                "before": "小於",
+			                "between": "在其中",
+			                "empty": "為空",
+			                "equals": "等於",
+			                "not": "不為",
+			                "notBetween": "不在其中",
+			                "notEmpty": "不為空"
+			            },
+			            "number": {
+			                "between": "在其中",
+			                "empty": "為空",
+			                "equals": "等於",
+			                "gt": "大於",
+			                "gte": "大於等於",
+			                "lt": "小於",
+			                "lte": "小於等於",
+			                "not": "不為",
+			                "notBetween": "不在其中",
+			                "notEmpty": "不為空"
+			            },
+			            "string": {
+			                "contains": "含有",
+			                "empty": "為空",
+			                "endsWith": "字尾為",
+			                "equals": "等於",
+			                "not": "不為",
+			                "notEmpty": "不為空",
+			                "startsWith": "字首為",
+			                "notContains": "不含",
+			                "notStartsWith": "開頭不是",
+			                "notEndsWith": "結尾不是"
+			            }
+			        },
+			        "data": "欄位",
+			        "leftTitle": "群組條件",
+			        "logicAnd": "且",
+			        "logicOr": "或",
+			        "rightTitle": "取消群組",
+			        "title": {
+			            "_": "複合查詢 (%d)",
+			            "0": "複合查詢"
+			        },
+			        "value": "內容",
+			        "deleteTitle": "刪除篩選條件"
+			    },
+			    "editor": {
+			        "close": "關閉",
+			        "create": {
+			            "button": "新增",
+			            "title": "新增資料",
+			            "submit": "送出新增"
+			        },
+			        "remove": {
+			            "button": "刪除",
+			            "title": "刪除資料",
+			            "submit": "送出刪除",
+			            "confirm": {
+			                "_": "您確定要刪除您所選取的 %d 筆資料嗎？",
+			                "1": "您確定要刪除您所選取的 1 筆資料嗎？"
+			            }
+			        },
+			        "error": {
+			            "system": "系統發生錯誤(更多資訊)"
+			        },
+			        "edit": {
+			            "button": "修改",
+			            "title": "修改資料",
+			            "submit": "送出修改"
+			        },
+			        "multi": {
+			            "title": "多重值",
+			            "info": "您所選擇的多筆資料中，此欄位包含了不同的值。若您想要將它們都改為同一個值，可以在此輸入，要不然它們會保留各自原本的值。",
+			            "restore": "復原",
+			            "noMulti": "此輸入欄需單獨輸入，不容許多筆資料一起修改"
+			        }
+			    },
+			    "autoFill": {
+			        "cancel": "取消"
+			    },
+			    "buttons": {
+			        "copySuccess": {
+			            "_": "複製了 %d 筆資料",
+			            "1": "複製了 1 筆資料"
+			        },
+			        "copyTitle": "已經複製到剪貼簿",
+			        "excel": "Excel",
+			        "pdf": "PDF",
+			        "print": "列印",
+			        "copy": "複製",
+			        "colvis": "欄位顯示",
+			        "colvisRestore": "重置欄位顯示",
+			        "csv": "CSV",
+			        "pageLength": {
+			            "-1": "顯示全部",
+			            "_": "顯示 %d 筆"
+			        },
+			        "createState": "建立狀態",
+			        "removeAllStates": "移除所有狀態",
+			        "removeState": "移除",
+			        "renameState": "重新命名",
+			        "savedStates": "儲存狀態",
+			        "stateRestore": "狀態 %d",
+			        "updateState": "更新",
+			        "collection": "更多"
+			    },
+			    "searchPanes": {
+			        "collapse": {
+			            "_": "搜尋面版 (%d)",
+			            "0": "搜尋面版"
+			        },
+			        "emptyPanes": "沒搜尋面版",
+			        "loadMessage": "載入搜尋面版中...",
+			        "clearMessage": "清空",
+			        "count": "{total}",
+			        "countFiltered": "{shown} ({total})",
+			        "showMessage": "顯示全部",
+			        "collapseMessage": "摺疊全部",
+			        "title": "篩選條件 - %d"
+			    },
+			    "stateRestore": {
+			        "emptyError": "名稱不能空白。",
+			        "creationModal": {
+			            "button": "建立",
+			            "columns": {
+			                "search": "欄位搜尋",
+			                "visible": "欄位顯示"
+			            },
+			            "name": "名稱：",
+			            "order": "排序",
+			            "paging": "分頁",
+			            "scroller": "卷軸位置",
+			            "search": "搜尋",
+			            "searchBuilder": "複合查詢",
+			            "select": "選擇",
+			            "title": "建立新狀態",
+			            "toggleLabel": "包含："
+			        },
+			        "duplicateError": "此狀態名稱已經存在。",
+			        "emptyStates": "名稱不可空白。",
+			        "removeConfirm": "確定要移除 %s 嗎？",
+			        "removeError": "移除狀態失敗。",
+			        "removeJoiner": "和",
+			        "removeSubmit": "移除",
+			        "removeTitle": "移除狀態",
+			        "renameButton": "重新命名",
+			        "renameLabel": "%s 的新名稱：",
+			        "renameTitle": "重新命名狀態"
+			    },
+			    "select": {
+			        "columns": {
+			            "_": "選擇了 %d 欄資料",
+			            "1": "選擇了 1 欄資料"
+			        },
+			        "rows": {
+			            "1": "選擇了 1 筆資料",
+			            "_": "選擇了 %d 筆資料"
+			        },
+			        "cells": {
+			            "1": "選擇了 1 格資料",
+			            "_": "選擇了 %d 格資料"
+			        }
+			    },
+			    "zeroRecords": "沒有符合的資料",
+			    "aria": {
+			        "sortAscending": "：升冪排列",
+			        "sortDescending": "：降冪排列"
+			    },
+			    "info": "顯示第 _START_ 至 _END_ 筆結果，共 _TOTAL_ 筆",
+			    "infoEmpty": "顯示第 0 至 0 筆結果，共 0 筆",
+			    "infoThousands": ",",
+			    "lengthMenu": "顯示 _MENU_ 筆結果",
+			    "search": "搜尋：",
+			    "searchPlaceholder": "請輸入關鍵字",
+			    "thousands": ",",
+			    "infoFiltered": "(從 _MAX_ 筆結果中篩選)"
+			} 
+    	
+    	
+    	})
+ 			
+    	
+    	
+	});
+        //------整批刪除功能-----------
+        function toggleSelectAll(source) {//選擇全部
+            //getElementsByClassName可以動態抓取新增的html，如果是用queryselector只能抓取既有的html元素
+            const checkboxes = document.getElementsByClassName('deleteCheckbox');
+            for (let i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+
+        function deleteSelected() {
+            const selectedIds=[];
+            const checkboxes = document.getElementsByClassName('deleteCheckbox');
+            for(let i = 0; i < checkboxes.length; i++){
+                if(checkboxes[i].checked){
+                    selectedIds.push(checkboxes[i].value);
+                }
+            }
+            if(selectedIds.length === 0){
+                alert("無勾選刪除項目")
+                return;
+            }
+            const confirmed = confirm('確定要刪除勾選的預約資料嗎');
+            if(confirmed){
+                axios.post('/PSNEXUS/BatchDeleteReservations.controller', selectedIds)
+                .then(response => {
+                    // 删除成功，重新加载页面或更新表格
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error("批量删除失败：", error);
+                    alert("删除失败，请重试。");
+                });
+            }
+
+        }
+        //------整批刪除功能-----------
+
+
+
+		//---取消預約------
+		function CancelReservation(reserveno){
+            Swal.fire({
+                title: '確認取消?',
+                text: '你確定要取消編號 ' + reserveno + ' 預約嗎？',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '確定',
+                cancelButtonText: '取消'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios({
+						method: 'get',
+						url: '/PSNEXUS/CancelReserve.controller',
+						params: {    //data後端用responseBody來接收物件
+							reserveno: reserveno
+						}
+					})
+					.then(response => {
+						console.log('取消成功')
+                        window.location.reload();
+					})
+					.catch(error => {
+						console.error('Error:', error);
+					});
+
+                }
+            });
+
+        }
+		
+		//---取消預約------
+
+		//------上傳檔案功能-----------
+		if( document.getElementById('upload') ){
+	        document.getElementById('upload').addEventListener('submit', function(event) {
+	            event.preventDefault();
+	            // console.log(123)
+	            const form = document.getElementById('upload');
+	            const formData = new FormData(form);
+	            
+	            axios.post('/PSNEXUS/UploadFile.controller', formData)
+	                .then(response => {
+	                    // 处理成功响应
+	                    console.log('Success:', response.data);
+	                    alert('上傳成功！');
+	                    window.location.reload();
+	                })
+	                .catch(error => {
+	                    // 处理错误响应
+	                    console.error('Error:', error);
+	                    document.getElementById('error').innerText = '提交失敗，請重試。';
+	                });
+	        });
+		
+		}
+        //------上傳檔案功能-----------
+        
+       
+
+        //---------刪除檔案-----------
+        function deleteFile(reserveno) {
+            Swal.fire({
+                title: '確認刪除?',
+                text: '你確定要刪除預約編號 ' + reserveno + ' 的檔案嗎？',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '確定',
+                cancelButtonText: '取消'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 如果用戶點擊確定，可以導向修改的 URL
+                    // window.location.href = 'FrontDeleteReserve.controller?reserveno=' + reserveno;
+                    axios({
+						method: 'get',
+						url: '/PSNEXUS/DeleteFile.controller',
+						params: {    //data後端用responseBody來接收物件
+							reserveno: reserveno
+						}
+					})
+					.then(response => {
+						console.log('檔案刪除成功')
+                        window.location.reload();
+					})
+					.catch(error => {
+						console.error('Error downloading file:', error);
+					});
+
+                }
+            });
+        }
+        //---------刪除檔案-----------
+        
+        //---------下載檔案-----------
+        function downloadFile(reserveno) {
+            Swal.fire({
+                title: '下載檔案?',
+                text: '將會儲存到C:\Download',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '確定',
+                cancelButtonText: '取消'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 如果用戶點擊確定，可以導向修改的 URL
+                    //window.location.href = 'GetFile.controller?reserveno=' + reserveno;
+                                        // // 如果用戶點擊確定，可以導向修改的 URL                    
+                    // window.location.href = 'GetFile.controller?reserveno=' + reserveno;
+					
+
+					axios({
+						method: 'get',
+						url: 'http://localhost:8088/PSNEXUS/GetFile.controller',
+						params: {    //data後端用responseBody來接收物件
+							reserveno: reserveno
+						}
+					})
+					.then(response => {
+						console.log('檔案下載成功')
+                        
+					})
+					.catch(error => {
+						console.error('Error downloading file:', error);
+					});
+                }
+            });
+        }
+        
+        
+        $(function () {
+			//-----時間判斷會議室狀態顯示------
+            function fetchReservations() {
+                return new Promise((resolve, reject) => {
+                    const url = "http://localhost:8088/PSNEXUS/FrontGetAllReservation.controller";
+                    $.getJSON(url, function (data) {
+                        resolve(data);
+                        console.log(data)
+                    }).fail(function (jqxhr, textStatus, error) {
+                        reject(new Error("Request Failed: " + textStatus + ", " + error));
+                    });
+                });
+
+            }
+
+            function calculateReservationStatus(reservation) {
+                let now = new Date();
+                let currentDate = now.toISOString().split('T')[0];
+                let currentTime = now.toTimeString().split(' ')[0];
+                console.log(currentDate);
+                console.log(currentTime);
+                let meetingDate = reservation.eventDay;
+                let startTime = reservation.startTime;
+                let endTime = reservation.endTime;
+
+                if (currentDate < meetingDate) {
+                    return '尚未進行';
+                } else if (currentDate === meetingDate) {
+                    if (currentTime < startTime) {
+                        return '尚未進行';
+                    } else if (currentTime >= startTime && currentTime <= endTime) {
+                        return '進行中';
+                    } else {
+                        return '會議完畢';
+                    }
+                } else {
+                    return '會議完畢';
+                }
+            }
+            function updateReservationStatus(allReservation) {
+                console.log("reDraw");
+                let roomElements = document.querySelectorAll('td[id^="reserveno_"]');//選擇具有id屬性且以reserveno開頭的td元素
+                roomElements.forEach(roomElement => {
+                    if (roomElement.textContent.trim() === String(allReservation.reserveno)) { //這邊需要將資料轉換成字串才能比對，但是在GetAllRoom.jsp卻不用
+                        let status = calculateReservationStatus(allReservation);
+                        let statusElement = document.getElementById('status_' + roomElement.id.split('_')[1]);
+                        statusElement.textContent = status;
+                        if (status === '进行中') {
+                            statusElement.style.color = 'red'; // 设置文字颜色为红色
+                        }
+                    }
+                });
+            }
+
+            async function updateAllReservations() {
+                try {
+                    let data = await fetchReservations();
+                    if (data.length > 0) {
+                        console.log(data)
+                        data.forEach(allReservation => {
+                            updateReservationStatus(allReservation);
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error fetching reservations: ", error);
+                }
+            }
+            // 定时器每隔一分钟更新一次状态
+            setInterval(updateAllReservations, 60000);
+
+            // 初始加载
+            updateAllReservations();
+			//-----時間判斷會議室狀態顯示------
+			
+			
+        });
+        
+    </script>
+
+</body>
+
+</html>

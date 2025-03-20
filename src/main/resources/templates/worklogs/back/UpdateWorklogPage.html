@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>修改工作日誌結果</title>
+	<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+
+	<style>
+		html,
+		body {
+			height: 97%;
+			width: 100%;
+		}
+
+		.wrap {
+			height: 100%;
+			width: 100%;
+		}
+		.left-side {
+			flex: 1;
+			margin-right: 20px;
+		}
+
+		.right-side {
+			flex: 2;
+		}
+
+		h2 {
+			color: #333333;
+			margin-bottom: 20px;
+			font-size: 24px;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 20px 0;
+			table-layout: fixed;
+		}
+
+		th,
+		td {
+			padding: 12px;
+			border-bottom: 1px solid #dddddd;
+			text-align: center;
+			font-size: 16px;
+		}
+
+		.th {
+			background-color: #BBBFCA;
+			color: black;
+			white-space: nowrap;
+			text-align: center;
+			/* 表頭文字置中 */
+		}
+
+		.btn {
+			padding: 5px 8px;
+			text-decoration: none;
+			background-color: #007BFF;
+			color: white;
+			border-radius: 5px;
+			margin: 0 4px;
+			font-size: 14px;
+		}
+
+		.btn.All {
+			background-color: #BBBFCA;
+		}
+
+		.navbar-container {
+			width: 100%;
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 1000;
+			/* 確保在最上方 */
+			color: white;
+			text-align: center;
+			padding: 0;
+		}
+
+		.navbar-container div {
+			color: white;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1"> <br>
+			<a th:href="@{/GetAllWorklogs}">管理日誌總表</a>
+			<a th:href="@{/ReviewAllWorklogs}">審核日誌總表</a>
+			<a th:href="@{/HistoricalAllWorklogs}">歷史日誌總表</a>
+			<a th:href="@{/InsertWorklog}">新增工作日誌</a>
+
+		</div>
+		<div id="content" class="container">
+			<div class="left-side">
+				<h2>修改工作日誌結果</h2>
+				<table class="table table-bordered">
+					<tbody>
+						<tr>
+							<td>工作日誌編號</td>
+							<td th:text="${worklog.worklogid}"></td>
+						</tr>
+						<tr>
+							<td>部門編號</td>
+							<td th:text="${worklog.department.deptno}+'-'+${worklog.department.deptname}"></td>
+						</tr>
+						<tr>
+							<td>員工編號</td>
+							<td th:text="${worklog.employees.empno}+'-'+${worklog.employees.name}"></td>
+						</tr>
+						<tr>
+							<td>工作日期</td>
+							<td th:text="${#dates.format(worklog.worklogdate, 'yyyy-MM-dd')}"></td>
+						</tr>
+						<tr>
+							<td>審核狀態</td>
+							<td th:text="${worklog.reviewstatus}"></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<h2>工作項目</h2>
+				<table class="table table-bordered">
+					<thead>
+						<tr class="th">
+							<th style="width: 130px;">需求部門</th>
+							<th style="width: 130px;">工作類型</th>
+							<th style="width: 320px;">工作內容說明</th>
+							<th class="hours" style="width: 100px;">正常工時</th>
+							<th class="hours" style="width: 100px;">加班工時</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="item : ${worklog.worklogItems}">
+							<td th:text="${item.deptname}"></td>
+							<td th:text="${item.jobType}"></td>
+							<td th:text="${item.jobDescription}"></td>
+							<td class="hours" th:text="${item.regularHours}"></td>
+							<td class="hours" th:text="${item.overtimeHours}"></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<a href="#" th:href="@{/GetAllWorklogs}" class="btn All">回到總表</a>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="~{layout/footer}"></div>
+</body>
+
+</html>

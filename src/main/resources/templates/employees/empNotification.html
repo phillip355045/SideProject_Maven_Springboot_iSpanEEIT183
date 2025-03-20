@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>歷史通知</title>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" />
+<link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+<style>
+body, html {
+	background: url('images/cat4.jpg') no-repeat center center fixed;
+	background-size: cover;
+	background-position: center;
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	transition: margin-left 0.3s;
+	height: 97%;
+	width: 100%;
+}
+
+.wrap {
+	height: 100%;
+	width: 100%;
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: rgba(255, 255, 255, 0.8);
+	border-radius: 10px;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+	transition: margin-left 0.3s;
+}
+
+h2 {
+	color: #333;
+}
+</style>
+</head>
+<body>
+
+	<div th:replace="~{layout/empnavbar}"></div>
+	<div class="wrap">
+		<div class="container mt-3">
+			<!-- <button type="button" id="readAll" name="readAll"
+				onclick="readAllNotification()">已讀全部通知</button> -->
+			<form method="get" th:action="@{/readAllNotification}">
+			<input type="button" value="已讀全部通知" class="btn btn-outline-danger btn-sm read-btn" />
+			</form>
+			<div align="center">
+				<table id="mytable" class="display text-center" style="width: 100%">
+					<thead>
+						<tr>
+							<!-- <th>項次</th> -->
+							<th>通知時間</th>
+							<th>通知訊息</th>
+							<th>是否已讀</th>
+							<th>讀取時間</th>
+
+						</tr>
+					<tbody>
+						<tr th:each="allNotifications : ${allNotifications}">
+							<!-- <td th:text="${allNotifications.id}"></td> -->
+							<td
+								th:text="${#dates.format(allNotifications.notification.announceTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+							<td th:text="${allNotifications.notification.message}"></td>
+							<td><span th:if="${allNotifications.isRead}">V</span> <span
+								th:unless="${allNotifications.isRead}"></span></td>
+							<td
+								th:text="${allNotifications.readTime != null ? #dates.format(allNotifications.readTime, 'yyyy-MM-dd HH:mm:ss') : ''}"></td>
+
+
+						</tr>
+					</tbody>
+				</table>
+				<p>
+			</div>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
+	<script>
+		new DataTable('#mytable');
+		
+		function readAllNotification() {
+		    const url = "http://localhost:8088/PSNEXUS/readAllNotification";  // Correct URL
+		    axios.get(url)  // Use the correct variable name
+		        .then(response => {
+		            console.log('成功', response);
+		        })
+		        .catch(error => {
+		            console.error('錯誤', error);
+		        });
+		}
+
+		$(document).ready(function() {
+		    $(document).on('click', '.read-btn', function() {
+		        var $button = $(this);
+		        var $form = $button.closest('form');
+		
+		        Swal.fire({
+		            title: '是否確定已讀所有通知',
+		            text: '麻煩請再次確認！',
+		            icon: 'warning',
+		            showCancelButton: true,
+		            confirmButtonText: '是！',
+		            cancelButtonText: '取消'
+		        }).then((result) => {
+		            if (result.isConfirmed) {
+		                $form.submit();
+		            }
+		        });
+		    });
+		});
+	</script>
+</body>
+</html>

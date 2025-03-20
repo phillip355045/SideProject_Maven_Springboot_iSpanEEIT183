@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+	<!-- Required meta tags -->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Bootstrap CSS -->
+	
+
+	<title>個人薪資單</title>
+
+	
+	<!-- 表單: backFrom-->
+    <link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+    
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500&display=swap');
+
+		* {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			text-decoration: none;
+		}
+
+		body {
+			background-color: rgb(235, 226, 247);
+		}
+
+		.headimg {
+			margin-bottom: 30px;
+			text-align: center;
+		}
+
+		.headimg a {
+			text-decoration: none;
+		}
+
+		.headimg img {
+			width: 100%;
+		}
+
+		.about {
+			position: relative;
+			width: 100%;
+			height: 280px;
+			margin-bottom: 30px;
+		}
+
+		.about img {
+			width: 100%;
+			height: 280px;
+			position: absolute;
+		}
+
+		.about .mask {
+			background-color: rgba(133, 201, 169, 0.6);
+			width: 100%;
+			height: 280px;
+			line-height: 200px;
+			position: absolute;
+		}
+
+		.about .mask h1 {
+			color: aliceblue;
+			font-size: 30px;
+			text-align: center;
+			padding-top: 30px;
+		}
+
+		.about .mask p {
+			line-height: 1.3;
+			text-align: justify;
+			margin-bottom: 10px;
+			color: aliceblue;
+			font-size: 20px;
+			margin: 30px;
+		}
+
+		.roll {
+			margin-bottom: 30px;
+		}
+
+		.row {
+			margin-bottom: 30px;
+		}
+
+		small {
+			font-size: 14px;
+		}
+
+		.information {
+			background-color: rgb(46, 46, 46);
+			color: rgb(160, 160, 160);
+			padding: 20px;
+			display: flex;
+			justify-content: center;
+			line-height: 1.3;
+			font-size: small;
+			align-items: center;
+		}
+
+		.map {
+			margin: 100px;
+		}
+
+		.back {
+			float: right;
+		}
+
+		footer {
+			background-color: rgb(25, 25, 25);
+			;
+			color: rgb(176, 176, 176);
+			height: 50px;
+			padding: 15px;
+		}
+
+		footer a {
+			color: rgb(175, 175, 175);
+			text-decoration: none;
+			margin: 5px;
+		}
+
+		footer a:hover {
+			color: rgb(79, 79, 79);
+			text-decoration: none;
+		}
+
+	
+
+		.wrap {
+		
+			width: 100%;
+		 	background: linear-gradient(to right, #dfe9f3, #ffffff);
+		/*background-color: #dfe9f3; */
+			margin: auto; 
+			/*
+            background-image: url("https://truth.bahamut.com.tw/s01/202201/78eb807a59adcd9aa4c96aac199feaa9.JPG");
+            background-repeat: no-repeat;
+            /* 防止背景圖片重複 */
+			background-position: center center;
+			/* 背景圖片置中 */
+			background-size: contain;
+			/* 背景圖片等比縮放以適應容器 */
+		}
+
+		.navbar-nav {
+			padding-right: 80px;
+			/* 調整右側的距離 */
+		}
+
+		.nav1 {
+			float: left;
+		}
+
+		.nav1 a {
+			color: rgb(231, 232, 243);
+			text-decoration: none;
+			background-color: rgba(125, 101, 165, 0.676);
+			background-image: url("star-half.svg");
+			background-repeat: no-repeat;
+			background-position: 20px center;
+			background-size: 25px;
+			display: block;
+			width: 200px;
+			border-bottom: 1px dashed rgb(2, 2, 2);
+			line-height: 40px;
+			text-align: center;
+		}
+
+		.nav1 a:hover {
+			color: rgb(228, 228, 251);
+			background-color: rgb(41, 39, 76);
+		}
+
+		#content {
+			width: 80%;
+			padding: 25px;
+			margin: auto;
+			background-color: rgba(255, 255, 255, .5);
+		}
+
+		h2 {
+			color: aliceblue;
+		}
+
+		form {
+			color: aliceblue;
+		}
+
+		body {
+			background-color: rgb(235, 226, 247);
+			font-family: Arial, sans-serif;
+		}
+
+		.salary-slip {
+			width: 80%;
+			margin: 0 auto;
+			border-collapse: collapse;
+			border: 1px solid black;
+		}
+
+		.salary-slip,
+		.salary-slip th,
+		.salary-slip td {
+			border: 1px solid black;
+		}
+
+		.salary-slip th,
+		.salary-slip td {
+			padding: 10px;
+			text-align: left;
+		}
+
+		.salary-slip th {
+			background-color: transparent;
+		}
+
+		.header {
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+		.header h2 {
+			margin: 0;
+			color: black;
+		}
+
+		.total {
+			font-weight: bold;
+		}
+
+		.right-align {
+			text-align: right;
+		}
+
+		.right-align-red {
+			color: rgb(158, 0, 0);
+		}
+
+		.right-align-blue {
+			color: blue;
+		}
+
+		.input-red {
+			color: rgb(158, 0, 0);
+			background-color: transparent;
+			border: none;
+			box-shadow: none;
+		}
+
+		.input-blue {
+			color: blue;
+			background-color: transparent;
+			border: none;
+			box-shadow: none;
+			border: none;
+		}
+
+		.input-bold {
+			font-weight: bold;
+			background-color: transparent;
+			border: none;
+			box-shadow: none;
+			color: rgb(25, 25, 25);
+		}
+
+		.yellow-text {
+			color: yellow;
+		}
+	</style>
+</head>
+
+<body>
+
+
+
+	<div th:replace="~{layout/empnavbar}"></div>
+	<div class="wrap">
+		
+		
+		
+		
+		<div id="content">
+			<div class="header">
+				<h2>
+					公司 <span th:text="${emp.year}">年份</span> 年 <span th:text="${emp.month}">月份</span> 月薪 清單
+				</h2>
+				<p>
+					發薪日期：<span th:text="${payDate}">發薪日期</span>
+				</p>
+			</div>
+			<table class="salary-slip">
+				<tr>
+					<th>部門： <span th:text="${emp.deptno}"></span></th>
+
+					<th>員編：<span th:text="${emp.empno}"></span></th>
+
+					<th>姓名：<span th:text="${emp.name}"></span></th>
+
+				</tr>
+			</table>
+			<br>
+			<table class="salary-slip">
+				<tr>
+					<th>發放金額</th>
+					<th>金額</th>
+					<th>扣除金額</th>
+					<th>金額</th>
+				</tr>
+				<tr>
+					<td>本薪</td>
+					<td class="right-align right-align-blue"><input type="text" class="input-blue" disabled
+							th:value="${emp.sal}"></td>
+					<td>勞保費</td>
+					<td class="right-align right-align-red"><input type="text" class="input-red" disabled
+							th:value="${laborInsurance}"></td>
+				</tr>
+				<tr>
+					<td>主管津貼</td>
+					<td class="right-align right-align-blue"><input type="text" class="input-blue" disabled
+							th:value="${emp.mgrAllowance}"></td>
+					<td>健保費</td>
+					<td class="right-align right-align-red"><input type="text" class="input-red" disabled
+							th:value="${healthInsurance}"></td>
+				</tr>
+				<tr>
+					<td>伙食津貼</td>
+					<td class="right-align right-align-blue"><input type="text" class="input-blue" disabled
+							th:value="${emp.foodAllowance}"></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>交通津貼</td>
+					<td class="right-align right-align-blue"><input type="text" class="input-blue" disabled
+							th:value="${emp.trafficAllowance}"></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>節日禮金</td>
+					<td class="right-align right-align-blue"><input type="text" class="input-blue" disabled
+							th:value="${emp.holidayAllowance}"></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>加班費</td>
+					<td class="right-align right-align-blue"><input type="text" class="input-blue" disabled
+							th:value="${emp.overtimePay}"></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>全勤獎金</td>
+					<td class="right-align right-align-blue"><input type="text" class="input-blue" disabled
+							th:value="${emp.attendanceBonus}"></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td colspan="1" class="right-align total">應發合計</td>
+					<td colspan="1" class="right-align total"><input type="text" class="input-blue" disabled
+							th:value="${totalAmount}"></td>
+					<td colspan="1" class="right-align total">應扣合計</td>
+					<td colspan="1" class="right-align total"><input type="text" class="input-red" disabled
+							th:value="${totalDeduction}"></td>
+				</tr>
+				<tr>
+					<td colspan="2" class="right-align total">實發金額</td>
+					<td colspan="2" class="right-align total"><input type="text" class="input-bold" disabled
+							th:value="${netPay}"></td>
+				</tr>
+			</table>
+			<br>
+			<table class="salary-slip">
+				<tr>
+					<td colspan="4">備註</td>
+				</tr>
+				<tr>
+					<td colspan="4">2023年度特休(2023-04-11 ~ 2024-04-10) 可休日數：10日0時
+						已休日數：0日3時<br>剩餘日數：9日5時<br>撥帳 <span th:text="${netPay}">實發金額</span>
+						存入 中國信託商業銀行 專帳戶內
+					</td>
+				</tr>
+			</table>
+			<div style="text-align: center;margin:20px;">
+				<input type="button" value="上一頁" onclick="history.back();" />
+			</div>
+		</div>
+	</div>
+	<footer>
+		&copy; 2024 資展專題呈現 All Rights Reserved
+		<div class="back">
+			<a href="note.html">員工須知</a><a href="#">線上諮詢</a> <a href="#">back
+				to top</a>
+		</div>
+	</footer>
+
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			$.ajax({
+				url: "/api/salary",
+				method: "GET",
+				success: function (data) {
+					$('#year').text(data.year);
+					$('#month').text(data.month);
+					$('#payDate').text(data.payDate);
+					$('#deptno').text(data.deptno);
+					$('#empno').text(data.empno);
+					$('#name').text(data.name);
+					$('#sal').val(data.sal);
+					$('#laborInsurance').val(data.laborInsurance);
+					$('#healthInsurance').val(data.healthInsurance);
+					$('#mgrAllowance').val(data.mgrAllowance);
+					$('#foodAllowance').val(data.foodAllowance);
+					$('#trafficAllowance').val(data.trafficAllowance);
+					$('#holidayAllowance').val(data.holidayAllowance);
+					$('#overtimePay').val(data.overtimePay);
+					$('#attendanceBonus').val(data.attendanceBonus);
+					$('#totalAmount').val(data.totalAmount);
+					$('#totalDeduction').val(data.totalDeduction);
+					$('#netPay').val(data.netPay);
+				}
+			});
+		});
+
+
+
+		document.addEventListener("DOMContentLoaded", function () {
+
+			var amountCells = document.querySelectorAll('.amount-cell');
+
+
+			amountCells.forEach(function (cell) {
+
+				var input = cell.querySelector('input');
+
+
+				if (input && !isNaN(input.value)
+					&& input.value.trim() !== "") {
+
+					cell.style.color = "yellow";
+					cell.style.color = "yellow";
+				}
+			});
+		});
+	</script>
+</body>
+
+</html>

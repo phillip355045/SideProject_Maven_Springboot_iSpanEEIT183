@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+    <meta charset="UTF-8">
+    <title>員工資料</title>
+    <link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+    <style>
+     /*時間條展示*/ 	
+         .timeline-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin: 20px auto;
+        }
+
+        .labels {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        .labels div {
+            flex: 1;
+            text-align: center;
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .segment {
+            flex: 1;
+            background-color: #e0f7fa;
+            margin: 0 5px;
+            border-radius: 5px;
+            height: 20px;
+        }
+   
+   
+        /*分隔線*/
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #dfe9f3, #ffffff);
+            color: #333;
+        }
+
+        .content {
+            margin: 20px auto;
+            width: 90%;
+            max-width: 1200px;
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .content h2 {
+            color: #219ebc;
+            font-size: 22px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 5px;
+            text-align: left;
+
+        }
+
+        th {
+            background: linear-gradient(to right, #8ecae6, #caffbf);
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f4f4f9;
+        }
+
+        tr:hover {
+            background-color: #eaeaea;
+        }
+
+        h3 {
+            color: #219ebc;
+        }
+
+        a {
+            color: #219ebc;
+            text-decoration: none;
+        }
+        .button-link {
+            background-color: #8ecae6;
+            color: #fff;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+
+        .button-link:hover {
+            background-color: #219ebc;
+        }
+
+        /*會議狀態的設定*/
+        .highlighted-text {
+            background-color: red;
+            color: white;
+            padding: 2px 5px;
+            display: inline-block;
+            border-radius: 3px;
+        }
+        /*會議室資料呈現*/
+        .room-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(700px, 1fr)); /* 自动适应列宽度，每列最小300px */
+    gap: 20px; /* 网格间隙 */
+}
+
+.room-item {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.room-info {
+    /*text-align: left;*/
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start
+    
+}
+
+.room-actions {
+    margin-top: 10px;
+}
+		/*控制圖片大小，有些圖片太大會影響到*/
+        .carousel-inner img {
+            max-height: 200px; /* 根據需要調整高度 */
+            object-fit: cover; /* 保持圖片比例 */
+        }
+
+
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+
+<body>
+<div th:replace="~{layout/empnavbar}"></div>
+<div class="wrap">
+
+<div id="content" class="content container" align="center">
+    <h2>會議室資料</h2>
+    <div class="room-grid">
+        <div th:each="room : ${page.content}" class="room-item" style="display: flex;">
+        
+	        <div  th:if="${#maps.containsKey(pictureMap, room.roomno)}" th:attr="id='carouselExample_' + ${room.roomno}" class="carousel slide col-md-3">
+			  <div class="carousel-inner">
+			    <div th:each="picture, iterStat : ${pictureMap[room.roomno]}" th:classappend="${iterStat.index == 0} ? ' active' : ''" class="carousel-item">
+			      <img th:src="'data:image/png;base64,' + ${picture.picturePath}" class="d-block w-10"  alt="...">
+			    </div>
+	
+			  </div>
+			
+			  <button class="carousel-control-prev" type="button" th:attr="data-bs-target='#carouselExample_' + ${room.roomno}" data-bs-slide="prev">
+			    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+			    <span class="visually-hidden">Previous</span>
+			  </button>
+			  <button class="carousel-control-next" type="button" th:attr="data-bs-target='#carouselExample_' + ${room.roomno}" data-bs-slide="next">
+			    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+			    <span class="visually-hidden">Next</span>
+			  </button>
+			  
+	           <button type="button" class="btn btn-outline-primary" style="position: absolute; bottom: 20px; right: 140px;">
+	           	<a th:href="@{/ReserveRoom.controller(roomName=${room.roomName})}">預約</a>
+	           </button>
+			</div>
+            <div class="room-info col-md-9 ms-3">
+ 
+                <h3 th:text="${room.roomName}" th:id="'roomName_' + ${room.roomno}"></h3>
+                <p>會議室號碼：<span th:text="${room.roomno}"></span>；人數：<span th:text="${room.capacity}"></span></p>
+                
+                <p>地區：<span th:text="${room.location}"></span></p>
+                <p>大樓名稱以及樓層：<span th:text="${room.buildignAndFloor}"></span></p>
+                <p>會議室設備：<span th:text="${room.equip}"></span></p>
+
+           		<div class="timeline-container">
+				    <div class="labels">
+				        <div>08:00</div>
+				        <div>09:00</div>
+				        <div>10:00</div>
+				        <div>11:00</div>
+				        <div>12:00</div>
+				        <div>13:00</div>
+				        <div>14:00</div>
+				        <div>15:00</div>
+				        <div>16:00</div>
+				        <div>17:00</div>
+				        <div>18:00</div>
+				        <div>19:00</div>
+				        <div>20:00</div>
+				    </div>
+				    <div class="timeline" th:id="${room.roomName}">
+				        <div class="segment" id="08:00:00"></div>
+				        <div class="segment" id="09:00:00"></div>
+				        <div class="segment" id="10:00:00"></div>
+				        <div class="segment" id="11:00:00"></div>
+				        <div class="segment" id="12:00:00"></div>
+				        <div class="segment" id="13:00:00"></div>
+				        <div class="segment" id="14:00:00"></div>
+				        <div class="segment" id="15:00:00"></div>
+				        <div class="segment" id="16:00:00"></div>
+				        <div class="segment" id="17:00:00"></div>
+				        <div class="segment" id="18:00:00"></div>
+				        <div class="segment" id="19:00:00"></div>
+				        <div class="segment" id="20:00:00"></div>
+				    </div>
+				</div>     
+
+                
+            </div>
+        </div>
+    </div>
+    <br>
+     <ul class="pagination" th:if="${ page.totalPages != 0 }">
+        <!-- <ul class="pagination"> -->
+        <!-- 上一頁 -->
+        <th:block th:switch="${page.number != 0}">
+         <li th:case="${true}" class="page-item">
+             <a class="page-link" th:href="@{/FrontGetAllRoom.controller(p=${page.number})}">上一頁</a>
+         </li>
+          <li th:case="${false}" class="page-item disabled">
+             <a class="page-link" >上一頁</a>
+         </li>
+        </th:block>
+		    
+        <th:block th:each="pageNumber : ${#numbers.sequence(1,page.totalPages)}">        
+       
+           <th:block th:switch="${page.number + 1 == pageNumber}">
+           <li th:case="${false}" class="page-item">
+             <a class="page-link" th:href="@{/FrontGetAllRoom.controller(p=${pageNumber})}" th:text="${pageNumber}"></a>
+           </li>
+           <li th:case="${true}" class="page-item active">
+             <span class="page-link" th:href="@{/FrontGetAllRoom.controller(p=${pageNumber})}" th:text="${pageNumber}"></span>
+           </li>
+           </th:block>     
+                           
+        </th:block>
+        <!-- 下一頁 -->
+        <th:block th:switch="${page.number + 1 == page.totalPages}">
+	         <li th:case="${false}" class="page-item">
+	             <a class="page-link" th:href="@{/FrontGetAllRoom.controller(p=${page.number + 2})}">下一頁</a>
+	         </li>
+	         <li th:case="${true}" class="page-item disabled">
+	             <a class="page-link">下一頁</a>
+	         </li>
+        </th:block> 
+		   
+       	</ul>
+		
+		<h3>共<span th:text="${page.totalElements}"></span>筆會議室資料</h3>
+</div>
+</div>
+<div th:replace="~{layout/footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+
+        //會議時間展示
+        const url="http://localhost:8088/PSNEXUS/FrontGetAllReservation.controller";
+        let now = new Date();
+        let currentDate = now.toISOString().split('T')[0];
+        
+        axios.get(url)
+            .then(response => {
+                console.log(response.data)
+                const datas = response.data;
+                datas.forEach(reservation => {
+                    // console.log(reservation)
+                    console.log(reservation.eventDay)
+                    console.log(currentDate)
+                    if(reservation.eventDay === currentDate){
+                        const timelines = document.querySelectorAll('.timeline')
+                        timelines.forEach(timeline=>{
+                            if(timeline.id === reservation.roomName){
+                                console.log(timeline)
+                                const segments = timeline.querySelectorAll('.segment')
+                                segments.forEach(segment =>{
+                                    console.log(segment)
+                                    if(segment.id === reservation.startTime){
+                                        segment.style.backgroundColor = '#7e66dc';
+                                    }
+                                    // if(segment.id === reservation.endTime){
+                                    //     segment.style.backgroundColor = 'blue';
+                                    // }
+                                    if(segment.id >= reservation.startTime && segment.id < reservation.endTime){
+                                        segment.style.backgroundColor = '#7e66dc';
+                                    }
+                                })
+                            }
+    
+                        })
+
+                    }
+
+                });
+            })
+            .catch(error => console.error('Error fetching announcements:', error));
+
+
+        //sweetalert 刪除
+        function showDeleteConfirmation(roomno) {
+            Swal.fire({
+                title: '確認刪除?',
+                text: '你確定要刪除會議室 ' + roomno + ' 嗎？',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '確定',
+                cancelButtonText: '取消'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 如果用戶點擊確定，可以導向修改的 URL
+                    window.location.href = 'DeleteRoom.controller?roomno=' + roomno;
+                }
+            });
+        }
+
+
+    </script>
+</body>
+
+</html>

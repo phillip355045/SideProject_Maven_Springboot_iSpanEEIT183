@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>員工打卡</title>
+<link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+<style>
+body, html {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	height: 97%;
+	width: 100%;
+}
+
+.background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: url('images/cat4.jpg') no-repeat center center fixed;
+	background-size: cover;
+	background-position: center;
+	opacity: 0.5; /* 控制透明度，0.5表示50%透明度 */
+	z-index: -1; /* 确保背景在内容后面 */
+}
+
+.wrap {
+	height: 100%;
+	width: 100%;
+}
+
+.container {
+	margin-top: 20px;
+}
+
+.form-container {
+	max-width: 400px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: #f9f9f9;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#clock {
+	font-size: 2em;
+	font-weight: bold;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+#ip-address {
+	text-align: center;
+	font-size: 1.2em;
+	margin-bottom: 20px;
+	color: #6c757d;
+}
+
+#checkin-button {
+	width: 100%;
+	padding: 10px;
+	font-size: 1.2em;
+}
+</style>
+</head>
+<body>
+	<div th:replace="~{layout/empnavbar}"></div>
+	<div class="background"></div>
+	<div class="wrap">
+		<div class="container">
+			<div class="form-container shadow p-3 mb-5 bg-white rounded">
+				<div id="clock"></div>
+				<div id="ip-address">正在獲取IP位置...</div>
+				<form action="CheckIn.controller" method="post"
+					onsubmit="addCheckInTime(event)">
+					<input type="hidden" id="checkin-time" name="checkinTime">
+					<button type="button" id="checkin-button"
+						class="btn btn-outline-secondary checkinbtn">打卡</button>
+				</form>
+			</div>
+			<input type="hidden" th:value="${note}" name="note">
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script>
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        setInterval(updateClock, 1000);
+        window.onload = function() {
+            updateClock();
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('ip-address').textContent = `目前IP位置: ${data.ip}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching IP address:', error);
+                    document.getElementById('ip-address').textContent = '無法獲取IP位置';
+                });
+        };
+
+        function addCheckInTime(event) {
+            event.preventDefault();
+            const now = new Date();
+            const checkInTime = now.toISOString(); 
+            document.getElementById('checkin-time').value = checkInTime;
+            
+            const note = document.querySelector('input[name="note"]').value;
+            const $form = event.target.closest('form');
+
+            if (note === "cantworkoff") {
+                Swal.fire({
+                    title: '目前尚未到下班時間',
+                    text: '請問是否確定打卡！',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '確定！',
+                    cancelButtonText: '取消'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $form.submit();
+                    }
+                });
+            } else {
+                $form.submit();
+            }
+        }
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('success')) {
+            Swal.fire({
+                title: '打卡成功!!!',
+                icon: 'success',
+                showCancelButton: false,
+                confirmButtonText: 'OK！'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.querySelector('form').submit();
+                }
+            });
+        }
+        
+        $(document).ready(function() {
+            $(document).on('click', '.checkinbtn', function() {
+                addCheckInTime(event);
+            });
+        });
+    </script>
+</body>
+
+</html>

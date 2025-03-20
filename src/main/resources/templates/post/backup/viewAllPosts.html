@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="custom-html-class">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .custom-html-class {
+            background-color: #ffffff; /* 背景變成白色 */
+            color: #000000; /* 所有文字變成黑色 */
+        }
+
+        .table-class {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .th-td-class, .th-class {
+            padding: 10px;
+            border: 2px solid #000000; /* 框線變成黑色且加粗 */
+            text-align: left; /* 文本靠左對齊 */
+        }
+
+        .th-class {
+            background-color: #f8f9fa;
+            color: inherit; /* 繼承<html>的文字顏色 */
+            font-weight: bold; /* 加粗字體 */
+        }
+
+        .h3-class {
+            color: inherit; /* 繼承<html>的文字顏色 */
+            margin-top: 20px;
+        }
+
+        .ul-class {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .li-class {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        .a-class, .buttom-class {
+            display: inline-block;
+            text-decoration: none;
+            color: #000000; /* 所有文字變成黑色 */
+            padding: 5px 10px;
+            border: 1px solid #000000; /* 框線變成黑色 */
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 0.9em; /* 縮小字體以適應按鈕 */
+        }
+
+        .a-class:hover, .buttom-class:hover {
+            background-color: #000000; /* 背景變成黑色 */
+            color: white;
+        }
+
+        .link-button {
+            background: none;
+            color: inherit;
+            border: none;
+            padding: 0;
+            font: inherit;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .link-button:hover {
+            color: blue;
+        }
+    </style>
+    <title>貼文總覽</title>
+
+</head>
+<body>
+    <div th:replace="~{layout/backEmpNavbar}"></div>
+    <div class="wrap">
+		<ul class="nav1">
+			<li><br></li>
+			<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" th:href="@{/#}" role="button"
+				data-bs-toggle="dropdown" aria-expanded="false">分類瀏覽</a>
+				<ul class="dropdown-menu">
+					<li><a class="dropdown-item" th:href="@{/myPostsWithCategory(postCategory='一般')}">一般</a></li> 
+					<li><a class="dropdown-item" th:href="@{/myPostsWithCategory(postCategory='活動')}">活動</a></li>
+					<li><a class="dropdown-item" th:href="@{/myPostsWithCategory(postCategory='考勤')}">考勤</a></li>
+					<li><a class="dropdown-item" th:href="@{/myPostsWithCategory(postCategory='薪資')}">薪資</a></li>
+					<li><a class="dropdown-item" th:href="@{/myPostsWithCategory(postCategory='福利')}">福利</a></li>
+					 
+				</ul>
+				</li>
+		</ul>
+
+		<div id="content" class="container">
+            <h3 class="h2-class">貼文明細總覽</h3>
+
+            <table class="table-class table">
+                <thead>
+                    <tr>
+                        <th class="th-class">貼文編號</th>
+                        <th class="th-class">發布日期</th>
+                        <th class="th-class">瀏覽權限</th>                
+                        <th class="th-class">標題</th>
+                        <th class="th-class">分類</th>
+                        <th class="th-class">發文人員</th>
+                        <th class="th-class">修改</th>
+                        <th class="th-class">上架</th>
+                        <th class="th-class">下架</th>
+                        <th class="th-class">刪除</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="posts : ${posts}">
+                        <td class="th-td-class">
+                            <form th:action="@{/findPostById.controller}" method="post" style="display: inline;">
+                                <input type="hidden" name="postId" th:value="${posts.postId}" />
+                                <button type="submit" class="link-button" th:text="${posts.postId}"></button>
+                            </form>
+                        </td>
+                        <td class="th-td-class" th:text="${posts.postDate}"></td>
+                        <td class="th-td-class">
+                            <span th:if="${posts.postStatus} == true">可瀏覽</span>
+                            <span th:unless="${posts.postStatus} == true">不可瀏覽</span>
+                        </td>
+                        <td class="th-td-class" th:text="${posts.postTitle}"></td>
+                        <td class="th-td-class" th:text="${posts.postCategory}"></td>
+                        <td class="th-td-class" th:text="${posts.postEmp}"></td>
+                        <td class="th-td-class">
+                            <form th:action="@{/showUpdatePostById.controller}" method="post">
+                                <input type="hidden" name="postId" th:value="${posts.postId}" />
+                                <button class="buttom-class" type="submit">修改</button>
+                            </form>
+                        </td>
+                        <td class="th-td-class">
+                            <form th:action="@{/browsePostById.manager.controller}" method="post">
+                                <input type="hidden" name="postId" th:value="${posts.postId}" />
+                                <button class="buttom-class" type="submit">啟用瀏覽</button>
+                            </form>
+                        </td>
+                        <td class="th-td-class">
+                            <form th:action="@{/softDeletePostById.manager.controller}" method="post">
+                                <input type="hidden" name="postId" th:value="${posts.postId}" />
+                                <button class="buttom-class" type="submit">禁用瀏覽</button>
+                            </form>
+                        </td>
+                        <td class="th-td-class">
+                            <form th:action="@{/deletePostById.controller}" method="post">
+                                <input type="hidden" name="postId" th:value="${posts.postId}" />
+                                <button class="buttom-class" type="submit">刪除</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div>共<span th:text="${#lists.size(posts)}"></span>筆貼文資料</div>
+
+            <ul class="ul-class">
+                <li class="li-class"><a class="a-class" th:href="@{/postWall}">回貼文牆</a></li>
+            </ul>
+        </div>
+    </div>
+    <footer>
+        <div th:replace="~{layout/footer}"></div>
+    </footer>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

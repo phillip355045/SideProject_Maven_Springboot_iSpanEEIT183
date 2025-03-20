@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" >
+<head>
+<meta charset="UTF-8">
+<title>新增會議室</title>
+    <link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<style>
+      body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #dfe9f3, #ffffff);
+            color: #333;
+        }
+        .content {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .content h2 {
+            color: #219ebc;
+            font-size: 22px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        form {
+            text-align: left;
+        }
+        form input[type="text"], form select, form textarea {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin: 5px 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        form input[type="submit"] {
+            background-color: #8ecae6;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        form input[type="submit"]:hover {
+            background-color: #219ebc;
+        }
+        
+        /*上傳圖片*/
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .image-preview img {
+            max-width: 100px;
+            max-height: 100px;
+        }
+
+        
+        /*上傳圖片*/
+
+</style>
+</head>
+<body>
+<div th:replace="~{layout/backEmpNavbar}"></div>
+<div class="wrap">
+
+<div class="nav1"> <br> 
+<a th:href="@{/GetAllRoom.controller}">會議室</a> 
+<a th:href="@{/InsertRoom.controller}">新增會議室</a>
+<a th:href="@{/GetAllReserve.controller2}">預約放行</a>
+<a th:href="@{/BackHomePage}">會議室分析</a>
+</div>
+   <div id="content" class="content container">
+	<h2>新增會議室資料</h2>
+	<div th:text="${errorMsg} ? ${errorMsg}" style="color: red;"></div>
+		<form method="post" action="InsertRoom"
+			enctype="multipart/form-data" id="inspection" class="form-container">
+			輸入會議室名稱 : <input type="text" name="roomName" th:value="${roomName}" readonly/><p>
+			選擇容納人數 : <select name="capacity">
+					    <option selected="selected" value="5">5</option>
+					    <option value="10">10</option>
+					    <option value="15">15</option>
+					    <option value="20">20</option>
+					    <option value="25">25</option>
+					    <option value="30">30</option>
+						</select><br><br>
+			輸入地點 :	<input id="address-input" type="text" name="location" placeholder="輸入地址"><p>
+			<!--  
+			選擇地區 : <select name="location">
+					    <option value="松山區">松山區</option>
+					    <option value="信義區">信義區</option>
+					    <option value="大安區">大安區</option>
+					    <option value="中山區">中山區</option>
+					    <option value="中正區">中正區</option>
+					    <option value="大同區">大同區</option>
+					    <option value="萬華區">萬華區</option>
+					    <option value="文山區">文山區</option>
+					    <option value="南港區">南港區</option>
+					    <option value="內湖區">內湖區</option>
+					    <option value="士林區">士林區</option>
+					    <option value="北投區">北投區</option>
+					 </select><br><br>
+					 -->
+			大樓名稱以及樓層 : <input type="text" name="buildignAndFloor" id="buildignAndFloor" required/><p>
+			
+
+			會議室設備 : <textarea name="equip" id="equip" rows="5" cols="20"></textarea><p>	
+			
+			上傳會議室照片 : <input type="file" id="fileInput" name="picture" multiple  class="form-control  form-control-sm">
+			
+			<div class="image-preview" id="imagePreview"></div><br>
+			
+			<input type="submit" value="確定" />
+
+			<button type="button" class="btn btn-primary" id="oneClickInput">一鍵輸入</button>
+		</form>
+
+	</div>
+</div>
+<div th:replace="~{layout/footer}"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8KSsc035mEKkn88-oWvJ1sFcRjrm8KB8&libraries=places&callback=initMap" async defer></script>
+
+	<script>
+		
+       function initMap() {
+          const autocomplete = new google.maps.places.Autocomplete(
+              document.getElementById("address-input")
+          );
+        }
+
+		document.getElementById('oneClickInput').addEventListener('click', function (e) {
+			e.preventDefault();
+			document.getElementById('buildignAndFloor').value = '集賢大樓5F';
+			document.getElementById('equip').value = '辦公桌、辦公椅、文件櫃、打印機、掃描儀、電話系統、書櫃、燈光設備、隔板、電腦';
+		});
+
+		//一旦有照片上傳就會觸發
+		document.getElementById('fileInput').addEventListener('change', function(event) {
+			const files = event.target.files; //這是一個FileList對象
+			const imagePreview = document.getElementById('imagePreview');
+			imagePreview.innerHTML = ''; //清空預覽區
+			for (let i = 0; i < files.length; i++) {
+				const file = files[i];
+				const reader = new FileReader();  //fileReader讀取文件會使用base64加載
+				reader.onload = function(e) {//onload會在讀取完file之後才會觸發
+					const img = document.createElement('img');
+					img.src = e.target.result;
+					imagePreview.appendChild(img);
+				};
+				//異步操作，不用等到onloard執行才執行readAsDataUrl
+				reader.readAsDataURL(file);//將file一一放入裡面
+			}
+		});
+
+	</script>
+</body>
+</html>

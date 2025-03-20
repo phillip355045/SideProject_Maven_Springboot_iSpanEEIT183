@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<title>貼文總覽</title>
+<style>
+.custom-html-class {
+    background-color: #ffffff; /* 背景變成白色 */
+    color: #000000; /* 所有文字變成黑色 */
+}
+
+.h3-class {
+	color: inherit; /* 繼承<html>的文字顏色 */
+	font-size: 1.5em;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.post-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* 將內容對齊到左側 */
+}
+
+.edit-button {
+    margin-bottom: 20px; /* 與下方元素保持適當間距 */
+}
+
+.ul-class, .comment-ul-class {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.ul-class li, .comment-ul-class li {
+	margin-bottom: 10px;
+	display: flex;
+	flex-direction: column; /* 讓 label 和 input/textarea 換行 */
+}
+
+.label {
+    width: 100%; /* 確保 label 靠左對齊 */
+    text-align: left;
+    font-weight: bold;
+    margin-bottom: 5px; /* 增加 label 和輸入框之間的間距 */
+}
+
+.input-class, .textarea-class{
+	display: block;
+	width: 100%;
+	padding: 8px;
+	margin-bottom: 10px;
+	border: 1px solid #000;
+	border-radius: 5px;
+	box-sizing: border-box;
+}
+
+.textarea-class {
+	width: 100%;
+    height: 150px;
+    padding: 8px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    box-sizing: border-box;
+    resize: both;
+    font-family: inherit; /* 確保字體繼承自父元素 */
+    font-size: inherit; /* 確保字體大小繼承自父元素 */
+    background-color: #fff; /* 設置背景顏色 */
+    outline: none; /* 移除聚焦時的預設外框 */
+}
+
+.small-textarea-class {
+	width: 100%;
+	height: 100px;
+	padding: 10px;
+	border: 1px solid #000;
+	border-radius: 5px;
+	box-sizing: border-box;
+	resize: vertical;
+}
+
+.separator {
+    border-bottom: 2px solid #000;
+    margin: 20px 0;
+}
+
+.link-button {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.link-button:hover {
+	color: blue;
+}
+
+.button-class {
+	display: inline-block;
+	text-decoration: none;
+	color: #000000; /* 所有文字變成黑色 */
+	padding: 10px 20px;
+	border: 1px solid #000000; /* 框線變成黑色 */
+	border-radius: 5px;
+	transition: background-color 0.3s, color 0.3s;
+}
+
+.button-class:hover {
+	background-color: #000000; /* 背景變成黑色 */
+	color: white;
+}
+
+
+.like-button-class {
+	display: inline-block;
+	padding: 10px;
+	border: 1px solid #000;
+	border-radius: 5px;
+	background-color: #f8f9fa;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.like-button-class:hover {
+	background-color: #e2e6ea;
+}
+
+.like-count-class {
+	display: inline-block;
+	padding: 10px;
+	border: 1px solid #000;
+	border-radius: 5px;
+	background-color: #f8f9fa;
+}
+
+.comment-form-class {
+	margin-top: 20px;
+	width: 100%;
+}
+
+.comment-input-class {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #000;
+	border-radius: 5px;
+	box-sizing: border-box;
+}
+
+.comment-submit-class {
+	padding: 10px 20px;
+	border: 1px solid #000;
+	border-radius: 5px;
+	background-color: #f8f9fa;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.comment-submit-class:hover {
+	background-color: #e2e6ea;
+}
+
+.comment-container-class {
+	margin-top: 20px;
+	width: 100%;
+	text-align: left;
+}
+
+.comment-item-class {
+	padding: 10px;
+	border: 1px solid #000;
+	border-radius: 5px;
+	margin-bottom: 10px;
+	background-color: #fff;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.comment-button-class {
+	padding: 5px 10px;
+	margin-left: 10px;
+	border: 1px solid #000;
+	border-radius: 5px;
+	background-color: #f8f9fa;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.comment-button-class:hover {
+	background-color: #e2e6ea;
+}
+
+.comment-text {
+    flex: 1;
+}
+.comment-meta {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.return-button {
+	display: inline-block;
+	text-decoration: none;
+	color: #000;
+	padding: 10px 20px;
+	border: 1px solid #000;
+	border-radius: 5px;
+	background-color: #f8f9fa;
+	transition: background-color 0.3s, color 0.3s;
+}
+
+.return-button:hover {
+	background-color: #000;
+	color: #fff;
+}
+
+.comment-colon {
+    margin-right: 8px; /* 增加右边距 */
+    font-weight: bold; /* 加粗字体 */
+}
+
+.comment-text {
+    margin-left: 8px; /* 增加左边距 */
+}
+
+    .image-gallery {
+        text-align: center;
+    }
+
+    .image-gallery .image-container {
+        display: inline-block;
+        margin: 20px; /* 增加外邊距 */
+        padding: 15px; /* 增加內邊距 */
+        background: #fff; /* 背景顏色 */
+        border: 1px solid #ddd; /* 邊框 */
+        border-radius: 10px; /* 圓角 */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加陰影 */
+        width: 300px; /* 固定容器寬度 */
+        height: 200px; /* 固定容器高度 */
+        overflow: hidden; /* 隱藏溢出內容 */
+        position: relative;
+    }
+
+    .image-gallery img {
+        max-width: 100%; /* 圖片最大寬度 */
+        max-height: 100%; /* 圖片最大高度 */
+        position: absolute; /* 絕對定位 */
+        top: 50%; /* 垂直居中 */
+        left: 50%; /* 水平居中 */
+        transform: translate(-50%, -50%); /* 移動到容器中心 */
+    }
+
+</style>
+</head>
+<body>
+    <div th:replace="~{layout/backEmpNavbar}"></div>
+    <div class="wrap">
+        <div class="nav1"> <br> 
+            <a th:href="@{/改成自己的連結}">第一項功能</a> 
+            <a th:href="@{/改成自己的連結}">第二項功能</a>
+        </div>
+		<div id="content" class="container">
+			<h3 class="h3-class">貼文資料</h3>
+			<div class="post-details">
+				<div class="edit-button">
+					<form th:action="@{/showUpdatePostById.controller}" method="post">
+						<input type="hidden" name="postId" th:value="${post.postId}" />
+						<button type="submit" class="btn btn-primary">編輯貼文</button>
+					</form>
+				</div>
+			</div>
+
+				<ul class="ul-class">
+					<li><span class="label">Post ID:</span> <span
+						class="input-class" th:text="${post.postId}"></span></li>
+					<li><span class="label">Post Date:</span> <span
+						class="input-class" th:text="${post.postDate}"></span></li>
+					<li><span class="label">Post Title:</span> <span
+						class="input-class" th:text="${post.postTitle}"></span></li>
+					<li><span class="label">Post Category:</span> <span
+						class="input-class" th:text="${post.postCategory}"></span></li>
+					<li><span class="label">Post Content:</span> <textarea
+							class="textarea-class" disabled th:text="${post.postContent}"></textarea></li>
+					<li><span class="label">Post Employee:</span> <span
+						class="input-class" th:text="${post.postEmp}"></span></li>
+				</ul>
+
+				<!-- 新增圖片展示區域 -->
+				<div class="image-gallery">
+					<h3 class="h3-class">貼文圖片</h3>
+					<div th:if="${postImageUploads.size() > 0}">
+						<div th:each="postImageUpload : ${postImageUploads}"
+							class="image-container">
+							<img th:src="${postImageUpload.base64ImageData}" alt="Post Image">
+							<button type="button" class="remove-btn"
+								th:data-image-id="${postImageUpload.postImageId}"
+								onclick="deleteImage(this)">X</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="separator"></div>
+
+				<div>
+					<input type="hidden" id="postId" th:value="${post.postId}" />
+				</div>
+
+
+				<div class="separator"></div>
+
+				<div>
+					<input type="hidden" id="postId" th:value="${post.postId}" />
+					<button class="like-button-class" id="likeButton">按讚</button>
+					<button class="like-button-class" id="unlikeButton"
+						style="display: none;">收回讚</button>
+					<span class="like-count-class" id="likeCounts">0</span>
+				</div>
+
+				<div class="separator"></div>
+
+				<form id="commentForm" class="comment-form-class">
+					<div>
+						<textarea class="small-textarea-class" id="commentContent"
+							name="commentContent"
+							th:placeholder="${session.name} + ' 想說甚麼嗎?'" required></textarea>
+					</div>
+					<input type="hidden" id="postId" name="postId"
+						th:value="${post.postId}" />
+					<button type="submit" class="comment-submit-class"
+						id="submitButton" disabled>提交</button>
+				</form>
+
+				<div class="separator"></div>
+
+				<div id="commentsContainer" class="comment-container-class">
+					<ul class="comment-ul-class" id="commentList">
+						<li th:each="comment : ${comments}" class="comment-item-class">
+							<span class="comment-meta" th:text="${comment.commentEmp}">User</span>
+							<span class="comment-text" th:text="${comment.commentContent}">Comment
+								content</span> <span class="comment-time"
+							th:text="${comment.commentDateTime}">Comment time</span>
+							<div>
+								<button class="comment-button-class"
+									th:attr="data-comment-id=${comment.commentId}">修改</button>
+								<button class="comment-button-class"
+									th:attr="data-comment-id=${comment.commentId}">刪除</button>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<ul
+					style="list-style-type: none; padding: 0; margin: 0 auto; display: table;">
+					<li style="display: table-cell; text-align: center;"><a
+						style="padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 4px;"
+						th:href="@{/postWall}">返回貼文牆 </a></li>
+				</ul>
+
+			</div>
+		</div>
+    <div th:replace="~{layout/footer}"></div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- 日期格式化函數 -->
+    <script>
+    function formatDateTime(dateTimeString) {
+        let utcDate = new Date(dateTimeString);
+        let year = utcDate.getUTCFullYear();
+        let month = utcDate.getUTCMonth();
+        let day = utcDate.getUTCDate();
+        let hour = utcDate.getUTCHours();
+        let minute = utcDate.getUTCMinutes();
+        let second = utcDate.getUTCSeconds();
+        let millisecond = utcDate.getUTCMilliseconds();
+        let localDate = new Date(year, month, day, hour, minute, second, millisecond);
+        return localDate.toLocaleString('zh-TW', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        });
+    }
+    </script>
+    
+    <!-- 以下是留言輸入框、按讚回應的Ajax程式碼 -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const postId = document.getElementById('postId').value;
+
+        document.getElementById('commentContent').addEventListener('input', function() {
+            let commentContent = document.getElementById('commentContent').value;
+            let submitButton = document.getElementById('submitButton');
+            submitButton.disabled = !commentContent;
+        });
+
+        const updateLikeStatus = () => {
+            let params = new URLSearchParams();
+            params.append('postId', postId);
+
+            fetch('/PSNEXUS/getReactionStatus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params
+            })
+            .then(response => response.json())
+            .then(data => {
+                const likeCounts = data.likeCounts;
+                const userReacted = data.userReacted;
+
+                if (likeCounts !== undefined) {
+                    const likeCountElement = document.getElementById('likeCounts');
+                    likeCountElement.innerText = likeCounts + ' 個讚';
+                }
+
+                if (userReacted) {
+                    document.getElementById('likeButton').style.display = 'none';
+                    document.getElementById('unlikeButton').style.display = 'inline';
+                } else {
+                    document.getElementById('likeButton').style.display = 'inline';
+                    document.getElementById('unlikeButton').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        };
+
+        document.getElementById('likeButton').addEventListener('click', function() {
+            let params = new URLSearchParams();
+            params.append('reactionCategory', 'like');
+            params.append('postId', postId);
+
+            fetch('/PSNEXUS/insertReaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params
+            })
+            .then(response => response.json())
+            .then(data => {
+                const likeCounts = data.likeCounts;
+                if (likeCounts !== undefined) {
+                    const likeCountElement = document.getElementById('likeCounts');
+                    likeCountElement.innerText = likeCounts + ' 個讚';
+                    document.getElementById('likeButton').style.display = 'none';
+                    document.getElementById('unlikeButton').style.display = 'inline';
+                } else {
+                    alert('按讚失敗，請稍後再試。');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('按讚失敗，請稍後再試。');
+            });
+        });
+
+        document.getElementById('unlikeButton').addEventListener('click', function() {
+            let params = new URLSearchParams();
+            params.append('reactionCategory', 'like');
+            params.append('postId', postId);
+
+            fetch('/PSNEXUS/deleteReaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params
+            })
+            .then(response => response.json())
+            .then(data => {
+                const likeCounts = data.likeCounts;
+                if (likeCounts !== undefined) {
+                    const likeCountElement = document.getElementById('likeCounts');
+                    likeCountElement.innerText = likeCounts + ' 個讚';
+                    document.getElementById('likeButton').style.display = 'inline';
+                    document.getElementById('unlikeButton').style.display = 'none';
+                } else {
+                    alert('收回讚失敗，請稍後再試。');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('收回讚失敗，請稍後再試。');
+            });
+        });
+
+        updateLikeStatus();
+
+        document.getElementById('commentForm').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            let commentContent = document.getElementById('commentContent').value;
+
+            let dtoObject = {
+                postId: postId,
+                commentContent: commentContent
+            };
+
+            fetch('/PSNEXUS/insertNewComment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dtoObject)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                alert('Comment added successfully!');
+                document.getElementById('commentContent').value = ''; 
+                document.getElementById('submitButton').disabled = true; 
+                fetchComments(postId);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        const fetchComments = (postId) => {
+            fetch(`/PSNEXUS/findAllComments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }, 
+                body: JSON.stringify({ postId })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                let commentsContainer = document.getElementById('commentList');
+                commentsContainer.innerHTML = ''; 
+                data.forEach(comment => {
+                    let commentId = comment.commentId;
+                    let commentContent = comment.commentContent;
+                    let commentEmp = comment.commentEmp;
+                    let commentDateTime = formatDateTime(comment.commentDateTime);
+                    let commentEmpName = comment.commentEmpName;
+
+                    let commentElement = document.createElement('li');
+                    commentElement.className = 'comment-item-class';
+
+                    let commentMeta = document.createElement('span');
+                    commentMeta.className = 'comment-meta';
+                    commentMeta.textContent = commentEmpName;
+                    
+                    let colon = document.createElement('span');
+                    colon.className = 'comment-colon';
+                    colon.textContent = ' : ';
+
+                    let commentText = document.createElement('span');
+                    commentText.className = 'comment-text';
+                    commentText.textContent = commentContent;
+                    
+                    let commentTime = document.createElement('span');
+                    commentTime.className = 'comment-time';
+                    commentTime.textContent = commentDateTime;
+
+                    let editButton = document.createElement('button');
+                    editButton.textContent = '修改';
+                    editButton.className = 'comment-button-class';
+                    editButton.setAttribute('data-comment-id', commentId);
+                    editButton.addEventListener('click', () => {
+                        let newCommentContent = prompt('請輸入新的留言內容:', commentContent);
+                        if (newCommentContent !== null) {
+                            updateComment(commentId, newCommentContent, postId); 
+                        }
+                    });
+
+                    let deleteButton = document.createElement('button');
+                    deleteButton.textContent = '刪除';
+                    deleteButton.className = 'comment-button-class';
+                    deleteButton.setAttribute('data-comment-id', commentId);
+                    deleteButton.addEventListener('click', () => {
+                        deleteComment(commentId, postId);
+                    });
+
+                    commentElement.appendChild(commentMeta);
+                    commentElement.appendChild(colon);
+                    commentElement.appendChild(commentText);
+                    commentElement.appendChild(commentTime);
+                    let buttonContainer = document.createElement('div');
+                    buttonContainer.appendChild(editButton);
+                    buttonContainer.appendChild(deleteButton);
+                    commentElement.appendChild(buttonContainer);
+                    commentsContainer.appendChild(commentElement);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        };
+
+        const updateComment = (commentId, newCommentContent, postId) => {
+            fetch('/PSNEXUS/updateComment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ commentId, newCommentContent })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    response.text().then(text => { throw new Error(text); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Comment updated successfully!');
+                fetchComments(postId);
+            })
+            .catch(error => console.error('Error:', error));
+        };
+
+        const deleteComment = (commentId, postId) => {
+            fetch('/PSNEXUS/deleteComment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `commentId=${commentId}`
+            })
+            .then(response => {
+                if (response.status !== 204) {
+                    throw new Error('Network response was not ok');
+                }
+                alert('Comment deleted successfully!');
+                fetchComments(postId);
+            })
+            .catch(error => console.error('Error:', error));
+        };
+
+        fetchComments(postId);
+    });
+    </script>
+    
+</body>
+</html>

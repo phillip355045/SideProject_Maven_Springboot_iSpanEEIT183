@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<!-- 表單: backFrom-->
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+
+
+<title>empSal</title>
+<style>
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.wrap{
+
+    height: 95%;
+    width: 100%;
+}
+.save{
+margin:auto;
+padding:auto;
+}
+</style>
+</head>
+
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+
+
+
+		<div class="nav1">
+			<br> <a th:href="@{/getAllEmpSal.controller}">薪資管理系統</a> <a
+				th:href="@{/toInsertEmpSal}">新增薪資單</a> <a
+				th:href="@{/toInsertEmpSalBatch}">批次新增薪資單</a>
+
+		</div>
+
+
+		<!--<a href="">個人績效獎金</a>
+			<a href="">個人年度自付保費核對表</a>
+			<a href="">津貼規章/獎金辦法</a> <a href="">薪資等級試算</a>  -->
+
+
+
+
+
+		<div id="content" class="container">
+
+			<h1 align=center style="padding-bottom: 10px">新增薪資資料</h1>
+			<form method="post" th:action="@{/insertEmpSalBatch}"
+				style="margin: 0 auto; width: 50%;">
+				<table style="margin: 0 auto;">
+
+
+
+
+
+
+					<!--	<tr>
+				<td>年度</td>
+				<td><input type="text" name="year"/>
+			</tr>
+			-->
+					<tr>
+						<td>月份：</td>
+
+						<td><input type="month" name="month" />
+					</tr>
+
+
+
+
+
+
+				</table>
+<br>
+
+				<div align=center class="save">
+					<input type="submit" value="儲存" />  
+					<input type="button" value="上一頁" onclick="history.back();" />
+				</div>
+			</form>
+
+
+		</div>
+		<hr>
+
+		<!-- <p>
+            <img class="myphoto2" src="https://truth.bahamut.com.tw/s01/202201/78eb807a59adcd9aa4c96aac199feaa9.JPG"
+                alt="">
+        </p> -->
+
+
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	
+	<script>
+	//status設置
+	   function setStatusAndSubmit(status) {
+        // Set the status value in the hidden input field
+        document.getElementById('status').value = status;
+        
+        // Submit the form
+        document.getElementById('empSalForm').submit();
+    }
+    
+	
+	</script>
+</body>
+</html>

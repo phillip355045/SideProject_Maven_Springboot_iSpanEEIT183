@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>員工資料</title>
+<link rel="stylesheet"
+	href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css">
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<style>
+html, body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+input[type="text"], select {
+	width: calc(100% - 20px);
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+	margin-bottom: 10px;
+}
+
+input[type="submit"] {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	background-color: #3498db;
+	color: white;
+	transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+	background-color: #2980b9;
+}
+
+.ui-datepicker {
+	background-color: #E0E0E0;
+	border: 1px solid #ccc;
+	padding: 5px;
+	color: black;
+	text-align: center;
+}
+
+.ui-datepicker-prev, .ui-datepicker-next {
+	display: none;
+}
+
+.wrap {
+	height: 95%;
+	width: 100%;
+}
+</style>
+</head>
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1">
+			<br> <a th:href="@{/allCheckIns}">所有員工打卡</a> <a
+				th:href="@{/checkInSearch}">員工打卡查詢</a> <a
+				th:href="@{/addCheckInTableData}">建立打卡資料</a> <a
+				th:href="@{/deleteCheckInByDateOrEmpno}">批量刪除打卡</a>
+		</div>
+		<div id="content" class="container">
+			<h2>修改員工打卡</h2>
+			<form method="post" th:action="@{/updateCheckIn}"
+				onsubmit="return updateNotes()">
+				<table>
+					<tr>
+						<td>員工編號</td>
+						<td><input type="text" th:value="${checkIn.checkInId.empno}"
+							th:name="checkInId.empno" readonly></td>
+					</tr>
+					<tr>
+						<td>日期</td>
+						<td><input type="text"
+							th:value="${#dates.format(checkIn.checkInId.date, 'yyyy-MM-dd')}"
+							th:name="checkInId.date" readonly></td>
+					</tr>
+					<tr>
+						<td>上班時間</td>
+						<td><input type="text" id="workon"
+							th:value="${checkIn.workon}" th:name="workon" autocomplete="off"></td>
+					</tr>
+					<tr>
+						<td>下班時間</td>
+						<td><input type="text" id="workoff"
+							th:value="${checkIn.workoff}" th:name="workoff"
+							autocomplete="off"></td>
+					</tr>
+					<tr>
+						<td>備註</td>
+						<td><input type="text" id="note" th:value="${checkIn.note}"
+							th:name="note"></td>
+					</tr>
+				</table>
+
+				<input type="hidden" id="oldworkon" th:value="${checkIn.workon}">
+				<input type="hidden" id="oldworkoff" th:value="${checkIn.workoff}">
+				<input type="hidden" id="record" th:name="checkIn.record"
+					th:value="${record}">
+				<div style="text-align: left;">
+					<input type="submit" value="確定">
+					<button type="button" class="btn btn-outline-warning"
+						onclick="enter(this)">一鍵輸入</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
+
+	<script>
+        $(document).ready(function() {
+            $("#workon, #workoff").timepicker({
+                timeFormat: 'HH:mm:ss',
+                interval: 30,
+                startTime: '00:00:00',
+                dynamic: false,
+                dropdown: true,
+                scrollbar: true
+            });
+        });
+
+        function updateNotes() {
+            const oldWorkon = $("#oldworkon").val();
+            const oldWorkoff = $("#oldworkoff").val();
+            const newWorkon = $("#workon").val();
+            const newWorkoff = $("#workoff").val();
+            const record = $("#record").val();
+            let recordValue = 0;
+
+            if (oldWorkon !== newWorkon && oldWorkoff !== newWorkoff) {
+                recordValue = 3;
+            } else if (oldWorkon !== newWorkon) {
+                if (record == 0 || record == 1) {
+                    recordValue = 1;
+                } else {
+                    recordValue = 3;
+                }
+            } else if (oldWorkoff !== newWorkoff) {
+                if (record == 0 || record == 2) {
+                    recordValue = 2;
+                } else {
+                    recordValue = 3;
+                }
+            } else if (oldWorkon == newWorkon && oldWorkoff == newWorkoff) {
+                recordValue = record;
+            }
+
+            $("#record").val(recordValue);
+            return true;
+        }
+       		function enter(button) {
+	            document.querySelector('input[name="workon"]').value = '09:00:00';
+	            document.querySelector('input[name="workoff"]').value = '18:37:03';
+	            document.querySelector('input[name="note"]').value = '上班忘打卡';
+
+	    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>所有打卡資料</title>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" />
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<style>
+.icon-plus {
+    color: gray;
+}
+</style>
+</head>
+<body>
+
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1">
+			<br> <a th:href="@{/allCheckIns}">所有員工打卡</a> <a
+				th:href="@{/checkInSearch}">員工打卡查詢</a> <a
+				th:href="@{/addCheckInTableData}">建立打卡資料</a> <a
+				th:href="@{/deleteCheckInByDateOrEmpno}">批量刪除打卡</a>
+		</div>
+		<div id="content" class="container">
+			<div align="center">
+				<h2>員工打卡資料</h2>
+				<div class="d-flex justify-content-between align-items-center">
+					<button type="button" id="download-button"
+						class="btn btn-outline-secondary ms-auto">
+						下載檔案<i class="fa-solid fa-file-arrow-down ms-2 icon-plus"></i>
+					</button>
+				</div>
+				<table id="mytable" class="display text-center" style="width: 100%">
+					<thead>
+						<tr>
+							<th>員工編號</th>
+							<th>日期</th>
+							<th>上班時間</th>
+							<th>下班時間</th>
+							<th>備註</th>
+							<th>忘刷/補登</th>
+							<th>刪除</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="checkin : ${checkIn}">
+							<td th:text="${checkin.checkInId.empno}"></td>
+							<td th:text="${checkin.checkInId.date}"></td>
+							<td th:text="${checkin.workon}"></td>
+							<td th:text="${checkin.workoff}"></td>
+							<td th:text="${checkin.note}"></td>
+							<td><a
+								th:href="@{/findUpdateCheckInData(empno=${checkin.checkInId.empno}, date=${checkin.checkInId.date})}"
+								class="btn btn-outline-success">修改</a></td>
+							<td>
+								<form method="post" th:action="@{/deleteCheckInById}">
+									<input type="hidden" th:value="${checkin.checkInId.empno}"
+										th:name="empno"> <input type="hidden"
+										th:value="${#dates.format(checkin.checkInId.date, 'yyyy-MM-dd')}"
+										th:name="date" readonly> <input name="_method"
+										value="DELETE" type="hidden"> <input type="button"
+										value="刪除" class="btn btn-outline-danger btn-sm delete-btn">
+								</form>
+							</td>
+						</tr>
+					</tbody>
+
+					<tfoot>
+						<tr>
+							<th>員工編號</th>
+							<th>日期</th>
+							<th>上班時間</th>
+							<th>下班時間</th>
+							<th>備註</th>
+							<th>忘刷/補登</th>
+							<th>刪除</th>
+						</tr>
+
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
+	<script>
+	     new DataTable('#mytable');
+		$(document).ready(function() {
+		    $(document).on('click', '.delete-btn', function() {
+		        var $button = $(this);
+		        var $form = $button.closest('form');
+		        var $tr = $button.closest('tr'); 
+		
+		        Swal.fire({
+		            title: '是否確定要刪除此筆打卡紀錄',
+		            text: '麻煩請再次確認！',
+		            icon: 'warning',
+		            showCancelButton: true,
+		            confirmButtonText: '刪除！',
+		            cancelButtonText: '取消'
+		        }).then((result) => {
+		            if (result.isConfirmed) {
+		                $form.submit();
+		            }
+		        });
+		    });
+		});
+		document.getElementById('download-button').addEventListener('click', function() {
+			window.location.href = '/PSNEXUS/downloadAllCheckInData';
+		});
+</script>
+</body>
+</html>

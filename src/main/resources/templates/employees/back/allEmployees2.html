@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>員工資料</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<style>
+body {
+	background-size: cover;
+	background-position: center;
+	font-family: Arial, sans-serif;
+	margin: 0;
+	transition: margin-left 0.3s;
+}
+
+.container {
+	max-width: 1200px;
+	margin: 15px auto 20px;
+	padding: 20px;
+	background-color: rgba(255, 255, 255, 0.8);
+	border-radius: 10px;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+	transition: margin-left 0.3s;
+}
+
+h2 {
+	color: #333;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th, td, thead {
+	padding: 10px;
+	text-align: center;
+}
+
+.update, .del {
+	padding: 5px 10px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	background-color: #3498db;
+	color: white;
+	transition: background-color 0.3s;
+}
+
+.update:hover, .del:hover {
+	background-color: #2980b9;
+}
+</style>
+</head>
+<body>
+
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+		<div class="wrap">
+		<div class="nav1">
+			<br> <a th:href="@{/getAllEmployees}">所有員工資料</a> <a
+				th:href="@{/insertEmp}">新增員工資料</a> <a th:href="@{/getEmpsByCol}">查詢員工資料</a>
+			<a th:href="@{/familyMemberInsert}">新增親屬資料</a> <a
+				th:href="@{/departmentTransferInsert}">新增部門調動</a> <a
+				th:href="@{/alldepartmentTransfer}">所有部門調動</a>
+		</div>
+	<div class="container">
+		<div align="center">
+			<h2>員工資料</h2>
+			<form th:action="@{/getAllEmployees2}" method="get"
+				class="form-inline mb-3">
+				<div class="form-group mr-2">
+					<label for="size" class="mr-2">每頁顯示筆數:</label> <input type="number"
+						id="size" name="size" class="form-control" min="1"
+						th:value="${size}" value="5">
+				</div>
+				<button type="submit" class="btn btn-outline-info">確定</button>
+			</form>
+			<table class="table table-bordered">
+				<thead class="thead-light">
+					<tr>
+						<th>員工編號</th>
+						<th>職稱</th>
+						<th>員工姓名</th>
+						<th>直屬主管</th>
+						<th>部門編號</th>
+						<th>人員狀態</th>
+						<th>修改</th>
+						<th>刪除</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="emp : ${employeesPage.content}">
+						<td th:text="${emp.empno}"></td>
+						<td th:text="${emp.job}"></td>
+						<td><a th:href="@{/getOneEmployees(empno=${emp.empno})}"
+							th:text="${emp.name}"></a></td>
+						<td th:text="${emp.mgr}"></td>
+						<td th:text="${emp.deptno}"></td>
+						<td th:text="${emp.empnoStatus}"></td>
+						<td><a th:href="@{/findUpdateEmpData(empno=${emp.empno})}"
+							class="btn btn-outline-success btn-sm">修改</a></td>
+						<td>
+							<form method="post" th:action="@{/deleteEmployee}">
+								<input name="empno" th:value="${emp.empno}" type="hidden" /> <input
+									name="_method" value="DELETE" type="hidden" /> <input
+									type="submit" value="刪除" class="btn btn-outline-danger btn-sm"
+									onclick="return confirm('確定刪除嗎???')" />
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div>
+				<ul class="pagination justify-content-center">
+					<li class="page-item"
+						th:classappend="${employeesPage.hasPrevious()} ? '' : 'disabled'">
+						<a class="page-link"
+						th:href="@{/getAllEmployees2(page=${employeesPage.number}, size=${employeesPage.size})}">上一頁</a>
+					</li>
+					<li class="page-item"
+						th:each="i : ${#numbers.sequence(1, employeesPage.totalPages)}"
+						th:classappend="${employeesPage.number == (i - 1)} ? 'active' : ''">
+						<a class="page-link"
+						th:href="@{/getAllEmployees2(page=${i}, size=${employeesPage.size})}"
+						th:text="${i}"></a>
+					</li>
+					<li class="page-item"
+						th:classappend="${employeesPage.hasNext()} ? '' : 'disabled'">
+						<a class="page-link"
+						th:href="@{/getAllEmployees2(page=${employeesPage.number + 2}, size=${employeesPage.size})}">下一頁</a>
+					</li>
+					<li class="ps-3"><a
+						class="btn btn-outline-primary border-0 disabled"
+						th:text="'共'+${employeesPage.totalPages}+'頁'"></a><input id="totalPages" type="hidden" th:value="${employeesPage.totalPages}"></li>
+					<li class="ml-auto">
+						<div class="form-inline">
+							<input type="number" class="form-control" id="pageNumber"
+								placeholder="跳頁" min="1" th:attr="max=${employeesPage.totalPages}">
+							<a class="btn btn-outline-secondary" type="button"
+								onclick="gotoPage()">跳轉</a>
+						</div>
+					</li>
+				</ul>
+			</div>
+
+
+			<p>
+			<h3>
+				共<span th:text="${employeesPage.totalElements}"></span>筆員工資料
+			</h3>
+		</div>
+	</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	
+</body>
+<script th:inline="javascript">
+		function gotoPage() {
+		var maxPages = document.getElementById('totalPages').value;
+			var size = document.getElementById('size').value;
+			var pageNumber = document.getElementById('pageNumber').value;
+			if (pageNumber >= 1 && pageNumber <= maxPages) {
+			window.location.href = '/PSNEXUS/getAllEmployees2?page=' + pageNumber + '&size='+ size ;
+			 } else {
+        alert("請輸入正確的頁碼（1 到 " + maxPages + "）。");
+    }
+		}
+	</script>
+</html>

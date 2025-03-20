@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>員工資料</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: url('resources/ling/cat4.jpg') no-repeat center center fixed;
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: margin-left 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            transition: margin-left 0.3s;
+        }
+
+       
+
+        h2 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .update, .del {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .update:hover, .del:hover {
+            background-color: #2980b9;
+        }
+
+ 
+    </style>
+</head>
+<body>
+
+	<div th:replace="~{layout/empnavbar}"></div>
+    <div class="container">
+        <div align="center">
+            <h2>員工資料</h2>
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                <tr>
+                    <th>員工編號</th>
+                    <th>職稱</th>
+                    <th>員工姓名</th>
+                    <th>直屬主管</th>
+                    <th>部門編號</th>
+                    <th>人員狀態</th>
+                    <th>修改</th>
+                    <th>刪除</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="emp : ${employees}">
+                    <td th:text="${emp.empno}"></td>
+                    <td th:text="${emp.job}"></td>
+                    <td><a th:href="@{GetEmpOne.controller(col='empno', colvalue=${emp.empno})}"
+                           th:text="${emp.name}"></a></td>
+                    <td th:text="${emp.mgr}"></td>
+                    <td th:text="${emp.deptno}"></td>
+                    <td th:text="${emp.empnoStatus}"></td>
+                    <td>
+                        <form method="post" th:action="@{GetUpdateEmp.controller}">
+                            <input type="hidden" name="col" value="empno">
+                            <input type="hidden" name="colvalue" th:value="${emp.empno}">
+                            <button type="submit" class="update">修改</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="post" th:action="@{DeleteEmp.controller}" onsubmit="return confirmDelete();">
+                            <input type="hidden" name="col" value="empno">
+                            <input type="hidden" name="colvalue" th:value="${emp.empno}">
+                            <button type="submit" class="del">刪除</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <p>
+            <!-- <h3>共<span th:text="${employees.size()}"></span>筆員工資料</h3> -->
+
+        </div>
+    </div>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script>
+  
+
+    function confirmDelete() {
+        return confirm(`是否真的要刪除此筆員工資料?`);
+    }
+</script>
+
+</body>
+</html>

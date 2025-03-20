@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>員工資料</title>
+<link rel="stylesheet"
+	href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+<style>
+body {
+	background: url('images/cat5.jpg') no-repeat center center fixed;
+	background-size: cover;
+	background-position: center;
+	font-family: Arial, sans-serif;
+	margin: 0;
+	
+}
+
+.container {
+	max-width: 800px;
+	margin: 20px auto;
+	padding: 20px;
+	background-color: #fff;
+	border-radius: 10px;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+	text-align: center;
+	color: #333;
+	margin-bottom: 20px;
+}
+
+form {
+	text-align: center;
+}
+
+table {
+	margin: 0 auto;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+td {
+	padding: 10px;
+	text-align: left;
+}
+
+input[type="text"], input[type="password"] {
+	width: calc(100% - 20px);
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+	margin-bottom: 10px;
+}
+
+input[type="submit"] {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	background-color: #3498db;
+	color: white;
+	transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+	background-color: #2980b9;
+}
+
+.ui-datepicker {
+	background-color: #E0E0E0;
+	border: 1px solid #ccc;
+	padding: 5px;
+	color: black;
+	text-align: center;
+}
+
+.ui-datepicker-prev, .ui-datepicker-next {
+	display: none;
+}
+</style>
+</head>
+<body>
+	<div th:replace="~{layout/empnavbar}"></div>
+	<div class="container">
+		<h2>員工資料</h2>
+		<form th:object="${emp}" method="post" th:action="@{/updateEmpData}" enctype="multipart/form-data">
+		<input name="_method" value="PUT" type="hidden" />
+			<table>
+				<tr>
+					<td>員工編號</td>
+					<td><input type="text" th:value="${emp.empno}" readonly
+						th:name="empno"></td>
+				</tr>
+				<tr>
+					<td>職稱</td>
+					<td><input type="text" th:value="${emp.job}" th:name="job"></td>
+				</tr>
+				<tr>
+					<td>員工姓名</td>
+					<td><input type="text" th:value="${emp.name}" th:name="name"></td>
+				</tr>
+				<tr>
+					<td>直屬主管</td>
+					<td><input type="text" th:value="${emp.mgr}" readonly
+						th:name="mgr"></td>
+				</tr>
+				<tr>
+					<td>部門編號</td>
+					<td><input type="text" th:value="${emp.deptno}" readonly
+						th:name="deptno"></td>
+				</tr>
+				<tr>
+					<td>部門調動編號</td>
+					<td><input type="text" th:value="${emp.deptTransferID}"
+						readonly th:name="deptTransferID"></td>
+				</tr>
+				<tr>
+					<td>密碼</td>
+					<td><input type="password" th:value="${emp.password}"
+						th:name="password"></td>
+				</tr>
+				<tr>
+					<td>身分證字號</td>
+					<td><input type="text" th:value="${emp.identityID}"
+						th:name="identityID"></td>
+				</tr>
+				<tr>
+					<td>出生日期</td>
+					<td><input type="text" id="datepicker"
+						th:value="${emp.birthDate}" th:name="birthDate"></td>
+				</tr>
+				<tr>
+					<td>性別</td>
+					<td><input type="text" th:value="${emp.gender}"
+						th:name="gender"></td>
+				</tr>
+				<tr>
+					<td>國籍</td>
+					<td><input type="text" th:value="${emp.citizenship}"
+						th:name="citizenship"></td>
+				</tr>
+				<tr>
+					<td>手機號碼</td>
+					<td><input type="text" th:value="${emp.phone}" th:name="phone"></td>
+				</tr>
+				<tr>
+					<td>家電</td>
+					<td><input type="text" th:value="${emp.telPhone}"
+						th:name="telPhone"></td>
+				</tr>
+				<tr>
+					<td>員工信箱</td>
+					<td><input type="text" th:value="${emp.mail}" th:name="mail"></td>
+				</tr>
+				<tr>
+					<td>照片</td>
+					<td><input type="text" th:value="${emp.photo}" th:name="photo"
+						id="photo"> <input type="file" name="file" id="photoInput"></td>
+				</tr>
+				<tr>
+					<td>緊急聯絡人</td>
+					<td><input type="text" th:value="${emp.emergencyContact}"
+						th:name="emergencyContact"></td>
+				</tr>
+				<tr>
+					<td>縣市</td>
+					<td><input type="text" th:value="${emp.city}" th:name="city"></td>
+				</tr>
+				<tr>
+					<td>住址</td>
+					<td><input type="text" th:value="${emp.address}"
+						th:name="address"></td>
+				</tr>
+				<tr>
+					<td>進公司日期</td>
+					<td><input type="text" th:value="${emp.hiredate}" readonly
+						th:name="hiredate"></td>
+				</tr>
+				<tr>
+					<td>薪資等級</td>
+					<td><input type="text" th:value="${emp.salGrade}" readonly
+						th:name="salGrade"></td>
+				</tr>
+				<tr>
+					<td>人員狀態</td>
+					<td><input type="text" th:value="${emp.empnoStatus}" readonly
+						th:name="empnoStatus"></td>
+				</tr>
+				<tr>
+					<td>離退日期</td>
+					<td><input type="text" th:value="${emp.departureDate}"
+						readonly th:name="departureDate"></td>
+				</tr>
+				<tr>
+					<td>最後一次登入時間</td>
+					<td><input type="text" th:value="${emp.lastTimeLogin}"
+						readonly th:name="lastTimeLogin"></td>
+				</tr>
+			</table>
+			<input type="submit" value="確定">
+		</form>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="js/jquery-ui-1.13.3/jquery-ui.js"></script>
+	<script>
+    $(function() {
+        $("#datepicker").datepicker({
+            dateFormat : "yy-mm-dd",
+            showOtherMonths : true,
+            selectOtherMonths : true,
+            changeMonth : true,
+            changeYear : true,
+            yearRange : "1911:2200"
+        });
+
+        $('#photoInput').on('change', function() {
+            var filename = $(this).val().split('\\').pop();
+            console.log(filename);
+            $('#photo').val(filename);
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>輸入通知</title>
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+</head>
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+
+		<div id="content" class="container">
+			<h2>輸入通知</h2>
+			<form id="notificationForm">
+				<div class="form-group mb-2 text-start">
+					<label for="basis">依據</label> <select class="form-control"
+						id="basis" name="basis">
+						<option value="empno">員工編號</option>
+						<option value="deptno">部門</option>
+					</select>
+				</div>
+				<div class="form-group mb-2 text-start">
+					<label for="category">通知類型</label> <input type="text"
+						class="form-control" id="category" name="category" required>
+				</div>
+				<div class="form-group mb-2 text-start">
+					<label for="message">通知內容</label>
+					<textarea class="form-control" id="message" name="message" rows="3"
+						required></textarea>
+				</div>
+				<div class="form-group mb-2 text-start">
+					<label for="returnPage">回傳頁面</label> <input type="text"
+						class="form-control" id="returnPage" name="returnPage"
+						placeholder="若無填寫則回傳到首頁">
+					<!-- <select multiple class="form-control" id="returnPage" name="returnPage">
+                    <option th:each="notifyRetrun : ${notifyRetruns}" th:value="${notifyRetrun.returnPage}" th:text="${notifyRetrun.pageName}"></option>
+                </select> -->
+				</div>
+				<div class="form-group mb-2 text-start" id="empnoContainer">
+					<label for="empnos">選擇員工</label> <select multiple
+						class="form-control" id="empnos" name="empnos">
+						<option th:each="employee : ${employees}"
+							th:value="${employee.empno}" th:text="${employee.name}"></option>
+					</select>
+				</div>
+				<div class="form-group mb-2 text-start" id="deptnoContainer">
+					<label for="deptno">選擇部門</label> <select multiple
+						class="form-control" id="deptnos" name="deptnos">
+						<option th:each="department : ${departments}"
+							th:value="${department.deptno}" th:text="${department.deptname}"></option>
+					</select>
+				</div>
+				<button type="submit" class="btn btn-outline-success mt-1 send-btn">發送通知</button>
+				<button type="button" class="btn btn-outline-warning mt-1"
+					onclick="enter(this)">一鍵輸入</button>
+			</form>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script>
+        document.getElementById('notificationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const basis = document.getElementById('basis').value;
+            const category = document.getElementById('category').value;
+            const message = document.getElementById('message').value;
+            let returnPage = document.getElementById('returnPage').value;
+            
+			if (returnPage === "") {
+			    returnPage = "http://localhost:8088/PSNEXUS/logInHomePage";
+			}
+            
+            
+	        let empnos = [];
+	        let deptnos = [];
+	        let empnosNames = [];
+	        let deptnoNames = [];
+	        if (basis === 'empno') {
+	            empnos = Array.from(document.getElementById('empnos').selectedOptions).map(option => option.value);
+	            empnosNames = Array.from(document.getElementById('empnos').selectedOptions).map(option => option.text);
+	            console.log(empnos);
+	        } else if (basis === 'deptno') {
+	            deptnos = Array.from(document.getElementById('deptnos').selectedOptions).map(option => option.value);
+	            deptnoNames= Array.from(document.getElementById('deptnos').selectedOptions).map(option => option.text);
+	            console.log(deptnoNames);
+	        }
+            
+	            console.log(empnos);
+	            console.log(deptnos);
+            
+				Swal.fire({
+				    title: '確認發送對象及訊息內容',
+				    html: '發送對象為:<br>' + empnosNames + deptnoNames + '<hr>發送訊息為:<br>' + message,
+				    icon: 'warning',
+				    showCancelButton: true,
+				    confirmButtonText: '發送！',
+				    cancelButtonText: '重新編輯'
+				}).then((result) => {
+		            if (result.isConfirmed) {
+		                
+		           
+            
+            const url = "http://localhost:8088/PSNEXUS/createNotification";
+            const data = {
+                basis: basis,
+                category: category,
+                message: message,
+                returnPage: returnPage,
+                empnos: empnos,
+                deptnos:deptnos
+            };
+            
+            axios.post(url, JSON.stringify(data), {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+	            Swal.fire({
+	                title: '通知已成功發送!!!',
+	                icon: 'success',
+	                showCancelButton: false,
+	                confirmButtonText: 'OK！'
+	            })
+            })
+            .catch(error => {
+	            Swal.fire({
+	                title: '發送通知時出錯',
+	                icon: 'warning',
+	                showCancelButton: false,
+	                confirmButtonText: 'OK！'
+	            })
+            });
+                }
+		        });      
+        });
+        
+		document.addEventListener('DOMContentLoaded', function () {
+		    const basisSelect = document.getElementById('basis');
+		    const deptnoContainer = document.getElementById('deptnoContainer');
+		    const empnoContainer = document.getElementById('empnoContainer');
+		
+		    deptnoContainer.style.display = 'none';
+		
+		    basisSelect.addEventListener('change', function () {
+		        if (this.value === 'deptno') {
+		            deptnoContainer.style.display = 'block';
+		            empnoContainer.style.display = 'none';
+		        } else {
+		            deptnoContainer.style.display = 'none';
+		            empnoContainer.style.display = 'block';
+		        }
+		    });
+		});
+
+
+
+		function enter(button) {
+            document.querySelector('input[name="category"]').value = '臨時通知';
+            document.querySelector('textarea[name="message"]').value = '今日冷氣修繕，無法使用!!';
+        }
+        
+    </script>
+</body>
+</html>

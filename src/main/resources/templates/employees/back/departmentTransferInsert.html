@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>部門調動</title>
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<style>
+html,body{
+    height: 97%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.wrap{
+    height: 100%;
+    width: 100%;
+}
+.btn-group {
+	display: flex;
+	gap: 5px;
+}
+.icon-plus {
+    color: gray;
+}
+</style>
+</head>
+
+<body>
+
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1">
+			<br> <a th:href="@{/getAllEmployees}">所有員工資料</a> <a
+				th:href="@{/insertEmp}">新增員工資料</a> <a th:href="@{/getEmpsByCol}">查詢員工資料</a>
+			<a th:href="@{/familyMemberInsert}">新增親屬資料</a> <a
+				th:href="@{/departmentTransferInsert}">新增部門調動</a> <a
+				th:href="@{/alldepartmentTransfer}">所有部門調動</a>
+		</div>
+		<div id="content" class="container">
+
+			<h2>部門調動</h2>
+			<form id="memberForm">
+				<table class="table table-bordered text-center">
+					<thead>
+						<tr>
+							<th>員工編號</th>
+							<th>原部門</th>
+							<th>調動日期</th>
+							<th>新部門</th>
+							<th>職稱</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="formBody">
+						<tr class="member">
+							<td><select class="form-control" name="empno" id="empno"
+								required onchange="fetchDeptno(this)">
+									<option value="" disabled selected>請選擇員工編號</option>
+									<option th:each="empId : ${employeeIds}" th:value="${empId}"
+										th:text="${empId}">Employee ID</option>
+							</select></td>
+							<td><input type="text" class="form-control"
+								name="lastDeptname" id="lastDeptname" readonly
+								placeholder="自動代入原部門"> <input type="hidden"
+								name="lastDeptno" id="lastDeptno"></td>
+							<td><input type="text" class="form-control datepicker"
+								name="transDate" id="transDate" placeholder="請選擇調動日期" required></td>
+							<td><select class="form-control" name="newDeptno"
+								id="newDeptno" required>
+									<option value="" disabled selected>請選擇新部門</option>
+									<option th:each="dept : ${dept}" th:value="${dept.deptno}"
+										th:text="${dept.deptname}">deptname</option>
+							</select></td>
+							<td><select id="newJob" name="newJob" class="form-control"
+								required>
+									<option value="" disabled selected>請選擇職稱</option>
+									<option value="assistant">Assistant</option>
+									<option value="leader">Leader</option>
+									<option value="manager">Manager</option>
+									<option value="boss">Boss</option>
+							</select></td>
+
+							<td>
+								<div class="btn-group">
+									<button type="button" class="btn btn-primary btn-save"
+										onclick="saveFormData(this)">存檔</button>
+									<button type="button" class="btn btn-danger btn-remove"
+										onclick="removeForm(this)">刪除</button>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<button type="button" class="  addPosition" onclick="addForm()">
+					新增一筆資料 <i class="fa-solid fa-plus icon-plus"></i>
+				</button>
+			</form>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script>
+		function saveFormData(button) {
+			var formRow = button.closest('tr');
+			var empno = formRow.querySelector('select[name="empno"]').value;
+			var transDate = formRow.querySelector('input[name="transDate"]').value;
+			var lastDeptno = formRow.querySelector('input[name="lastDeptno"]').value;
+			var newDeptno = formRow.querySelector('select[name="newDeptno"]').value;
+			var newJob = formRow.querySelector('select[name="newJob"]').value;
+			var url = "http://localhost:8088/PSNEXUS/addDepartmentTransfer";
+
+			if (lastDeptno == newDeptno) {
+				Swal.fire({
+					title: '新部門與舊部門不會相同!',
+					text: '麻煩請再次確認！',
+					icon: 'error',
+					showCancelButton: false,
+					confirmButtonText: '重新修正！'
+				}).then((result) => {
+					if (result.isConfirmed) {
+						$form.submit();
+					}
+				});
+				return;
+			}
+
+			Swal.fire({
+				title: '是否確定新增?',
+				text: '麻煩請再次確認！',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: '是！',
+				cancelButtonText: '再檢查一下'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					axios({
+						method: 'post',
+						url: url,
+						data: {
+							empno: empno,
+							transDate: transDate,
+							lastDeptno: lastDeptno,
+							newDeptno: newDeptno,
+							newJob: newJob,
+						}
+					}).then(() => {
+						Swal.fire({
+							title: '新增成功!',
+							text: '',
+							icon: 'success',
+							showCancelButton: false,
+							confirmButtonText: 'OK！',
+						});
+
+						// Hide buttons
+						var buttons = formRow.querySelectorAll('button');
+						buttons.forEach(btn => {
+							btn.style.display = 'none';
+						});
+
+					}).catch((error) => {
+						console.error('Error occurred:', error);
+						Swal.fire({
+							title: '新增失敗!',
+							text: '發生錯誤，請稍後再試。',
+							icon: 'error',
+							showCancelButton: false,
+							confirmButtonText: 'OK！',
+						});
+					});
+				}
+			})
+		}
+
+
+		function addForm() {
+			var formRow = document.querySelector('.member').cloneNode(true);
+			var buttons = formRow.querySelectorAll('button');
+			buttons.forEach(btn => {
+				btn.style.display = '';
+			});
+
+			var inputs = formRow.querySelectorAll('input, select');
+			inputs.forEach(input => {
+				if (input.type === 'text' || input.tagName === 'SELECT') {
+					input.value = '';
+				}
+			});
+
+			var datepickers = formRow.querySelectorAll('.datepicker');
+			datepickers.forEach(dp => {
+				var uniqueId = 'datepicker-' + Date.now();
+				dp.id = uniqueId;
+
+				$(dp).removeClass('hasDatepicker').datepicker({
+					dateFormat: "yy-mm-dd",
+					showOtherMonths: true,
+					selectOtherMonths: true,
+					changeMonth: true,
+					changeYear: true,
+					yearRange: "1911:2200"
+				});
+			});
+
+			document.getElementById('formBody').appendChild(formRow);
+		}
+
+
+		function removeForm(button) {
+			var formRow = button.closest('tr');
+			if (document.querySelectorAll('.member').length > 1) {
+				formRow.remove();
+			} else {
+				Swal.fire({
+					title: '至少需要一筆資料',
+					icon: 'error',
+					showCancelButton: false,
+					confirmButtonText: '取消刪除！',
+				})
+			}
+		}
+
+		const urlParams = new URLSearchParams(window.location.search);
+		if (urlParams.has('success')) {
+			alert('刪除成功！');
+		}
+
+		$(".datepicker").datepicker({
+			dateFormat: "yy-mm-dd",
+			showOtherMonths: true,
+			selectOtherMonths: true,
+			changeMonth: true,
+			changeYear: true,
+			yearRange: "1911:2200"
+		});
+
+
+		function fetchDeptno(empnoSelect) {
+			const empno = empnoSelect.value;
+			if (empno) {
+				axios.post('http://localhost:8088/PSNEXUS/findEmpnoDeptno', empno, {
+					headers: {
+						'Content-Type': 'text/plain'
+					}
+				})
+					.then(response => {
+						const currentRow = empnoSelect.closest('tr');
+						const deptnoInput = currentRow.querySelector('input[name="lastDeptno"]');
+						const deptnameInput = currentRow.querySelector('input[name="lastDeptname"]');
+
+						// Set the value of the input fields
+						deptnoInput.value = response.data.deptno;
+						deptnameInput.value = response.data.deptname;
+					})
+					.catch(error => {
+						console.error('Error fetching deptno:', error);
+					});
+			}
+		}
+	</script>
+</body>
+
+</html>

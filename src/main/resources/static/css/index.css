@@ -1,0 +1,447 @@
+html, body {
+	background-color: aquamarine;
+	width: 100%;
+	height: 100%;
+	font-family: Arial, sans-serif;
+}
+
+h1 {
+	font-weight: normal;
+	font-size: 300%;
+}
+
+.logo {
+	position: fixed;
+	top: 40px;
+	margin-left: 20px;
+	z-index: 1000;
+}
+
+.logo img {
+	width: 80px;
+}
+
+.myNav {
+	position: fixed;
+	top: 40px;
+	right: 30px;
+	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 40px;
+	padding: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+	z-index: 1000;
+}
+
+.box {
+	display: flex;
+	background-color: #110c0c;
+}
+
+.navbar-menu {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: space-around;
+}
+
+.navbar-menu li {
+	display: inline;
+}
+
+.navbar-menu a {
+	color: white;
+	text-decoration: none;
+	padding: 10px 20px;
+	display: block;
+}
+
+.navbar-menu a:hover {
+	color: rgb(192, 209, 255);
+}
+
+.home-section, .employees-section, .leaveRequest-section,
+	.meetingRoom-section, .post-section, .sal-section, .worklog-section {
+	
+}
+
+section {
+	height: 100%;
+	padding-top: 150px;
+	background-position: center center;
+	background-size: cover;
+	background-attachment: fixed;
+	text-align: center;
+}
+
+.home-section {
+	display: flex;
+	background-image: url(../images/辦公室1.jpg);
+	height: 210%;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+/* 	背景遮罩 */
+.overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(118, 85, 180, 0.418);
+	z-index: 1;
+}
+
+.overlayYL {
+	position: absolute;
+	top: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(255, 226, 226, 0.618);
+	z-index: 1;
+	background-position: -20%; /* 往上移動背景 */
+}
+
+.overlayWN {
+	position: absolute;
+	top: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(246, 246, 246, 0.518);
+	z-index: 1;
+}
+
+.overlayYR {
+	position: absolute;
+	top: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(255, 222, 77, 0.218);
+	z-index: 1;
+}
+
+.overlayCY {
+	position: absolute;
+	top: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(246, 244, 235, 0.518);
+	z-index: 1;
+}
+
+.overlayLL {
+	position: absolute;
+	top: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(167, 230, 255, 0.418);
+	z-index: 1;
+}
+
+.overlayHX {
+	position: absolute;
+	top: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(110, 119, 162, 0.410);
+	z-index: 1;
+}
+
+.employees-section {
+	background-image: url(../images/辦公室2.jpg);
+	position: relative;
+	text-align: center;
+	height: 150%;
+}
+
+.leaveRequest-section {
+	background-image: url(../images/辦公室3.jpg);
+	position: relative;
+	text-align: center;
+	height: 120%;
+}
+
+.meetingRoom-section {
+	background-image: url(../images/辦公室4.jpg);
+	position: relative;
+	text-align: center;
+	height: 140%;
+}
+
+.post-section {
+	background-image: url(../images/辦公室5.jpg);
+	position: relative;
+	text-align: center;
+}
+
+.sal-section {
+	height: 100%;
+	background-image: url(../images/辦公室6.jpg);
+	position: relative;
+	text-align: center;
+	height: 110%;
+}
+
+.worklog-section {
+	background-image: url(../images/辦公室7.jpg);
+	position: relative;
+	text-align: center;
+	height: 120%;
+}
+
+.final-section {
+	background-image: url(../images/辦公室8.jpg);
+	position: relative;
+	text-align: center;
+}
+
+.groupName {
+	text-align: center;
+	margin: 0 auto;
+}
+
+.content {
+	position: relative;
+}
+
+.container {
+	top: -150px;
+	left: 5%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: flex-start;
+	position: relative;
+}
+
+.row {
+	width: 700px;
+	/*background-color: rgba(255, 255, 255, .2); 找出欄位位置*/
+	border-radius: 20px;
+	text-align: left;
+	box-sizing: border-box;
+	position: relative;
+	/* 確保 padding 不影響寬度計算 */
+}
+
+.text-overlay {
+	position: absolute;
+	top: -100%;
+	left: 120%;
+	transform: translate(-50%, -50%);
+	background-color: rgba(255, 255, 255, 0.8);
+	/* 可選：增加半透明背景 */
+	padding: 40px;
+	padding-left: 100px !important;
+	/* 強制應用樣式 */
+	border-radius: 10px;
+	/* 可選：圓角效果 */
+	max-width: 90%;
+	/* 確保文本框不會溢出容器 */
+}
+
+.text-overlayHX {
+	position: absolute;
+	top: 50px;
+	left: 95%;
+	transform: translate(-50%, -50%);
+	background-color: rgba(255, 255, 255, 0.8);
+	/* 可選：增加半透明背景 */
+	padding: 50px;
+	/* 強制應用樣式 */
+	border-radius: 10px;
+	/* 可選：圓角效果 */
+	max-width: 90%;
+	/* 確保文本框不會溢出容器 */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.pr-3 {
+	padding-right: 1rem;
+	/* 相當於 Bootstrap 的 pr-3 */
+}
+
+.left-image {
+	width: 800px;
+	/* 根據需要調整圖片寬度 */
+	max-width: 200%;
+	/* 確保圖片不會超過其容器的寬度 */
+	height: auto;
+	/* 保持圖片的縱橫比 */
+	/* 	margin-left: 50%; */
+	/* 	transform: translateX(-50%); */
+	margin-bottom: 20px;
+	/* 在小屏幕上為圖片添加下邊距 */
+	z-index: 950;
+}
+
+.salImg {
+	position: relative;
+	top: 70px;
+	left: 19%;
+}
+
+.topicImg {
+	position: relative;
+	top: 5%;
+	left: 5%;
+	z-index: 1000;
+}
+
+.profitImg {
+	position: relative;
+	justify-content: center;
+	align-items: center;
+	top: 200px;
+	left: 30px;
+}
+
+.featureContainer {
+	position: absolute;
+	top: 1000px;
+	left: 35%;
+	max-width: 800px;
+	margin: 0 auto;
+	background-color: #fff;
+	padding: 20px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+}
+
+/* 
+.featureContainerr {
+	max-width: 800px;
+	margin: 0 auto;
+	background-color: #fff;
+	padding: 20px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+} */
+.featureContainer-employees {
+	position: absolute;
+	top: -200px;
+	max-width: 90%;
+	left: 350px;
+	margin: 0 auto;
+	background-color: #fff;
+	padding: 50px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+	z-index: 950;
+}
+
+.featureContainer-meeting {
+	position: absolute;
+	top: -300px;
+	max-width: 90%;
+	left: 350px;
+	margin: 0 auto;
+	background-color: #fff;
+	padding: 50px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+	z-index: 950;
+}
+
+.featureContainerrrr {
+	position: absolute;
+	top: 0px;
+	max-width: 1500px;
+	left: 400px;
+	margin: 0 auto;
+	background-color: #fff;
+	padding: 20px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+}
+
+.featureContainer-worklog {
+	position: absolute;
+	top: -300px;
+	max-width: 90%;
+	left: 350px;
+	margin: 0 auto;
+	background-color: #fff;
+	padding: 50px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+}
+
+.featureContainer-post {
+	position: absolute;
+	top: -150px;
+	max-width: 90%;
+	left: 350px;
+	margin: 0 auto;
+	background-color: #fff;
+	padding: 50px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+}
+
+.featureContainer-leaveRequest {
+	position: absolute;
+	top: -150px;
+	max-width: 90%;
+	left: 350px;
+	margin: 0 auto;
+	background-color: #fff;
+	padding: 50px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+}
+
+.featureContainer-final {
+	position: absolute;
+	top: 150px;
+	left: 35%;
+	max-width: 800px;
+	margin: 0 auto;
+	background-color: #fff;
+	padding: 50px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+	text-align: center;
+}
+
+.feature {
+	margin-bottom: 20px;
+}
+
+.feature h2 {
+	color: #555;
+}
+
+.feature p {
+	color: #666;
+	line-height: 1.6;
+}
+
+.leatWord {
+	text-align: left;
+}
+
+@media ( max-width : 768px) {
+	.myNav {
+		width: 100%;
+		text-align: center;
+		top: 0;
+		right: 0;
+	}
+	.navbar-menu {
+		flex-direction: column;
+	}
+	.navbar-menu a {
+		padding: 15px 0;
+	}
+	.home-section {
+		flex-direction: column;
+		align-items: center;
+	}
+	.row-bg {
+		margin-left: 0;
+		width: 100%;
+	}
+}

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+	<meta charset="UTF-8">
+
+	<title></title>
+	<style>
+		.modal-body {
+			padding: 20px;
+		}
+
+		.modal-body h2 {
+			font-size: 1.5rem;
+			margin-top: 1.5rem;
+			margin-bottom: 1rem;
+		}
+
+		.modal-body h3 {
+			font-size: 1.25rem;
+			margin-top: 1rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.modal-body p {
+			padding-left: 30px;
+			font-size: 1rem;
+			line-height: 1.6;
+			margin-bottom: 1rem;
+		}
+	</style>
+</head>
+
+<body>
+	<footer>
+		&copy; 2024 PolarStar Nexus All Rights Reserved
+		<div class="back">
+			<a href="#" data-bs-toggle="modal" data-bs-target="#employeeNoticeModal">員工須知</a> <a href="#"
+				data-bs-toggle="modal" data-bs-target="#connectwithusModal">聯絡我們</a>
+			<a href="#">back to top</a>
+		</div>
+	</footer>
+	<div class="modal fade" id="employeeNoticeModal" tabindex="-1" aria-labelledby="employeeNoticeModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="employeeNoticeModalLabel">員工須知</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<h2 class="text-center">網站簡介</h2>
+					<h3>
+						<i class="fa-solid fa-flag"></i>歷史
+					</h3>
+					<p>P.S Nexus成立於2024年，致力於創新和可持續發展。</p>
+					<h3>
+						<i class="fa-solid fa-flag"></i>使命與願景
+					</h3>
+					<p>我們的使命是通過網路減少人力資源，願景是成為全球最具好用的人資系統。</p>
+					<h3>
+						<i class="fa-solid fa-flag"></i>價值觀
+					</h3>
+					<p>創新、誠信、客戶至上、合作共贏。</p>
+
+					<h2 class="text-center">員工手冊</h2>
+					<h3>
+						<i class="fa-regular fa-flag"></i>公司政策和規章制度
+					</h3>
+					<p>所有員工應遵守公司制定的各項政策和規章制度，具體內容詳見員工手冊。</p>
+					<h3>
+						<i class="fa-regular fa-flag"></i>工作時間和休假政策
+					</h3>
+					<p>標準工作時間為每週40小時，週一至週五。員工享有每年15天帶薪休假，以及法定節假日。</p>
+					<h3>
+						<i class="fa-regular fa-flag"></i>行為準則
+					</h3>
+					<p>員工應遵守職業道德，保持專業形象，尊重同事，維護公司的聲譽和利益。</p>
+					<h3>
+						<i class="fa-regular fa-flag"></i>服裝要求
+					</h3>
+					<p>辦公室著裝應保持整潔得體，簡單便捷舒適為主。</p>
+
+					<h2 class="text-center">人力資源信息</h2>
+					<h3>
+						<i class="fa-solid fa-flag-checkered"></i>招聘和離職程序
+					</h3>
+					<p>所有招聘和離職均需通過人力資源部門辦理，詳細流程請參考人力資源手冊。</p>
+					<h3>
+						<i class="fa-solid fa-flag-checkered"></i>培訓和發展機會
+					</h3>
+					<p>公司提供多種培訓和發展機會，幫助員工提升技能，實現職業目標。</p>
+					<h3>
+						<i class="fa-solid fa-flag-checkered"></i>員工績效評估
+					</h3>
+					<p>每年進行兩次績效評估，評估結果將作為晉升和加薪的重要依據。</p>
+					<h3>
+						<i class="fa-solid fa-flag-checkered"></i>晉升和加薪政策
+					</h3>
+					<p>公司根據員工的績效和貢獻，定期進行晉升和加薪，具體政策詳見員工手冊。</p>
+
+					<h2 class="text-center">福利與補助</h2>
+					<h3>
+						<i class="fa-regular fa-hand-point-right"></i>健康保險計劃
+					</h3>
+					<p>公司為員工提供全面的健康保險計劃，包括醫療、牙科和視力保險。</p>
+					<h3>
+						<i class="fa-regular fa-hand-point-right"></i>退休計劃
+					</h3>
+					<p>公司為員工提供退休計劃，幫助員工為未來做準備。</p>
+					<h3>
+						<i class="fa-regular fa-hand-point-right"></i>帶薪休假和病假
+					</h3>
+					<p>員工享有帶薪休假和病假，具體天數根據工作年限和職位而定。</p>
+					<h3>
+						<i class="fa-regular fa-hand-point-right"></i>員工折扣和福利
+					</h3>
+					<p>員工可以享受公司產品和服務的專屬折扣和福利。</p>
+
+					<h2 class="text-center">辦公設施與資源</h2>
+					<h3>
+						<i class="fa-solid fa-star"></i>辦公室布局和設施介紹
+					</h3>
+					<p>介紹公司辦公室的布局和各項設施，幫助員工更好地利用辦公資源。</p>
+					<h3>
+						<i class="fa-solid fa-star"></i>會議室預定系統
+					</h3>
+					<p>提供會議室預定系統的使用指南，方便員工預定會議室。</p>
+					<h3>
+						<i class="fa-solid fa-star"></i>辦公用品和資源的使用指南
+					</h3>
+					<p>介紹辦公用品和資源的使用方法和規則。</p>
+
+					<h2 class="text-center">內部溝通</h2>
+					<h3>
+						<i class="fa-solid fa-tree"></i>公司新聞和公告
+					</h3>
+					<p>發布公司的最新動態和重要公告，讓員工及時了解公司信息。</p>
+					<h3>
+						<i class="fa-solid fa-tree"></i>活動和會議日曆
+					</h3>
+					<p>提供公司活動和會議的日曆，方便員工查詢和參與。</p>
+					<h3>
+						<i class="fa-solid fa-tree"></i>內部通訊錄
+					</h3>
+					<p>提供內部通訊錄，方便員工之間的聯絡。</p>
+
+					<h2 class="text-center">法律合規</h2>
+					<h3>
+						<i class="fa-solid fa-person"></i>反騷擾政策
+					</h3>
+					<p>公司嚴格禁止任何形式的騷擾行為，員工如有相關問題可立即向人力資源部門舉報。</p>
+					<h3>
+						<i class="fa-solid fa-person"></i>平等就業機會政策
+					</h3>
+					<p>公司致力於提供平等的就業機會，不歧視任何員工或求職者。</p>
+					<h3>
+						<i class="fa-solid fa-person"></i>遵守法律和法規的指南
+					</h3>
+					<p>員工應遵守相關法律和法規，確保公司的合法經營。</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="connectwithusModal" tabindex="-1" aria-labelledby="connectwithusModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="connectwithusModalLabel">聯絡我們</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="contactForm">
+						<div class="mb-3">
+							<div class="d-flex justify-content-between align-items-center">
+								<label for="name" class="form-label mb-0"><i
+										class="fa-solid fa-user me-2"></i>名字</label>
+								<div class="form-check d-flex align-items-center">
+									<input class="form-check-input mt-0 me-2" type="checkbox" id="sameAsLogin"
+										aria-label="Checkbox for following text input">
+									<label class="form-check-label mb-0" for="sameAsLogin">聯絡資訊同登入帳號</label>
+									<input type="hidden" name="connectionaccount" th:value="${session.account}"
+										id="connectionaccount">
+								</div>
+							</div>
+							<input type="text" class="form-control" id="connectionname" name="connectionname"
+								autocomplete="off" placeholder="王曉明">
+						</div>
+
+						<div class="mb-3">
+							<label for="phone" class="form-label"><i class="fa-solid fa-phone me-2"></i>聯絡電話</label>
+							<input type="text" class="form-control" id="connectionphone" name="connectionphone"
+								autocomplete="off" placeholder="手機/家電">
+						</div>
+						<div class="mb-3">
+							<label for="mail" class="form-label"><i class="fa-solid fa-envelope me-2"></i>聯絡信箱</label>
+							<input type="email" class="form-control" id="connectionmail" name="connectionmail"
+								autocomplete="off" placeholder="example@gmail.com">
+						</div>
+						<div class="alert alert-danger d-none" id="error-msg">請輸入聯絡電話或聯絡信箱</div>
+						<hr>
+						<div class="mb-3">
+							<label for="connectionmessage" class="form-label"><i
+									class="fa-solid fa-comment me-2"></i>意見欄</label>
+							<textarea class="form-control" id="connectionmessage" placeholder="請輸入內容...最多150字"
+								autocomplete="off" maxlength="150"></textarea>
+						</div>
+						<div class="alert alert-danger d-none" id="error-msg1">請輸入意見內容</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-secondary" onclick="enter(this)">一鍵輸入</button>
+					<button type="button" class="btn btn-primary" id="submitBtn">送出</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close">關閉</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		document.getElementById('submitBtn').addEventListener('click', function () {
+			const phone = document.getElementById('connectionphone').value.trim();
+			const mail = document.getElementById('connectionmail').value.trim();
+			const name = document.getElementById('connectionname').value.trim();
+			const message = document.getElementById('connectionmessage').value.trim();
+			const empno = document.getElementById('connectionaccount').value.trim();
+			const errorMsg = document.getElementById('error-msg');
+			const errorMsg1 = document.getElementById('error-msg1');
+			const url = "http://localhost:8088/PSNEXUS/addconnection";
+
+			if (phone === '' && mail === '' && message === '') {
+				errorMsg.classList.remove('d-none');
+				errorMsg1.classList.remove('d-none');
+			} else if (phone === '' && mail === '') {
+				errorMsg.classList.remove('d-none');
+				errorMsg1.classList.add('d-none');
+			} else if (message === '') {
+				errorMsg.classList.add('d-none');
+				errorMsg1.classList.remove('d-none');
+			} else {
+				errorMsg.classList.add('d-none');
+				errorMsg1.classList.add('d-none');
+				const data = {
+					empno: empno,
+					name: name,
+					phone: phone,
+					mail: mail,
+					message: message
+				};
+				axios.post(url, data)
+					.then(response => {
+						console.log('Response:', response.data);
+						document.getElementById('sameAsLogin').checked = false;
+						document.getElementById('connectionphone').value = "";
+						document.getElementById('connectionmail').value = "";
+						document.getElementById('connectionname').value = "";
+						document.getElementById('connectionmessage').value = "";
+						document.getElementById('close').click();
+					})
+					.catch(error => {
+						console.error('Error:', error);
+					});
+			}
+		});
+
+
+
+		document.getElementById('sameAsLogin').addEventListener('change', function () {
+			const account = document.getElementById('connectionaccount').value;
+			console.log(account);
+			const phone = document.getElementById('connectionphone');
+			const mail = document.getElementById('connectionmail');
+			const name = document.getElementById('connectionname');
+
+			if (this.checked) {
+				axios.post('http://localhost:8088/PSNEXUS/findEmpnoinfo', account, {
+					headers: {
+						'Content-Type': 'text/plain'
+					}
+				})
+					.then(response => {
+						phone.value = response.data.phone;
+						mail.value = response.data.email;
+						name.value = response.data.name;
+					})
+					.catch(error => {
+						console.error('Error:', error);
+					});
+			} else {
+
+				phone.value = "";
+				mail.value = "";
+				name.value = "";
+			}
+		});
+		
+		function enter(button) {
+				//document.getElementById('connectionmail').value = 'psnexus175@gmail.com';
+	            document.getElementById('connectionmessage').value = '我希望今年尾牙的大獎可以是20萬!';
+	    }
+	</script>
+
+</body>
+
+</html>

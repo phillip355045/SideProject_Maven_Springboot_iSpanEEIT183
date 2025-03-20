@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<title>預約會議室</title>
+<head>
+    <link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+ <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #dfe9f3, #ffffff);
+            color: #333;
+        }
+
+        .content {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            text-align: left;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .content h2 {
+            color: #219ebc;
+            font-size: 22px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+        form {
+            text-align: left;
+        }
+        form input[type="text"], form select, form input[type="date"], form input[type="time"], form input[type="file"] {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin: 5px 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        form input[type="submit"] {
+            background-color: #8ecae6;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        form input[type="submit"]:hover {
+            background-color: #219ebc;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+        .form-container {
+            display: flex;
+            flex-direction: column;
+        }
+        /*彈出視窗*/
+        
+        .hidden {
+            display: none;
+        }
+ </style>
+</head>
+<body>
+<div th:replace="~{layout/empnavbar}"></div>
+<div class="wrap">
+	<div id="content" class="content container">
+		<h2>預約會議室</h2>
+		<span th:text="${errorMsg} ? ${errorMsg}" style="color: red; font-weight: bold;"></span>
+		<form method="post" th:action="@{/ReserveRoom}"
+			enctype="multipart/form-data" id="inspection" class="form-container">
+			<input type="hidden" name="fakeDelete" value="0"/>
+			<input type="hidden" name="status" value="未審核"/>
+			
+			會議主題 : <input type="text" name="reserveTitle" required />
+			會議室:<input type="text" name="roomName" th:value="${roomName}" readonly/>
+			預約人員編號 : <input type="text" name="empno" th:value="${session.account}" readonly/>
+			
+			會議日期 : <input type="date" name="eventDay" required />
+			<div id="error" style="color: red;"></div>
+			會議開始時間 :<input type="time" name="startTime" id="startTime" step="3600" required />
+			
+
+			會議結束時間 :<input type="time" name="endTime" id="endTime" step="3600" required />
+			
+
+ 				
+			上傳會議文件 : <input type="file" name="document" multiple  class="form-control  form-control-sm">
+			
+		 	<input type="hidden" value="會議室預約放行" name="category" id="category">
+    		<input type="hidden" th:value="${session.mgr}" name="notifyEmpno" id="notifyEmpno">
+
+				<input type="submit" value="確定" />
+			
+		</form>
+	</div>
+</div>
+<div th:replace="~{layout/footer}"></div>	
+	<script>
+	
+		
+		$(function() {				
+	        document.getElementById('startTime').addEventListener('input', function() {
+	            this.value = adjustToHour(this.value);
+	        });
+
+	        document.getElementById('endTime').addEventListener('input', function() {
+	            this.value = adjustToHour(this.value);
+	        });
+
+	        function adjustToHour(time) {
+	            const [hours, minutes] = time.split(':');
+	            return `${hours.padStart(2, '0')}:00:00`;
+	        }
+			
+			let startTime;
+			let endTime;
+			let errorMessage;
+			$("#inspection").on("submit", function(event) { //function裡的event是將事件對象作為參數，用來阻止默默行為、獲取觸發事件
+				event.preventDefault(); //阻止瀏覽器的默認提交行為，執行完下面的判斷後才能提交
+				startTime = $('#startTime').val();
+				endTime = $('#endTime').val();
+				errorMessage = $('#error');
+				errorMessage.text("");
+				if (startTime === endTime) {
+					errorMessage.text("時間不可相同").css("color", "red");
+					return;
+				}
+				if (startTime > endTime) {
+					errorMessage.text("開始時間需要早於結束時間").css("color", "red");
+					return;
+				}
+				alert('預約送出');
+				//驗證完提交
+				this.submit();
+			});
+           
+		});
+	</script>
+</body>
+</html>

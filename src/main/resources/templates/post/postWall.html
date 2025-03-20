@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+/*------------------------------------------*/
+* {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-decoration: none;
+	font-family: Arial, sans-serif;
+	transition: margin-left 0.3s;
+	transition: all 0.3s;
+	/* 所有屬性都設置過渡效果 */
+}
+
+/* 內容最外層，通常看不到 */
+.wrap {
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+	width: 100%;
+	background: #F5EDF7;
+	color: #333;
+	padding-top: 104px;
+}
+
+/* 左側navbar */
+.nav1 {
+	position: relative;
+	width: 260px;
+	/* 固定寬度，可以根據需要調整 */
+	background-color: #BB99CD;
+	/* 背景色，可以根據需要調整 */
+	padding: 20px;
+	/* 內邊距，可以根據需要調整 */
+}
+
+.nav1 a {
+	color: rgb(34, 34, 34);
+	text-decoration: none;
+	background-size: 25px;
+	display: block;
+	width: 200px;
+	line-height: 40px;
+	text-align: center;
+	text-decoration: none;
+}
+
+.nav1 a:hover {
+	color: blue;
+	/* background-color: rgb(41, 39, 76); */
+}
+
+/* 左側navbar頂部線條 */
+/* 
+    .nav1::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 100%;
+        width:5px ; 
+        height:100% ;
+        background-color: rgb(102, 130, 255); }*/
+
+/* class為container:增加id content */
+#content {
+	max-width: 70%;
+	margin: 20px auto;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	background-color: rgba(255, 255, 255, 0.8);
+	text-align: center;
+	overflow: hidden;
+	/* 確保 .container 的內容不會溢出 */
+	position: relative;
+}
+
+/* 內容區上面的藍色區塊綴飾 */
+.container::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	/* 調整位置以達到覆蓋效果 */
+	left: 0;
+	width: 100%;
+	height: 10px;
+	background-color: #643579;
+	/* 紫色區塊 */
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
+/* 標題置左 */
+h2 {
+	color: #333;
+	padding: 10px;
+	padding-bottom: 20px;
+	text-align: left;
+}
+
+/* 表單列輸入欄設定 */
+
+/* 按欄位種類修改 */
+/* .table-form input[type="month"], input[type="text"], input[type="password"],
+        input[type="file"], input[type="month"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    } */
+
+/* table的class內input統一修改 */
+.table-form input, .table-form select {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+}
+
+/* 表單列內按鈕 */
+input[type="submit"], input[type="button"], input[type="reset"] {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	background-color: rgb(102, 130, 255);
+	color: white;
+	transition: background-color 0.3s;
+	color: white;
+}
+
+/* 修改特定按鈕寬度 */
+.table-form td .confirmButton {
+	padding: 10px;
+	width: 100px;
+}
+
+/* 
+.table-form td .confirmButton:hover {
+    background-color: rgb(42, 60, 147);
+} */
+
+/* 表單列內按鈕變色 */
+input[type="submit"]:hover, input[type="button"]:hover, input[type="reset"]:hover
+	{
+	background-color: rgb(42, 60, 147);
+}
+
+/* 存檔按鈕 */
+.btn.btn-save {
+	color: white;
+	background-color: rgb(102, 130, 255);
+	border: none;
+	/* 去掉邊框 */
+}
+
+/* 刪除按鈕 */
+.btn.btn-remove {
+	color: white;
+	background-color: rgb(241, 57, 57);
+	border: none;
+	/* 去掉邊框 */
+}
+
+.btn.btn-save:hover {
+	color: white;
+	background-color: rgb(57, 78, 184);
+}
+
+.btn.btn-remove:hover {
+	color: white;
+	background-color: rgb(185, 28, 28);
+}
+
+/* 新增一筆資料按鈕 */
+.addPosition {
+	float: right;
+	padding-right: 10px;
+	border: none;
+	/* 隱藏邊框 */
+	background-color: transparent;
+	/* 移除底色 */
+	color: rgb(145, 145, 145);
+}
+
+/* 將SVG改顏色 */
+.custom-color-icon {
+	filter: invert(62%) sepia(22%) saturate(3753%) hue-rotate(193deg)
+		brightness(100%) contrast(93%);
+}
+
+/* 按鈕 hover 時將 SVG 和文字顏色變深 */
+.addPosition:hover {
+	color: rgb(65, 65, 65);
+	/* 文字變色 */
+}
+
+.addPosition:hover .custom-color-icon {
+	filter: invert(62%) sepia(22%) saturate(3753%) hue-rotate(193deg)
+		brightness(80%) contrast(93%);
+}
+
+/* table用的class */
+.table-form {
+	width: 100%;
+	max-width: 600px;
+	margin: 0;
+	border-collapse: collapse;
+	text-align: left;
+}
+
+/*  */
+.table-form td {
+	padding: 10px;
+	width: 60px;
+}
+
+/* 表單列固定、做區間 */
+label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+/* 使用dataTable套件做表格，記得把<table>中的border="1"刪掉 */
+#myTable th:first-child {
+	border-top-left-radius: 20px;
+}
+
+#myTable th:last-child {
+	border-top-right-radius: 20px;
+}
+
+#myTable th {
+	border: none;
+	padding: 10px;
+}
+
+/* 使用聯流鑽研出的自動帶名字條:autocomplete全部css */
+.autocomplete {
+	position: relative;
+	display: inline-block;
+}
+
+.autocomplete-items {
+	position: absolute;
+	border: 1px solid #d4d4d4;
+	border-bottom: none;
+	border-top: none;
+	z-index: 99;
+	top: 100%;
+	left: 0;
+	right: 0;
+}
+
+.autocomplete-item {
+	padding: 10px;
+	cursor: pointer;
+	background-color: #fff;
+	border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-item:hover {
+	background-color: #e9e9e9;
+}
+
+/*  footer 下面所有都要放*/
+footer {
+	background-color: rgb(46, 46, 46);
+	color: rgb(176, 176, 176);
+	height: 50px;
+	padding: 15px;
+}
+
+footer a {
+	color: rgb(175, 175, 175);
+	text-decoration: none;
+	margin: 5px;
+}
+
+footer a:hover {
+	color: rgb(79, 79, 79);
+	text-decoration: none;
+}
+
+.back {
+	float: right;
+}
+
+/*------------------------------------------*/
+.post-container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	min-width: 800px;
+}
+
+.post {
+	background-color: #ffffff;
+	padding: 20px;
+	margin-bottom: 20px;
+	border-radius: 10px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	width: 100%;
+	border: none;
+	text-align: left;
+	position: relative;
+}
+
+.post-title {
+	font-size: 18px;
+	margin: 0 0 10px;
+	font-weight: bold;
+}
+
+.post-body {
+	font-size: 14px;
+	color: #555;
+	margin-bottom: 10px;
+}
+
+.post-footer {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	font-size: 14px;
+	color: #999;
+}
+
+.post-footer span {
+	margin-right: 20px;
+	display: flex;
+	align-items: center;
+}
+
+.post-footer span i {
+	margin-right: 5px;
+}
+
+.post-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.post-header .post-date {
+	font-size: 14px;
+	color: #999;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	position: relative;
+}
+
+.header .title {
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.header .actions {
+	display: flex;
+	align-items: center;
+}
+
+.header .actions button, .header .actions input[type="text"] {
+	margin-left: 10px;
+}
+
+.header .actions button {
+	padding: 5px 10px;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.header .actions input[type="text"] {
+	padding: 5px;
+	font-size: 14px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+.pagination {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	margin-top: 20px;
+}
+
+.page-item {
+	margin: 0 5px;
+	cursor: pointer;
+	border: none;
+	background: none;
+	color: inherit;
+	padding: 5px 10px;
+}
+
+.page-item.active {
+	font-weight: bold;
+	color: #007bff;
+}
+
+.page-item button {
+	border: none;
+	background: none;
+	color: inherit;
+	padding: 5px 10px;
+	border-radius: 5px;
+}
+
+.page-item button:hover {
+	background-color: #f8f9fa;
+	border: none;
+}
+
+.custom-modal-width {
+	min-width: 80%;
+}
+
+/* 自定義背景遮罩樣式 */
+.modal-backdrop {
+	background-color: rgba(0, 0, 0, 0.5); /* 改變這裡的顏色或透明度來適應你的設計 */
+}
+
+/* 新增: 禁止在Modal打開時對頁面佈局的影響 */
+body.modal-open {
+	overflow: hidden;
+}
+</style>
+<title>歡迎來到布告欄</title>
+</head>
+<body>
+    <div th:replace="~{layout/empnavbar}"></div>
+    <div class="wrap">
+       
+        <div id="content" class="container">
+            <h1 class="title">布告欄</h1>
+            <div class="header">
+                <div class="actions">
+                    <button type="button" class="btn btn-primary" id="loadBtnB">
+                        新增貼文
+                    </button>
+                    <form th:action="@{#}" method="get" style="margin: 0;">
+                        <input type="text" name="query" placeholder="搜尋..." onclick="showSearchModal()">
+                    </form>
+                </div>
+                <div class="pagination" id="pagination">
+                    <!-- 分頁按鈕會在這裡生成 -->
+                </div>
+            </div>
+            <main class="post-container" id="post-container">
+                <form th:each="post : ${posts}" th:action="@{/findPostById.controller(postId=${post.postId})}" method="post" class="post">
+                    <div class="post-header">
+                        <h3 class="post-title" th:text="${post.postTitle}"></h3>
+                        <span class="post-date" th:text="${post.postDateTime}"></span>
+                    </div>
+                    <p class="post-body" th:text="${post.postContent}"></p>
+                    <div class="post-footer">
+                        <span th:text="${post.postCategory}"></span>
+                        <i class="fas fa-thumbs-up"></i> <span th:text="${post.likeCounts}">0</span>
+       					<i class="fas fa-comment"></i> <span th:text="${post.commentCounts}">0</span>
+                        
+                    </div>
+                    <input type="hidden" name="id" th:value="${post.postId}" />
+                    <button type="submit" style="all: unset; cursor: pointer; width: 100%; height: 100%; position: absolute; top: 0; left: 0;"></button>
+                </form>
+            </main>
+        </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="insertPostModalLabel" aria-hidden="true" data-backdrop="true" data-keyboard="true">
+        <div class="modal-dialog custom-modal-width">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="insertPostModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeModal()"></button>
+                </div>
+                <div class="modal-body" id="modalContent">
+                    <!-- AJAX will load content here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Modal -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog custom-modal-width">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchModalLabel">貼文牆-條件搜尋</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="searchModalContent">
+                    <!-- AJAX will load content here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div th:replace="~{layout/footer}"></div>
+
+    <!-- JavaScript files -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+
+    <!-- Modal JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var loadBtnB = document.getElementById('loadBtnB');
+            var myModal = new bootstrap.Modal(document.getElementById('myModal'));
+            var searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
+            var modalTitle = document.querySelector('.modal-title');
+            var modalContent = document.getElementById('modalContent');
+            var searchModalContent = document.getElementById('searchModalContent');
+
+            if (loadBtnB) {
+                loadBtnB.onclick = function() {
+                    fetch('/PSNEXUS/insertPost.controller')
+                        .then(response => response.text())
+                        .then(result => {
+                            modalContent.innerHTML = result;
+                            modalTitle.textContent = '新增貼文';
+                            myModal.show();
+                            // 重新初始化動態加載的內容中的事件監聽器和插件
+                            initializeModalContent();
+                        })
+                        .catch(error => console.error('Error loading content:', error));
+                };
+            }
+
+            function closeModal() {
+                myModal.hide();
+            }
+
+            // 新增: 初始化動態加載內容中的事件監聽器和插件
+            function initializeModalContent() {
+                // 這裡放置需要初始化的JS代碼，例如事件監聽器的綁定等
+                const fillExampleBtn = document.querySelector('button[onclick="fillExampleData()"]');
+                if (fillExampleBtn) {
+                    fillExampleBtn.onclick = function() {
+                        document.getElementById('postTitle').value = '測試功能-展示新增貼文:享受陽光明媚的一天：公園散步與咖啡時光';
+                        document.getElementById('postContent').value = '這是一個預設的貼文內容範例。今天的天氣非常好，陽光明媚，讓人感到心情愉快。早上我去公園散步，看到很多人也在享受這美好的時光。公園裡的花朵盛開，五顏六色，非常漂亮。午後我在咖啡館讀了一本書，感受到一種難得的寧靜。生活中的小確幸往往就在這些平凡的瞬間，希望大家也能珍惜每天的美好時光。';
+                    };
+                }
+
+                const imageUploadInput = document.getElementById('image-upload');
+                const imagePreviewContainer = document.getElementById('image-preview');
+
+                if (imageUploadInput) {
+                    imageUploadInput.onchange = function (event) {
+                        const files = event.target.files;
+                        imagePreviewContainer.innerHTML = ''; // 清空之前的預覽
+
+                        Array.from(files).forEach((file, index) => {
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                const previewItem = document.createElement('div');
+                                previewItem.classList.add('preview-item');
+                                
+                                const img = document.createElement('img');
+                                img.src = e.target.result;
+                                previewItem.appendChild(img);
+                                
+                                const removeBtn = document.createElement('button');
+                                removeBtn.innerText = 'X';
+                                removeBtn.classList.add('remove-btn');
+                                removeBtn.onclick = function() {
+                                    previewItem.remove();
+                                    // 移除該文件在 input.files 中的對應項
+                                    const dt = new DataTransfer();
+                                    Array.from(imageUploadInput.files)
+                                        .filter((_, i) => i !== index)
+                                        .forEach(file => dt.items.add(file));
+                                    imageUploadInput.files = dt.files;
+                                };
+
+                                previewItem.appendChild(removeBtn);
+                                imagePreviewContainer.appendChild(previewItem);
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                    };
+                }
+            }
+
+            // 添加事件处理程序以显示搜索模态框
+            window.showSearchModal = function() {
+                fetch('/PSNEXUS/searchPostWall')
+                    .then(response => response.text())
+                    .then(result => {
+                        searchModalContent.innerHTML = result;
+                        searchModal.show();
+                    })
+                    .catch(error => console.error('Error loading search modal content:', error));
+            };
+        });
+    </script>
+
+    <!-- 分頁 JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var posts = Array.from(document.querySelectorAll('.post-container .post'));
+            var postsPerPage = 6;
+            var currentPage = 1;
+            var totalPages = Math.ceil(posts.length / postsPerPage);
+
+            function showPage(page) {
+                var start = (page - 1) * postsPerPage;
+                var end = start + postsPerPage;
+
+                posts.forEach((post, index) => {
+                    if (index >= start && index < end) {
+                        post.style.display = 'block';
+                    } else {
+                        post.style.display = 'none';
+                    }
+                });
+
+                currentPage = page;
+                updatePagination();
+            }
+
+            function updatePagination() {
+                var pagination = document.getElementById('pagination');
+                pagination.innerHTML = '';
+
+                for (var i = 1; i <= totalPages; i++) {
+                    var pageItem = document.createElement('button');
+                    pageItem.textContent = i;
+                    pageItem.classList.add('page-item');
+                    if (i === currentPage) {
+                        pageItem.classList.add('active');
+                    }
+
+                    pageItem.addEventListener('click', (function(page) {
+                        return function() {
+                            showPage(page);
+                        };
+                    })(i));
+
+                    pagination.appendChild(pageItem);
+                }
+            }
+
+            showPage(currentPage);
+        });
+    </script>
+</body>
+</html>

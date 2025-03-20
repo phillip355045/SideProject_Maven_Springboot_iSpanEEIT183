@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>WebSocket Chat</title>
+	<style>
+		body {
+			margin: 0;
+			padding-top: 60px;
+			background-color: #f8f9fa;
+		}
+
+		#chat {
+			width: 100%;
+			height: 400px;
+			border: 1px solid #dee2e6;
+			border-radius: 5px;
+			overflow-y: scroll;
+			padding: 10px;
+			background-color: #ffffff;
+		}
+
+		#text {
+			width: 100%;
+			margin-top: 10px;
+		}
+
+		.navbar-container {
+			width: 100%;
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 1000;
+			color: white;
+			text-align: center;
+			padding: 10px 0;
+		}
+
+		.navbar-container div {
+			color: white;
+		}
+
+		.content {
+			margin-top: 80px;
+			padding: 20px;
+		}
+
+		.chat-message {
+			margin-bottom: 10px;
+			padding: 5px 10px;
+			border-radius: 5px;
+			background-color: #e9ecef;
+		}
+
+		.chat-message.from-me {
+			background-color: #d1ecf1;
+			text-align: right;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="navbar-container">
+		<div th:replace="~{layout/empnavbar}"></div>
+	</div>
+	<div class="container content">
+		<input type="hidden" id="empno" th:value="${session.account}" />
+		<input type="hidden" id="name" th:value="${session.name}" />
+		<div class="form-group">
+			<label for="employeeTarget">選擇員工:</label>
+			<select id="employeeTarget" class="form-control" onchange="loadChatHistory()">
+				<option value="">選擇員工</option>
+				<option th:each="employee : ${employees}" th:value="${employee.empno}" th:text="${employee.name}">
+				</option>
+			</select>
+		</div>
+		<div id="chat"></div>
+		<div class="input-group">
+			<input type="text" id="text" class="form-control" placeholder="請輸入訊息...">
+			<div class="input-group-append">
+				<button class="btn btn-primary" onclick="sendMessage()">發送</button>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/sockjs/1.1.4/sockjs.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/stomp/1.2.0/stomp.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+	<script>
+		let stompClient = null;
+		//var currentReceiver = "";
+
+		function connect() {
+			// 創建一個 SockJS 連接到 '/ws' 端點
+			let socket = new SockJS('/PSNEXUS/ws');
+
+			// 使用 SockJS 創建一個 STOMP 客戶端
+			stompClient = Stomp.over(socket);
+
+			// 連接到 STOMP 服務器
+			stompClient.connect({}, function (frame) {
+				// 連接成功後執行這段代碼
+				console.log('Connected: ' + frame);
+
+				// 訂閱 '/topic/messages' 主題，當有新消息時調用回調函數
+				stompClient.subscribe('/topic/messages', function (message) {
+
+					// 接收到消息後，將消息內容解析為 JSON 並顯示
+					showMessage(JSON.parse(message.body));
+				});
+
+				// 訂閱 個人消息
+				stompClient.subscribe('/user/queue/messages', function (message) {
+
+					showMessage(JSON.parse(message.body));
+				});
+			}, function (error) {
+			});
+		}
+
+
+		function sendMessage() {
+			let empno = document.getElementById('empno').value;
+			let receiver = document.getElementById('employeeTarget').value;
+			let content = document.getElementById('text').value;
+			if (receiver === "") {
+				alert("請選擇接收者");
+				return;
+			}
+
+			stompClient.send("/app/sendMessage", {}, JSON.stringify({'empno': empno, 'content': content, 'receiver': receiver}));
+			document.getElementById('text').value = ''; // 清空輸入框
+		}
+
+		function showMessage(message) {
+			let chat = document.getElementById('chat');
+			let currentUser = document.getElementById('empno').value;//增加
+
+
+			if (message.receiver === currentUser || message.empno === currentUser) {
+				let messageElement = document.createElement('div');
+				messageElement.className = 'chat-message';
+				if (message.empno === currentUser) {
+					messageElement.classList.add('from-me');
+				}
+				messageElement.appendChild(document.createTextNode(message.empno + ": " + message.content));
+				chat.appendChild(messageElement);
+				chat.scrollTop = chat.scrollHeight;
+			}
+		}
+
+		// 獲取紀錄的ajax
+		function loadChatHistory() {
+			let sender = document.getElementById('empno').value;
+			let receiver = document.getElementById('employeeTarget').value;
+
+			if (receiver) {
+				axios.get('/PSNEXUS/getChatHistory', {
+					params: {
+						sender: sender,
+						receiver: receiver
+					}
+				})
+					.then(function (response) {
+						const chatHistory = response.data.chatHistory;
+						const chatHistoryDiv = document.getElementById('chat');
+						chatHistoryDiv.innerHTML = ''; // 清空聊天記錄區域
+
+						chatHistory.forEach(message => {
+							const messageDiv = document.createElement('div');
+							messageDiv.className = 'chat-message';
+							if (message.empno === sender) {
+								messageDiv.classList.add('from-me');
+							}
+							messageDiv.innerHTML = `
+         <p>${message.empno}: ${message.content}</p>
+      `;
+							chatHistoryDiv.appendChild(messageDiv);
+						});
+						chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight; // 滾動到最底部
+					})
+					.catch(function (error) {
+						console.error('Error fetching chat history:', error);
+					});
+			}
+		}
+		window.onload = connect;
+	</script>
+</body>
+
+</html>

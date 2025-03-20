@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+<meta charset="UTF-8">
+
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/css/bootstrap.min.css.map}" rel="stylesheet" />
+<link th:href="@{/js/jquery-ui-1.13.3/jquery-ui.css}" rel="stylesheet" />
+<link th:href="@{/css/sweetalert2.min.css}" rel="stylesheet" />
+<link th:href="@{/css/dataTables.dataTables.min.css}" rel="stylesheet" />
+<link th:href="@{/js/dataTables.min.js}" rel="stylesheet" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.3/font/bootstrap-icons.min.css">
+
+
+<title></title>
+<style>
+/* 使導航欄中的文字變為粗體 */
+.navbar-nav .nav-link {
+	font-weight: bolder;
+	color: rgb(90, 90, 90);
+}
+/* 確保 modal 的 z-index 高於 navbar */
+.modal-backdrop.fade {
+	z-index: 100; /* Bootstrap 默認的 modal z-index */
+}
+
+.navbar-fixed {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 1030; /* 確保 navbar z-index 低於 modal */
+}
+
+.notification-container {
+	position: relative;
+	display: inline-block;
+}
+
+#notificationDropdown {
+	display: none;
+	position: absolute;
+	right: 0;
+	top: 100%;
+	margin-top: 10px;
+	background-color: white;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+	min-width: 300px;
+	z-index: 1;
+}
+
+.dropdown-item {
+	border-bottom: 1px solid #ddd;
+}
+
+.dropdown-item:last-child {
+	border-bottom: none;
+}
+
+.dropdown-item:hover {
+	background-color: #f1f1f1;
+}
+
+#notificationButton {
+	position: relative;
+}
+
+#notificationButton .badge {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 5px 10px;
+	border-radius: 50%;
+	background: red;
+	color: white;
+}
+
+/*spinner效果*/
+.spinner-border {
+	animation: spin 5s linear infinite;
+	display: inline-block;
+	width: 23px;
+	height: 23px;
+}
+
+@keyframes spin {from { transform:rotate(0deg);
+	 
+}
+
+to {
+	transform: rotate(1000deg);
+}
+
+}
+
+/*websocket*/
+.chat-dropdown {
+	position: fixed; 
+	right: 30px; 
+	bottom: 0px; 
+	width: 300px;
+	max-height: 600px;
+	overflow-y: auto;
+	display: none;
+	z-index: 1000;
+	background-color: white;
+	border: 1px solid #ccc;
+	padding: 10px;
+}
+
+.chat-message {
+	color: #4a4a4a;
+	display: flex;
+	justify-content: flex-start;
+	margin-bottom: 10px;
+}
+
+.chat-time {
+	color: #4a4a4a;
+	font-size: 0.8em;
+	margin-left: 5px;
+}
+
+.chat-date {
+	color: #4a4a4a;
+	font-weight: bold;
+	text-align: center;
+	margin: 10px 0;
+}
+
+.chat-message.from-me {
+	background-color: #e6f7ff;
+	justify-content: flex-end;
+	text-align: right;
+	margin-left: auto;
+	padding-right: 10px;
+}
+
+#chatButton {
+	position: relative;
+}
+
+#chatButton .chatnotification {
+	position: absolute;
+	top: 0.001;
+	right: 0;
+	padding: 2px 10px; /* 調整padding來控制高度和寬度 */
+	border-radius: 100%; /* 使用更小的值來變成扁的橢圓形 */
+	background: red;
+	color: white;
+	font-size: 10px; /* 可調整字體大小來適應 */
+}
+</style>
+
+<title></title>
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg bg-light navbar-fixed">
+		<div class="container-fluid">
+			<img width="100px" src="images/Logo-3.png" class="me-2"> <a
+				class="navbar-brand" th:href="@{/logInHomePage}">P.S Nexus</a>
+
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+				aria-controls="navbarScroll" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<input id="account" th:value="${session.account}" type="hidden">
+			<div class="collapse navbar-collapse" id="navbarScroll">
+				<ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
+					style="--bs-scroll-height: 100px;">
+					<li class="nav-item"><a class="nav-link active"
+						th:text="'員工編號 : ' + ${session.account}"></a></li>
+					<!-- <li class="nav-item"><a class="nav-link active" aria-current="page" th:href="@{/#}">功能一</a></li> -->
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" th:href="@{/#}" role="button"
+						data-bs-toggle="dropdown" aria-expanded="false"> 打卡 </a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" th:href="@{/empCheckIn}">員工打卡</a></li>
+							<li><a class="dropdown-item"
+								th:href="@{/empCheckInsByMonth}">個人打卡月份表</a></li>
+							<li><a class="dropdown-item" th:href="@{/getEmpCheckIn}">個人打卡紀錄</a></li>
+						</ul></li>
+					<li class="nav-item"><a class="nav-link active"
+						aria-current="page" th:href="@{/getEmpByAccount}">個人資料查看</a> <!-- 
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" th:href="@{/getAllEmployees}"
+						role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							所有員工資料 </a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" th:href="@{/getEmpByAccount}">個人資料查看</a></li>
+							<li><hr class="dropdown-divider"></li>
+							<li><a class="dropdown-item" th:href="@{/insertEmp}">新增員工資料</a></li>
+							<li><a class="dropdown-item" th:href="@{/getEmpsByCol}">查詢員工資料</a></li>
+							<li><a class="dropdown-item" th:href="@{/getAllEmployees}">所有員工資料</a></li>
+							<li><a class="dropdown-item"
+								th:href="@{/familyMemberInsert}">新增親屬資料</a></li>
+							<li>
+								<hr class="dropdown-divider">
+							</li>
+							<li><a class="dropdown-item" th:href="@{/emphomepage}">員工資料首頁</a></li>
+							<li><a class="dropdown-item"
+								th:href="@{/departmentTransferInsert}">新增部門調動</a></li>
+							<li><a class="dropdown-item"
+								th:href="@{/alldepartmentTransfer}">部門調動資料</a></li>
+						</ul></li> -->
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" th:href="@{/#}" role="button"
+						data-bs-toggle="dropdown" aria-expanded="false">會議室</a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item"
+								th:href="@{/FrontGetAllRoom.controller}">會議室總覽</a></li>
+							<li><a class="dropdown-item" th:href="@{/feedbackView}">受邀會議紀錄</a></li>
+							<li><a class="dropdown-item" th:href="@{/FeedbackViewForSponsor}">會議回饋查看</a></li>
+							<li><a class="dropdown-item"
+								th:href="@{/FrontGetAllReserve.controller2}">預約紀錄</a></li>
+<!-- 							<li> -->
+<!-- 								<hr class="dropdown-divider"> -->
+<!-- 							</li> -->
+<!-- 							<li><a class="dropdown-item" -->
+<!-- 								th:href="@{/GetAllRoom.controller}">後台</a></li> -->
+<!-- 							<li><a class="dropdown-item" -->
+<!-- 								th:href="@{/InsertRoom.controller}">後台新增會議室</a></li> -->
+<!-- 							<li><a class="dropdown-item" -->
+<!-- 								th:href="@{/GetAllReserve.controller2}">後台預約紀錄</a></li> -->
+						</ul></li>
+
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" th:href="@{/#}" role="button"
+						data-bs-toggle="dropdown" aria-expanded="false"> 薪資 </a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" th:href="@{/empsal}">前台薪資首頁</a></li>
+							<li><a class="dropdown-item"
+								th:href="@{/getOneEmpSal.controller}">個人薪資查詢</a></li>
+							<li><a class="dropdown-item" th:href="@{/toGetInsurance}">勞健保額度試算</a></li>
+<!-- 							<li> -->
+<!-- 								<hr class="dropdown-divider"> -->
+<!-- 							</li> -->
+
+<!-- 							<li><a class="dropdown-item" -->
+<!-- 								th:href="@{/getAllEmpSal.controller}">後台薪資總表</a></li> -->
+						</ul></li>
+
+					<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" th:href="@{/#}" role="button"
+							data-bs-toggle="dropdown" aria-expanded="false">請假申請 </a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" th:href="@{/InsertLeaveRequest.front}">請假表單申請</a></li>
+							<li th:if="${session.job != 'boss'}">
+								<a class="dropdown-item" th:href="@{/GetAllLeaveRequest.front}">查詢申請紀錄</a>
+							</li>
+							<li th:if="${session.job == 'leader'}">
+								<a class="dropdown-item" th:href="@{/GetAllLeaveRequestToReview.front}">請假審核總表</a>
+							<li>
+								<hr class="dropdown-divider">
+							</li>
+							<li><a class="dropdown-item" th:href="@{/InsertBusinessTrip.front}">出差申請</a></li>
+							<li th:if="${session.job != 'boss'}">
+								<a class="dropdown-item" th:href="@{/GetAllBusinessTrip.front}">查詢出差紀錄</a>
+							</li>
+							<li th:if="${session.job == 'leader'}">
+								<a class="dropdown-item" th:href="@{/GetAllBusinessTripToReview.front}">出差審核總表</a>
+							<li>
+								<hr class="dropdown-divider">
+							</li>
+							<li><a class="dropdown-item" th:href="@{/InsertInvoice.front}">請款申請</a></li>
+							<li th:if="${session.job != 'boss'}">
+								<a class="dropdown-item" th:href="@{/GetAllInvoice.front}">查詢請款紀錄</a>
+							</li>
+							<li th:if="${session.job == 'leader'}">
+								<a class="dropdown-item" th:href="@{/GetAllInvoiceToReview.front}">請款審核總表</a>
+							</li>
+							
+						</ul>
+					</li>
+
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" th:href="@{/WorklogsHomePage}"
+						role="button" data-bs-toggle="dropdown" aria-expanded="false">工作日誌</a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" th:href="@{/UserInsertWorklog}">工作日誌填寫</a></li>
+							<li><a class="dropdown-item"
+								th:href="@{/UserGetAllWorklogs}">工作日誌總表</a></li>
+						</ul></li>
+
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" th:href="@{/postpage.controller}"
+						role="button" data-bs-toggle="dropdown" aria-expanded="false">布告欄</a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" th:href="@{/postWall}">貼文牆</a></li>
+							<li><a class="dropdown-item" th:href="@{/navbarInsertPost}">新增貼文</a></li>
+							<li><a class="dropdown-item" th:href="@{/myPosts}">我的貼文</a></li>	
+						</ul>
+					</li>
+					<!-- <li class="nav-item"><a class="nav-link active" aria-current="page"
+							th:href="@{/notificationpage}">手動發送通知</a></li> -->
+					<!-- 
+					<li class="nav-item"><a class="nav-link disabled">Link</a></li>-->
+					<li th:if="${session.job == 'boss' or session.job == 'manager' }"
+						class="nav-item"><a class="nav-link active"
+						aria-current="page" th:href="@{/BackHomePage}">後台首頁</a></li>
+					<li class="nav-item"><a class="nav-link active"
+						aria-current="page" th:href="@{/logout}">登出</a></li>
+				</ul>
+				<!-- 
+				<form class="d-flex" role="search">
+					<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+					<button class="btn btn-outline-success" type="submit">Search</button>
+				</form> -->
+
+				<!-- Websocket -->
+
+				<button type="button" id="chatButton" class="btn btn-primary-sm">
+					<i class="bi bi-chat-heart-fill"></i> <span
+						id="chatnotificationCount" class="chatnotification"></span>
+				</button>
+
+
+				<div id="chatDropdown" class="chat-dropdown">
+					<input type="hidden" th:value="${session.account}" id="empno" /> <input
+						type="hidden" th:value="${session.name}" id="ename" />
+					<div class="form-group p-2">
+						<select id="employeeTarget" class="form-control"
+							onchange="loadChatHistory()">
+							<option value="">選擇員工</option>
+							<option th:each="employee : ${employees}"
+								th:value="${employee.empno}" th:data-name="${employee.name}"
+								th:text="${employee.empno + ' ' + employee.name}"></option>
+						</select>
+					</div>
+					<div id="chat" class="p-2"></div>
+					<div class="input-group p-2">
+						<input type="text" id="text" class="form-control mb-3"
+							placeholder="請輸入訊息...">
+						<div class="input-group-append">
+							<button class="btn btn-primary" style="float: right;"
+								onclick="sendMessage()">發送</button>
+						</div>
+					</div>
+				</div>
+
+
+				<!-- Websocket XXX -->
+
+				<button type="button" class="btn btn-primary-sm"
+					data-bs-toggle="modal" data-bs-target="#exampleModal"
+					data-bs-whatever="@mdo">
+					<i class="fa-regular fa-envelope"></i>
+				</button>
+				<div class="modal fade" id="exampleModal" tabindex="-1"
+					aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h1 class="modal-title fs-5" id="exampleModalLabel">寄發郵件</h1>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<form>
+									<div class="mb-3">
+										<label for="mailRecipient" class="col-form-label">請輸入收件人:
+											</label> <input type="text"
+											class="form-control" id="mailRecipient" placeholder="ex:s0933719354@gmail.com">
+									</div>
+									<div class="mb-3">
+										<label for="mailTitle" class="col-form-label">請輸入主旨:</label> <input
+											type="text" class="form-control" id="mailTitle">
+									</div>
+									<div class="mb-3">
+										<label for="mailText" class="col-form-label">請輸入訊息:</label>
+										<textarea class="form-control" id="mailText"></textarea>
+									</div>
+									<div class="mb-3">
+										<input type="file" class="form-control form-control" multiple
+											id="mailFile">
+									</div>
+								</form>
+								<button type="button" class="btn btn-primary"
+									id="fillFormButton">一鍵輸入</button>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary"
+									data-bs-dismiss="modal">關閉</button>
+								<button type="button" class="btn btn-primary"
+									id="sendEmailButton">送出</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="notification-container">
+					<form class="d-flex me-3" role="search">
+						<button id="notificationButton" class="btn" type="button">
+							<i class="fa-solid fa-bell"></i> <span class="badge badge-danger"
+								id="notificationCount"></span>
+						</button>
+						<div id="notificationDropdown" class="dropdown-menu me-3"
+							aria-labelledby="notificationButton">
+							<!-- <span class="dropdown-item px-1">載入中...</span> -->
+							<input type="hidden" th:value="${session.account}"
+								id="notifyaccount"> <span class="dropdown-item"
+								th:href="@{/allnotification}" style="color: red"
+								onclick="allnotification(this)">查看歷史通知</span>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/js/bootstrap.bundle.min.js.map}"></script>
+	<script th:src="@{/js/axios.min.js}"></script>
+	<script th:src="@{/js/jquery-3.7.1.js}"></script>
+	<script th:src="@{/js/jquery-ui-1.13.3/jquery-ui.js}"></script>
+	<script th:src="@{/js/sweetalert2.all.min.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/sockjs/1.1.4/sockjs.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/stomp/1.2.0/stomp.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+
+	<script>
+		//信箱一鍵輸入
+		document.getElementById('fillFormButton').addEventListener('click', function () {
+			document.getElementById('mailRecipient').value = 'psnexus175@gmail.com';
+			document.getElementById('mailTitle').value = '線上會議通知';
+			//document.getElementById('mailText').value = '';
+		})
+		document.getElementById('sendEmailButton').addEventListener('click', function () {
+			let recipient = document.getElementById('mailRecipient').value;
+			let title = document.getElementById('mailTitle').value;
+			let message = document.getElementById('mailText').value;
+			const files = document.getElementById('mailFile').files;
+
+			if (!recipient || !title || !message) {
+				alert('請填寫所有資料');
+				return;
+			}
+
+			showSpinner()
+			console.log(recipient)
+			console.log(message)
+			
+			const formData = new FormData();
+			formData.append('mailRecipient', recipient);
+			formData.append('mailTitle', title);
+			formData.append('mailText', message);
+			
+			for (let i = 0; i < files.length; i++) {
+			  formData.append('files', files[i]);
+			}
+			
+		    axios.post('/PSNEXUS/sendEmail', formData, {
+		        headers: {
+		            'Content-Type': 'multipart/form-data'
+		        }
+		    })
+				.then(function (response) {
+				  alert('信件已送出');
+		  			document.getElementById('mailRecipient').value='';
+					document.getElementById('mailTitle').value='';
+					document.getElementById('mailText').value='';
+					document.getElementById('mailFile').value='';
+				  let modal = bootstrap.Modal.getInstance(document.getElementById('exampleModal'));
+				  modal.hide();
+				})
+				.catch(function (error) {
+				  alert('寄發失敗');
+				  console.error(error);
+				})
+				.finally(() => {
+				  hideSpinner();
+				});
+
+		})
+
+		function showSpinner() {
+			const button = document.querySelector("#sendEmailButton")
+			button.disabled = true
+			button.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>'
+
+		}
+
+		function hideSpinner() {
+			const button = document.querySelector("#sendEmailButton")
+			button.disabled = false
+			button.innerHTML = '送出'
+		}
+
+		function fetchNotifications() {
+			const account = document.getElementById('account').value;
+			const url = "http://localhost:8088/PSNEXUS/notificationsapi";
+
+			axios.get(url, {
+				params: {
+					account: account
+				}
+			})
+				.then(response => {
+					const notifications = response.data;
+					const notificationCountElement = document.getElementById('notificationCount');
+
+					if (Array.isArray(notifications) && notifications.length > 0) {
+						notificationCountElement.textContent = notifications.length;
+					} else {
+						notificationCountElement.textContent = '';
+					}
+				})
+				.catch(error => {
+					console.error(error);
+					document.getElementById('notificationCount').textContent = '';
+				});
+		}
+
+		document.getElementById('notificationButton').addEventListener('click', function (event) {
+			event.preventDefault();
+			const dropdown = document.getElementById('notificationDropdown');
+			const allnotication = '<span class="dropdown-item" th:href="@{/allnotification}" style="color:red" onclick="allnotification()">查看歷史通知</span>';
+			dropdown.innerHTML = '<span class="dropdown-item">載入中...</span>';
+			const account = document.getElementById('account').value;
+			const url = "http://localhost:8088/PSNEXUS/notificationsapi";
+
+			axios.get(url, {
+				params: {
+					account: account
+				}
+			})
+				.then(response => {
+					const notifications = response.data;
+					console.log(notifications)
+					if (Array.isArray(notifications) && notifications.length > 0) {
+						dropdown.innerHTML = notifications.map(notification =>
+							`<a class="dropdown-item" href="#"  onclick="handleNotificationClick('${notification.notification.retrunPage}', '${notification.id}')">${notification.notification.message}</a>`
+						).join('');
+						dropdown.innerHTML += allnotication;
+					} else {
+						dropdown.innerHTML = '<span class="dropdown-item">無未讀通知</span>' + allnotication;
+					}
+
+				})
+				.catch(error => {
+					dropdown.innerHTML = '<span class="dropdown-item">無未讀通知</span>' + allnotication;
+				});
+
+			dropdown.style.display = 'block';
+		});
+
+
+		document.addEventListener('click', function (event) {
+			const dropdown = document.getElementById('notificationDropdown');
+			const notificationButton = document.getElementById('notificationButton');
+			if (!notificationButton.contains(event.target)) {
+				dropdown.style.display = 'none';
+			}
+		});
+
+		setInterval(fetchNotifications, 10000); //10000 表示10秒檢查一次通知
+
+		fetchNotifications();
+
+
+		function handleNotificationClick(returnPage, id) {
+			const url1 = "http://localhost:8088/PSNEXUS/readnotification";
+			console.log(id)
+			console.log(returnPage)
+
+			axios.get(url1, {
+				params: {
+					id: id
+				}
+			})
+				.then(response => {
+					console.log('成功', response);
+					window.location.href = returnPage;
+				})
+				.catch(error => {
+					console.error('錯誤', error);
+				});
+		}
+
+
+
+		function allnotification() {
+			const returnPage = "http://localhost:8088/PSNEXUS/allnotification";
+			axios.get(returnPage, {
+			})
+				.then(response => {
+					console.log('成功', response);
+					window.location.href = returnPage;
+				})
+				.catch(error => {
+					console.error('錯誤', error);
+				});
+		}
+
+		//========================================websocket========================================
+
+		document.addEventListener('click', function (event) {
+		    const chatDropdown = document.getElementById('chatDropdown');
+		    const chatButton = document.getElementById('chatButton');
+		    if (!chatDropdown.contains(event.target) && !chatButton.contains(event.target)) {
+		        chatDropdown.style.display = 'none';
+		    }
+		});
+
+		document.getElementById('chatButton').addEventListener('click', function (event) {
+		    event.preventDefault();
+		    const dropdown = document.getElementById('chatDropdown');
+		    if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+		        dropdown.style.display = 'block';
+		    } else {
+		        dropdown.style.display = 'none';
+		    }
+		});
+		
+		// 沒有選擇員工時不要顯示歷史紀錄
+		document.getElementById('employeeTarget').addEventListener('change', function() {
+		    let receiver = this.value;
+		    if (receiver) {
+		        loadChatHistory(receiver);
+		    } else {
+		        clearChatHistory();
+		    }
+		});
+
+
+
+		let stompClient = null;
+
+		function connect() {
+			let socket = new SockJS('/PSNEXUS/ws');
+			stompClient = Stomp.over(socket);
+
+			stompClient.connect({}, function (frame) {
+				console.log('Connected: ' + frame);
+
+				stompClient.subscribe('/topic/messages', function (message) {
+					showMessage(JSON.parse(message.body));
+				});
+
+				stompClient.subscribe('/user/queue/messages', function (message) {
+					showMessage(JSON.parse(message.body));
+				});
+			}, function (error) {
+				console.error('Connection error: ', error);
+			});
+		}
+
+		function sendMessage() {
+			let empno = document.getElementById('empno').value;
+			let ename = document.getElementById('ename').value;
+			let receiverOption = document.getElementById('employeeTarget').selectedOptions[0];
+			let receiver = receiverOption.value;
+			let receiverName = receiverOption.getAttribute('data-name');
+			let content = document.getElementById('text').value;
+			if (receiver === "") {
+				alert("請選擇接收者");
+				return;
+			}
+
+			let chattime = new Date().toISOString().split('.')[0].replace('T', ' ');
+			stompClient.send("/app/sendMessage", {}, JSON.stringify({
+				'empno': empno,
+				'ename': ename,
+				'content': content,
+				'receiver': receiver,
+				'rname': receiverName,
+				'chattime': chattime
+			}));
+			document.getElementById('text').value = '';
+		}
+		
+		let lastDisplayedDate = '';
+		let lastMessageDate = '';
+		let unreadCount = localStorage.getItem('unreadCount') ? parseInt(localStorage.getItem('unreadCount')) : 0;
+
+		function showMessage(message) {
+    		let chat = document.getElementById('chat');
+    		let currentUser = document.getElementById('empno').value;
+
+    		let messageDate = new Date(message.chattime);
+    		let dateStr = messageDate.toLocaleDateString('zh-TW', {year: 'numeric', month: '2-digit', day: '2-digit'});
+    		let timeStr = messageDate.toLocaleTimeString('zh-TW', {hour: '2-digit', minute: '2-digit', hour12: false});
+
+    		
+    		if (lastDisplayedDate !== dateStr) {
+        		let dateElement = document.createElement('div');
+        		dateElement.className = 'chat-date';
+        		dateElement.textContent = dateStr;
+        		chat.appendChild(dateElement);
+        		lastDisplayedDate = dateStr;
+    		}
+    		let messageElement = document.createElement('div');
+    		messageElement.className = 'chat-message';
+
+    		if (message.empno === currentUser) {
+        		messageElement.classList.add('from-me');
+        		messageElement.innerHTML = `<div>${message.content}</div><div class="chat-time">${timeStr}</div>`;
+    		} else {
+        		let senderName = document.querySelector(`#employeeTarget option[value="${message.empno}"]`).getAttribute('data-name');
+        		messageElement.innerHTML = `<div>${senderName}: ${message.content}</div><div class="chat-time">${timeStr}</div>`;
+    			unreadCount++;
+    			localStorage.setItem('unreadCount', unreadCount);
+        		updateUnreadCount();
+    		}
+
+    		chat.appendChild(messageElement);
+    		chat.scrollTop = chat.scrollHeight;
+		}
+		
+		// 未讀消息
+		function updateUnreadCount() {
+		    const chatnotificationBadge = document.getElementById('chatnotificationCount');
+		    if (chatnotificationBadge) {
+		        if (unreadCount > 0) {
+		            chatnotificationBadge.style.display = 'inline-block';
+		            chatnotificationBadge.textContent = unreadCount;
+		        } else {
+		            chatnotificationBadge.style.display = 'none';
+		        }
+		    } else {
+		        console.error('ChatNotification badge element not found');
+		    }
+		}
+		
+		document.getElementById('chatButton').addEventListener('click', function () {
+		    unreadCount = 0;
+		    localStorage.setItem('unreadCount', unreadCount);
+		    updateUnreadCount();
+		});
+
+
+		function loadChatHistory() {
+			let sender = document.getElementById('empno').value;
+			let receiver = document.getElementById('employeeTarget').value;
+
+			if (receiver) {
+				axios.get('/PSNEXUS/getChatHistory', {
+					params: {
+						sender: sender,
+						receiver: receiver
+					}
+				})
+					.then(function (response) {
+						const chatHistory = response.data.chatHistory;
+						chatHistory.reverse();// 讓紀錄可以保持最新的在最下方
+						const chatHistoryDiv = document.getElementById('chat');
+						chatHistoryDiv.innerHTML = '';
+
+						lastDisplayedDate = '';
+            			chatHistory.forEach(message => {
+		                let messageDate = new Date(message.chattime);
+		                let dateStr = messageDate.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' });
+		                let timeStr = messageDate.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+		                if (lastDisplayedDate !== dateStr) {
+		                    let dateElement = document.createElement('div');
+		                    dateElement.className = 'chat-date';
+		                    dateElement.textContent = dateStr;
+		                    chatHistoryDiv.appendChild(dateElement);
+		                    lastDisplayedDate = dateStr;
+		                }
+
+							let messageDiv = document.createElement('div');
+                			messageDiv.className = 'chat-message';
+
+               				if (message.empno === sender) {
+                    			messageDiv.classList.add('from-me');
+                    			messageDiv.innerHTML = `<div>${message.content}</div><div class="chat-time">${timeStr}</div>`;
+                			} else {
+                    			let senderName = document.querySelector(`#employeeTarget option[value="${message.empno}"]`).getAttribute('data-name');
+								messageDiv.innerHTML = `<div>${senderName}: ${message.content}</div><div class="chat-time">${timeStr}</div>`;                			
+								}
+
+                			chatHistoryDiv.appendChild(messageDiv);
+            			});
+            			chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+        			})
+        		.catch(function (error) {
+            		console.error('Error fetching chat history:', error);
+        		});
+    		}
+		}
+		
+		function clearChatHistory() {
+		    const chatHistoryDiv = document.getElementById('chat');
+		    chatHistoryDiv.innerHTML = '';
+		}
+
+		window.onload = function() {
+		    unreadCount = parseInt(localStorage.getItem('unreadCount')) || 0;
+		    updateUnreadCount();
+		    connect();
+		};
+
+</script>
+</body>
+
+</html>

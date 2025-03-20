@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" >
+<head>
+<meta charset="UTF-8">
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<style>
+    /* CSS 部分，將前面提到的風格樣式添加進來 */
+ body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #dfe9f3, #ffffff);
+            color: #333;
+        }
+        .content {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .content h2 {
+            color: #219ebc;
+            font-size: 22px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        form {
+            text-align: left;
+        }
+        form input[type="text"], form select, form textarea {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin: 5px 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        form input[type="submit"] {
+            background-color: #8ecae6;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        form input[type="submit"]:hover {
+            background-color: #219ebc;
+        }
+        
+        /*圖片格式*/
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .image-preview .image-container {
+            position: relative;
+            display: inline-block;
+        }
+        .image-preview img {
+            max-width: 100px;
+            max-height: 100px;
+        }
+        .image-preview .delete-button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        /*圖片格式*/
+
+</style>
+<title>修改會議室</title>
+</head>
+<body>
+<div th:replace="~{layout/backEmpNavbar}"></div>
+<div class="wrap">
+
+<div class="nav1"> <br> 
+<a th:href="@{/GetAllRoom.controller}">會議室</a> 
+<a th:href="@{/InsertRoom.controller}">新增會議室</a>
+<a th:href="@{/GetAllReserve.controller2}">預約放行</a>
+<a th:href="@{/BackHomePage}">會議室分析</a>
+</div>
+	<div id="content" class="content container">
+		<h2>修改會議室資料</h2>
+			
+		<form id="updateRoomForm" enctype="multipart/form-data">
+			
+				會議室代號:<input type="text" name="roomno" th:value="${room.roomno}" readonly/>	<br>
+				會議室名稱:<input type="text" readonly name="roomName" th:value="${room.roomName}"/>	<br>
+				
+				容納人數:<select id="capacity" name="capacity" th:field="*{room.capacity}">
+						    <option th:each="cap : ${#numbers.sequence(5, 30, 5)}"
+			                    th:value="${cap}"
+			                    th:text="${cap}"> 
+				            </option>
+						</select><br>		
+				地點:<input id="address-input" type="text" name="location" th:value="${room.location}"/><br>
+				地點:<input type="text" name="buildignAndFloor" th:value="${room.buildignAndFloor}"/><br>
+				會議室設備 : <textarea name="equip" rows="5" cols="20" th:text="${room.equip}"></textarea><p>
+				
+                會議室照片:<br>
+                <div class="image-preview" id="imagePreview">
+                    <div th:each="picture: ${pictures}">
+                        <div class="image-container">
+                        
+                            <img th:src="'data:image/jpeg;base64,' + ${picture.picturePath}" alt="Room Image"/>
+                            <button type="button" class="delete-button" onclick="removeImage(this)">x</button>
+                            
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="images" id="imagesInput"/>
+                </div><br>
+                <input type="file" id="fileInput" multiple class="form-control form-control-sm" onchange="handleFiles(this.files)">
+				
+			<input type="submit" value="確定" onclick="submitForm(event)"/>
+		</form>
+	</div>
+</div>
+<div th:replace="~{layout/footer}"></div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8KSsc035mEKkn88-oWvJ1sFcRjrm8KB8&libraries=places&callback=initMap" async defer></script>
+    <script>
+	   function initMap() {
+	         const autocomplete = new google.maps.places.Autocomplete(
+	             document.getElementById("address-input")
+	         );
+        }
+        function handleFiles(files) {//讀取上傳的圖片
+            const imagePreview = document.getElementById('imagePreview');
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                reader.onload = function(e) {  //讀取完成時觸發
+                    const imageContainer = document.createElement('div');
+                    imageContainer.classList.add('image-container');
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.innerText = 'x';
+                    deleteButton.classList.add('delete-button');
+                    deleteButton.onclick = function() {
+                        imageContainer.remove();  
+                    };
+
+                    imageContainer.appendChild(img);
+                    imageContainer.appendChild(deleteButton);
+                    imagePreview.appendChild(imageContainer);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage(button) {
+            const imageContainer = button.parentElement; //連同上一層父元素一起移除<div class="image-container">
+            imageContainer.remove();
+        }
+
+        function prepareImages() { //把圖片轉成base64存到隱藏的imagesInput元素裡面
+            const imagesInput = document.getElementById('imagesInput');
+            const imageContainers = document.querySelectorAll('.image-container img');
+            // img.src 是每个图片元素的 src 属性，它的值类似于 "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxITEhUSEhIVFRUV..."。
+            const images = Array.from(imageContainers).map(img => img.src.split(',')[1]); //把nodeList轉換成數組(陣列)並且只擷取base64的部分
+            // console.log(images);
+            imagesInput.value = JSON.stringify(images);
+        }
+
+        function submitForm(event){
+            event.preventDefault();
+
+            const form = document.getElementById('updateRoomForm');
+            const formData = new FormData(form);//將form表單裡面要傳輸的值都放入
+
+            prepareImages(); //更新隱藏的input元素
+            const imagesInputValue = document.getElementById('imagesInput').value;
+            formData.append('pictures', imagesInputValue);
+
+            const meetingRoomData = {
+                roomno: form.roomno.value,
+                roomName: form.roomName.value,
+                capacity: form.capacity.value,
+                location: form.location.value,
+                buildignAndFloor: form.buildignAndFloor.value,
+                equip: form.equip.value
+            }
+
+            formData.append('meetingRoom', JSON.stringify(meetingRoomData));
+/*
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+            */
+            
+            axios.post('/PSNEXUS/UpdateForRoom.controller', formData)
+                .then(response=>{
+                    alert('上傳成功');
+                    
+                })
+                .catch(error =>{
+                    console.error('Error:',error)
+                })
+        }
+    </script>
+</body>
+</html>

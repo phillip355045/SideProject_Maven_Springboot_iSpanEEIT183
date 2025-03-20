@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" >
+<head>
+<meta charset="UTF-8">
+<title>新增會議室</title>
+<link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+<style>
+      body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #dfe9f3, #ffffff);
+            color: #333;
+        }
+        .content {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .content h2 {
+            color: #219ebc;
+            font-size: 22px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        form {
+            text-align: left;
+        }
+        form input[type="text"], form select, form textarea {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin: 5px 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        form input[type="submit"] {
+            background-color: #8ecae6;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        form input[type="submit"]:hover {
+            background-color: #219ebc;
+        }
+        /*選擇人員*/
+        .autocomplete {
+            position: relative;
+            display: inline-block;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+        }
+
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff; 
+            border-bottom: 1px solid #d4d4d4; 
+        }
+
+        .autocomplete-item:hover {
+            background-color: #e9e9e9; 
+        }
+
+        .selected-employees {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .selected-employee {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+        }
+
+        .remove-btn {
+            margin-left: 5px;
+            color: red;
+            cursor: pointer;
+        }
+		 /*選擇人員*/
+</style>
+</head>
+<body>
+<div th:replace="~{layout/empnavbar}"></div>
+<div class="wrap">
+   <div id="content" class="content container">
+	<h2>選擇與會人員</h2>
+		<form method="post" th:action="@{/MeetingInfoForInsert}">
+        預約編號 : <input type="text" name="reserveno" id="reserveno" th:value="${reserveno}" readonly/><p>
+		已通知人員: <input type="text" th:value="${#strings.defaultString(members, '尚未通知')}" readonly/>
+            
+            <div class="autocomplete">
+                <input id="employeeInput" type="text" placeholder="輸入員工編號或姓名">
+                <div id="autocomplete-list" class="autocomplete-items"></div>
+            </div>
+                <span th:text="${errorMsg} ? ${errorMsg}" style="color: red; font-weight: bold;"></span>
+            <div class="selected-employees" id="selectedEmployees"></div>
+              <div class=""></div>
+            <input id="sendEmpno" type="submit" value="通知" />
+
+        </form>
+        
+    </div>
+</div>    
+<div th:replace="~{layout/footer}"></div>
+<script>
+    document.getElementById('sendEmpno').addEventListener('click', function(e) {
+        e.preventDefault();
+        const choiseEmpno = document.querySelectorAll('#empno');
+        const reserveno = document.querySelector('#reserveno')
+        let number = reserveno.value;
+        // console.log(reserveno.value)
+        // console.log(choiseEmpno)
+        const empnoArray = Array.from(choiseEmpno).map(div => {
+            let textContent = '';
+            //把div裡面的<span元素拿掉
+            div.childNodes.forEach(node =>{
+                if(node.nodeType === Node.TEXT_NODE){ //只抓取文本節點，也就是A0001的部分
+                    textContent += node.textContent.trim();
+                }
+            })
+            //
+            const empnoMatch = textContent.match(/^[A-Za-z]+\d+/);
+            return empnoMatch ? empnoMatch[0] : '';
+            //return textContent;
+        }).filter(empno => empno);
+        console.log(empnoArray);
+
+        // empnoArray.forEach(e => {
+        //     console.log(e);
+        // });
+        console.log('-------' + number)
+        axios({
+            method:'post',
+            url : 'http://localhost:8088/PSNEXUS/MeetingInfoForInsert',
+            data:{
+                reserveno:number,
+                empnoList:empnoArray
+            }
+        })
+        .then(response => {
+        console.log('Data sent successfully:', response.data);
+        alert(response.data);
+        location.reload()
+        // Redirect to the next page
+        //window.location.href = '/PSNEXUS/FrontGetAllReserve.controller2'; 
+        })
+        .catch(error => {
+            console.error('Error sending data:', error);
+        });
+
+        
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('employeeInput');
+        const list = document.getElementById('autocomplete-list');
+        const selectedEmployeesContainer = document.getElementById('selectedEmployees');
+        const url = "http://localhost:8088/PSNEXUS/GetEmployeesByEmpnoAndNameFuzzySearch"
+        let selectedEmployees = [];
+
+        input.addEventListener('input', async () => {
+            const query = input.value;
+            if (!query) {
+                list.innerHTML = '';
+                return;
+            }
+
+            try {
+                const response = await axios.get(url, { params: { query: query } });
+                const employees = response.data;
+                // console.log(employees)
+
+                list.innerHTML = '';
+                employees.forEach(employee => {
+                    const item = document.createElement('div');
+                    item.classList.add('autocomplete-item');
+                    item.textContent = `${employee.empno} - ${employee.name}`;
+                    item.addEventListener('click', () => {
+                        addSelectedEmployee(employee);
+                        input.value = '';
+                        list.innerHTML = '';
+
+                    });
+                    list.appendChild(item);
+                })
+
+            } catch (error) {
+                console.error('Error fetching employees:', error);
+            }
+        })
+
+        function addSelectedEmployee(employee) {
+        if (!selectedEmployees.some(e => e.empno === employee.empno)) {
+            selectedEmployees.push(employee);
+            renderSelectedEmployees();
+        }
+
+        function renderSelectedEmployees() {
+            selectedEmployeesContainer.innerHTML = '';
+            selectedEmployees.forEach(employee => {
+                const selectedEmployeeDiv = document.createElement('div');
+                selectedEmployeeDiv.classList.add('selected-employee');
+                selectedEmployeeDiv.setAttribute('id', 'empno');
+                selectedEmployeeDiv.textContent = employee.empno + employee.name;
+                
+                const removeBtn = document.createElement('span');
+                removeBtn.classList.add('remove-btn');
+                removeBtn.textContent = 'x';
+                removeBtn.addEventListener('click', () => {
+                    removeSelectedEmployee(employee.empno)
+                });
+
+                selectedEmployeeDiv.appendChild(removeBtn);
+                selectedEmployeesContainer.appendChild(selectedEmployeeDiv);
+            });
+        }
+        function removeSelectedEmployee(empno) {
+                selectedEmployees = selectedEmployees.filter(e => e.empno !== empno);
+                renderSelectedEmployees();
+            }
+        }
+    })   
+</script>
+
+   
+</body>
+</html>

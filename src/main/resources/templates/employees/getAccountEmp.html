@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>員工資料</title>
+<link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+<style>
+body {
+	background: url('images/profit.jpg') no-repeat center center fixed;
+	background-size: cover;
+	background-position: center;
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	transition: margin-left 0.3s;
+}
+
+.container {
+	max-width: 1200px;
+	margin: 20px auto;
+	padding: 20px;
+	background-color: #fff;
+	border-radius: 10px;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+	overflow: hidden;
+}
+
+h2 {
+	text-align: center;
+	color: #333;
+	margin-bottom: 20px;
+}
+
+.basic-info, .academic-info {
+	margin-top: 20px;
+}
+
+.section-title {
+	text-align: center;
+	background-color: #5bc0de;
+	color: #fff;
+	padding: 10px;
+	border-radius: 5px;
+	margin-bottom: 10px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 20px;
+}
+
+table th, table td {
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+
+table th {
+	background-color: #f2f2f2;
+}
+
+.social-icons {
+	text-align: center;
+	margin-top: 20px;
+}
+
+.social-icons a {
+	text-decoration: none;
+	margin: 0 10px;
+	color: #333;
+}
+
+.social-icons a:hover {
+	color: #5bc0de;
+}
+
+input:disabled {
+	color: #333;
+	background-color: transparent;
+}
+
+select:disabled {
+	background-color: transparent;
+}
+
+input[readonly]:focus {
+	outline: none;
+}
+
+.save-button {
+	display: none;
+}
+
+.photo-upload {
+	display: none;
+}
+
+.edit-mode .save-button {
+	display: inline-block;
+}
+
+.edit-mode .photo-upload {
+	display: block;
+}
+</style>
+
+</head>
+
+<body>
+	<div th:replace="~{layout/empnavbar}"></div>
+	<div class="wrap">
+		<div class="container">
+			<h2 th:text="${session.name} + ' 個人資料'"></h2>
+			<form th:action="@{/updateAccountEmpData}" method="post"
+				enctype="multipart/form-data" id="empForm">
+				<input name="_method" value="PUT" type="hidden" />
+				<div class="academic-info">
+					<div class="section-title">基本資料</div>
+					<table>
+						<tr>
+							<th>員工姓名</th>
+							<td><input type="text" th:value="${emp.name}" name="name"
+								id="name" disabled class="border-0"></td>
+							<th>密碼</th>
+							<td><input type="password" th:value="${emp.password}"
+								name="password" id="password" disabled class="border-0"></td>
+							<th>身分證字號</th>
+							<td><input type="text" th:value="${emp.identityID}"
+								name="identityID" id="identityID" disabled class="border-0"></td>
+							<th rowspan="5">照片</th>
+							<td rowspan="5" class="text-center">
+								<div class="photo-container">
+									<!-- Display current photo -->
+									<img height="200px"
+										th:src="@{/photos/download(empno=${emp.empno})}" alt="無提供照片">
+									<input type="hidden" th:value="${emp.photo}" name="photo"
+										id="photo">
+									<div class="photo-upload">
+										<input type="file" name="file">
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th>出生日期</th>
+							<td><input type="text" th:value="${emp.birthDate}"
+								name="birthDate" id="birthDate" disabled class="border-0"></td>
+							<th>性別</th>
+							<td><select id="gender" name="gender" class="border-0 ps-0"
+								disabled>
+									<option value="男性" th:selected="${emp.gender == '男性'}">男性</option>
+									<option value="女性" th:selected="${emp.gender == '女性'}">女性</option>
+							</select></td>
+							<th>國籍</th>
+							<td><input type="text" th:value="${emp.citizenship}"
+								name="citizenship" id="citizenship" disabled class="border-0"></td>
+						</tr>
+						<tr>
+							<th>手機號碼</th>
+							<td><input type="text" th:value="${emp.phone}" name="phone"
+								id="phone" disabled class="border-0"></td>
+							<th>家電</th>
+							<td><input type="text" th:value="${emp.telPhone}"
+								name="telPhone" id="telPhone" disabled class="border-0"></td>
+							<th>緊急聯絡人</th>
+							<td><input type="text" th:value="${emp.emergencyContact}"
+								name="emergencyContact" id="emergencyContact" disabled
+								class="border-0"></td>
+						</tr>
+						<tr>
+							<th>進公司日期</th>
+							<td><input type="text" th:value="${emp.hiredate}"
+								name="hiredate" id="hiredate" readonly class="border-0"></td>
+							<th>員工信箱</th>
+							<td colspan="3"><input type="text" th:value="${emp.mail}"
+								name="mail" id="mail" disabled class="border-0"></td>
+						</tr>
+						<tr>
+							<th>縣市</th>
+							<td><select id="city" name="city" class="border-0 ps-0"
+								disabled>
+									<option value="台北市" th:selected="${emp.city == '台北市'}">台北市</option>
+									<option value="新北市" th:selected="${emp.city == '新北市'}">新北市</option>
+									<option value="桃園市" th:selected="${emp.city == '桃園市'}">桃園市</option>
+									<option value="新竹市" th:selected="${emp.city == '新竹市'}">新竹市</option>
+									<option value="苗栗縣" th:selected="${emp.city == '苗栗縣'}">苗栗縣</option>
+									<option value="台中市" th:selected="${emp.city == '台中市'}">台中市</option>
+									<option value="基隆市" th:selected="${emp.city == '基隆市'}">基隆市</option>
+									<option value="宜蘭縣" th:selected="${emp.city == '宜蘭縣'}">宜蘭縣</option>
+							</select></td>
+
+							<th>住址</th>
+							<td colspan="3"><input type="text" th:value="${emp.address}"
+								name="address" id="address" disabled class="border-0"></td>
+						</tr>
+					</table>
+				</div>
+				<div class="basic-info">
+					<div class="section-title">公司相關資料</div>
+					<table>
+						<tr>
+							<th>員工編號</th>
+							<td><input type="text" th:value="${emp.empno}" name="empno"
+								id="empno" readonly class="border-0"></td>
+							<th>職稱</th>
+							<td><input type="text" th:value="${emp.job}" name="job"
+								id="job" readonly class="border-0"></td>
+							<th>直屬主管編號</th>
+							<td><input type="text" th:value="${emp.mgr}" name="mgr"
+								id="mgr" readonly class="border-0"></td>
+							<th>直屬主管名字</th>
+							<td><input type="text" th:value="${mgrName}" name="mgrName"
+								id="mgrName" readonly class="border-0"></td>
+						</tr>
+						<tr>
+							<th>薪資等級</th>
+							<td><input type="text" th:value="${emp.salGrade}"
+								name="salGrade" id="salGrade" readonly class="border-0"></td>
+							<th>人員狀態</th>
+							<td><input type="text" th:value="${emp.empnoStatus}"
+								name="empnoStatus" id="empnoStatus" readonly class="border-0"></td>
+							<th>離退日期</th>
+							<td><input type="text" th:value="${emp.departureDate}"
+								name="departureDate" id="departureDate" readonly
+								class="border-0"></td>
+							<th>最後一次登入時間</th>
+							<td><input type="text" th:value="${emp.lastTimeLogin}"
+								name="lastTimeLogin" id="lastTimeLogin" readonly
+								class="border-0"></td>
+						</tr>
+						<tr>
+							<th>部門編號</th>
+							<td><input type="text" th:value="${emp.deptno}"
+								name="deptno" id="deptno" readonly class="border-0"></td>
+							<th>部門名稱</th>
+							<td><input type="text" th:value="${deptname}"
+								name="deptName" id="deptName" readonly class="border-0"></td>
+							<th>部門調動編號</th>
+							<td th:text="${emp.deptTransferID}" name="deptTransferID"
+								id="deptTransferID" colspan="3"></td>
+
+						</tr>
+					</table>
+				</div>
+				<div class="basic-info"
+					th:if="${familyMember != null and #lists.size(familyMember) > 0}">
+					<div class="section-title">親屬資料</div>
+					<table>
+						<thead class="thead-light">
+							<tr>
+								<th>親屬姓名</th>
+								<th>親屬關係</th>
+								<th>是否加保</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="member : ${familyMember}">
+								<td th:text="${member.memberName}"></td>
+								<td th:text="${member.relation}"></td>
+								<td><span th:if="${member.insurance == 0}">否</span> <span
+									th:if="${member.insurance == 1}">是</span></td>
+							</tr>
+						</tbody>
+
+					</table>
+				</div>
+				<input type="hidden" value="員工資料修改" name="category" id="category">
+				<input type="hidden" th:value="${emp.empno}" name="notifyEmpno"
+					id="notifyEmpno"> <input type="hidden" value="員工修改自己的資料"
+					name="category1" id="category1">
+				<div class="social-icons">
+					<a href="#" onclick="enableEditing()"
+						class="btn btn-outline-secondary">修改</a>
+					<button type="submit" class="btn btn-outline-success save-button"
+						style="display: none;">保存</button>
+				</div>
+
+			</form>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script>
+		function enableEditing() {
+			document.body.classList.add('edit-mode');
+			let inputs = document.querySelectorAll('input[type="text"], input[type="password"], select');
+			inputs.forEach(input => input.disabled = false);
+			document.querySelector('.save-button').style.display = 'inline-block';
+		}
+
+
+		const initialWidth = 150;
+
+		let colspanCells = document.querySelectorAll('td[colspan]');
+
+		colspanCells.forEach(cell => {
+			let colspanValue = parseInt(cell.getAttribute('colspan'));
+			let inputElement = cell.querySelector('input[type="text"], input[type="password"]');
+
+			if (inputElement) {
+				inputElement.style.width = `${colspanValue * initialWidth}px`;
+			}
+		});
+		$("#birthDate").datepicker({
+            dateFormat: "yy-mm-dd",
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1911:2200"
+        });
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>出差申請資料</title>
+    <link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fdf5e6;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .navbar-container {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .content {
+            padding-top: 60px; /* 根据导航栏的高度调整 */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 0; /* 移除上边距 */
+        }
+        .container-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            margin: 0; /* 移除上下边距 */
+            text-align: center;
+        }
+        h5 {
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold !important;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+        }
+        .hours-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        .hours-wrapper input[type="text"] {
+            width: 70px; /* 设置较小的宽度 */
+            margin-right: 5px; /* 增加间距 */
+        }
+        .btn-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .back-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+<div class="navbar-container container-fluid" th:replace="~{layout/empnavbar}"></div>
+<div class="content mt-5">
+    <div class="container-content mb-5 mt-5">
+        <h5>出差申請資料</h5>
+        <table>
+            <tr>
+                <th>員工編號</th>
+                <td><input type="text" disabled th:value="${businessTrip.employee.empno}"></td>
+            </tr>
+            <tr>
+                <th>職務代理人:</th>
+                <td><input type="text" disabled th:value="${businessTrip.delegateID}"></td>
+            </tr>
+            <tr>
+                <th>出差事由:</th>
+                <td><input type="text" disabled th:value="${businessTrip.reason}"></td>
+            </tr>
+            <tr>
+                <th>出差地點:</th>
+                <td><input type="text" disabled th:value="${businessTrip.location}"></td>
+            </tr>
+            <tr>
+                <th>出差開始時間:</th>
+                <td><input type="text" disabled th:value="${businessTrip.startTime}"></td>
+            </tr>
+            <tr>
+                <th>出差結束時間:</th>
+                <td><input type="text" disabled th:value="${businessTrip.endTime}"></td>
+            </tr>
+            <tr>
+                <th>出差時數:</th>
+                <td>
+                    <div class="hours-wrapper">
+                        <input type="text" disabled th:value="${businessTrip.totalHours}">
+                        <span>小時</span>
+                    </div>
+                </td>
+            </tr>
+            
+            <tr>
+                <th>相關證明文件</th>
+                <td><input type="text" disabled th:value="${businessTrip.documents}"></td>
+            </tr>
+            <tr>
+                <th>最終審查狀態</th>
+                <td><input type="text" disabled th:value="${businessTrip.finalStatus}"></td>
+            </tr>
+            
+        </table>
+        <div class="d-grid gap-2">
+			<a class="btn btn-success" th:href="@{/GetAllBusinessTrip.front}">返回上一頁</a>
+		</div>
+    </div>
+</div>
+<div th:replace="~{layout/footer}"></div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>所有打卡資料</title>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" />
+<link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+<style>
+body {
+	background: url('images/cat4.jpg') no-repeat center center fixed;
+	background-size: cover;
+	background-position: center;
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	transition: margin-left 0.3s;
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: rgba(255, 255, 255, 0.8);
+	border-radius: 10px;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+	transition: margin-left 0.3s;
+}
+
+h2 {
+	color: #333;
+}
+</style>
+</head>
+<body>
+
+	<div th:replace="~{layout/empnavbar}"></div>
+	<div class="wrap">
+		<div class="container mt-3">
+			<h2 th:text="${session.name} + ' 打卡月份資料'" class="text-center"></h2>
+			<table id="mytable" class="display text-center" style="width: 100%">
+				<thead>
+					<tr>
+						<th>月份</th>
+						<th>詳細內容</th>
+					</tr>
+				<tbody>
+					<tr th:each="month : ${months}">
+						<td th:text="${month[0]}"></td>
+						<td>
+							<form th:action="@{/empCheckInSearchByMonth}" method="get">
+								<input type="hidden" name="startDate"
+									th:value="${month[0]}+'-01'"> <input type="hidden"
+									name="endDate" th:value="${month[1]}">
+								<button type="submit" class="btn btn-secondary btn-sm"
+									th:text="${month[0]}+' 打卡紀錄'"></button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<p>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
+	<script>
+		new DataTable('#mytable');
+	</script>
+</body>
+</html>

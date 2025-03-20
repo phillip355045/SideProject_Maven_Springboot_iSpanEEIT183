@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>請假申請資料</title>
+    <style>
+        body {
+            background-color: #fdf5e6;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column; /* 使导航栏和内容垂直排列 */
+            align-items: center;
+            min-height: 100vh;
+        }
+        .navbar-container {
+            width: 100%; /* 确保导航栏占据全宽 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            background-color: #007bff;
+        }
+        .container-fluid {
+            max-width: 100%;
+            padding: 0;
+        }
+        .content {
+            padding-top: 100px; /* 调整以适应导航栏高度 */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            margin: 20px;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+            font-weight: bold !important;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="text"], input[type="date"], select, input[type="file"], input[readonly] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+            outline: none; /* Removes the default focus outline */
+        }
+        input[readonly] {
+            background-color: #e9ecef; /* Light grey background */
+            color: #495057; /* Darker text for better readability */
+            cursor: not-allowed; /* Cursor indicates non-editable */
+        }
+        .file-input-container {
+            margin-top: 10px; /* Adds space between document input and file input */
+        }
+        input[type="text"]:hover, input[type="date"]:hover, select:hover, input[type="file"]:hover, input[readonly]:hover {
+            border-color: #888; /* Changes border color on hover */
+        }
+        input[type="text"]:focus, input[type="date"]:focus, select:focus, input[readonly]:focus {
+            border-color: #0056b3; /* Changes border color on focus */
+            box-shadow: 0 0 8px rgba(0,86,179,0.5); /* Adds a soft blue glow */
+        }
+        .submit-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007bff;
+            font-size: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .download-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .download-btn:hover {
+            background-color: #0056b3;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-container">
+        <div class="container-fluid" th:replace="~{layout/empnavbar}"></div>
+    </div>
+    <div class="content mt-3">
+        <div class="container mt-5">
+            <h2>請假申請資料</h2>
+            <form method="post" th:action="@{/GetLeaveRequestToReview}">
+                <input type="hidden" name="_method" value="put">
+                <input type="hidden" id="approvalNo1ID" name="approvalNo1ID" th:value="${leaveRequest.approvalNo1ID}" />
+                <input type="hidden" id="approvalNo2ID" name="approvalNo2ID" th:value="${leaveRequest.approvalNo2ID}" />
+                <input type="hidden" id="approvalNo3ID" name="approvalNo3ID" th:value="${leaveRequest.approvalNo3ID}" />
+                <input type="hidden" id="requestTypeID" name="requestTypeID" th:value="${leaveRequest.leaveType.requestTypeID}" />
+                <input type="hidden" id="requestID" name="requestID" th:value="${leaveRequest.requestID}" />
+                <table>
+                    
+                    <tr>
+                        <th>員工編號</th>
+                        <td><input type="text" name="empno" th:value="${leaveRequest.employee.empno}" readonly/></td>
+                    </tr>
+                    <tr>
+                        <th>假別</th>
+                        <td><input type="text" name="requestTypeName" th:value="${leaveRequest.leaveType.requestTypeName}" readonly/></td>
+                    </tr>
+                    <tr>
+                        <th>請假原因</th>
+                        <td><input type="text" name="reason" th:value="${leaveRequest.reason}" readonly/></td>
+                    </tr>
+                    <tr>
+                        <th>請假起始時間</th>
+                        <td><input type="datetime-local" name="startTime" th:value="${leaveRequest.startTime}" readonly/></td>
+                    </tr>
+                    <tr>
+                        <th>請假結束時間</th>
+                        <td><input type="datetime-local" name="endTime" th:value="${leaveRequest.endTime}" readonly/></td>
+                    </tr>
+                    <tr>
+                        <th>職務代理人</th>
+                        <td><input type="text" name="delegateID" th:value="${leaveRequest.delegateID}" readonly/></td>
+                    </tr>
+                    <tr>
+                        <th>相關證明文件</th>
+                        <td>
+                            <input type="text" name="documents" th:value="${leaveRequest.documents}" readonly />
+                            <!-- 如果需要顯示文件類型或下載連接，可以這樣做 -->
+                            <a th:href="@{'/downloadFile?fileName=' + ${leaveRequest.documents}}" class="download-btn">下載</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>進行審核</th>
+                        <td>
+                            <select name="isApproved">
+                                <option value="true">通過</option>
+                                <option value="false">拒絕</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <div class="d-grid gap-2">
+			  <button class="btn btn-primary" type="submit">確定</button>
+			 
+			  <a class="btn btn-success" th:href="@{/GetAllLeaveRequestToReview.front}">返回查詢頁面</a>
+			</div>
+
+            </form>
+            
+        </div>
+    </div>
+</body>
+</html>

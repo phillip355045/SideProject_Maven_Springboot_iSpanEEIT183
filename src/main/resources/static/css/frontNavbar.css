@@ -1,0 +1,28 @@
+
+.wrap {
+	padding-top: 104px;
+	
+}
+
+/*  footer 下面所有都要放*/
+footer {
+    background-color: rgb(46, 46, 46);
+    color: rgb(176, 176, 176);
+    height: 50px;
+    padding: 15px;
+}
+
+footer a {
+    color: rgb(175, 175, 175);
+    text-decoration: none;
+    margin: 5px;
+}
+
+footer a:hover {
+    color: rgb(79, 79, 79);
+    text-decoration: none;
+}
+
+.back {
+    float: right;
+}

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+<meta charset="UTF-8">
+<title>P.S Nexus - 員工登入</title>
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/css/bootstrap.min.css.map}" rel="stylesheet" />
+<style>
+.modal-backdrop.fade.show {
+	z-index: 0;
+}
+
+body {
+	background: url('images/cat1.jpg') no-repeat center center fixed;
+	background-size: cover;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	margin: 0;
+	font-family: Arial, sans-serif;
+	z-index: 0;
+}
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.5);
+	backdrop-filter: blur(10px);
+	z-index: -1;
+}
+
+.login-container {
+	background-color: rgba(255, 255, 255, 0.9);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 30px;
+	max-width: 500px;
+	width: 100%;
+	text-align: center;
+	position: relative;
+	z-index: 2;
+	overflow: hidden;
+}
+
+.login-container::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: url('images/Logo-2.png') no-repeat center center;
+	background-size: contain;
+	opacity: 0.5;
+	z-index: -1;
+}
+
+.login-container h1 {
+	margin-bottom: 20px;
+	color: #333;
+}
+
+.login-container label {
+	display: block;
+	text-align: left;
+	margin: 10px 0 5px;
+	color: #555;
+}
+
+.login-container input[type="text"], .login-container input[type="password"]
+	{
+	width: calc(100% - 20px);
+	padding: 10px;
+	margin-bottom: 20px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 5px;
+	box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.5);
+	color: #333;
+}
+
+.login-container input[type="submit"], button[type="button"] {
+	background-color: cornflowerblue;
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+.login-container input[type="submit"]:hover {
+	background-color: #6495ed;
+}
+
+.switch-login {
+	text-align: center;
+	margin-top: 20px;
+}
+
+.switch-login a {
+	color: #666;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.switch-login a:hover {
+	color: #333;
+}
+
+.red {
+	color: red;
+}
+
+#forgotPasswordModal {
+	display: none;
+}
+
+.selectA {
+	text-align: center;
+	justify-content: center;
+	margin-left:160px;
+}
+</style>
+</head>
+
+<body>
+	<div class="login-container">
+		<h1>員工登入</h1>
+		<form id="accountLoginForm" th:action="@{/checklogin}" method="post">
+			<label for="account">帳號：</label> <input type="text" id="account"
+				name="empno" autocomplete="off"> <label for="password">密碼：</label>
+			<input type="password" id="password" name="password"> <br />
+			<br /> <input type="submit" value="登入">
+
+
+			<p class="red" th:text="${errorMsg}?${errorMsg}"></p>
+		</form>
+		<form id="forgot" action="#" method="post">
+			<a href="#" data-toggle="modal" data-target="#forgotPasswordModal">忘記密碼</a>
+		</form>
+		<p></p>
+		<div class="selectA">
+			<select id="selectempno" name="selectempno" required
+				onchange="fetchempno(this)" class="form-control ps-0 pe-0"
+				style="width: 45%; text-align: center;">
+				<option value="" disabled selected>選擇登入帳號</option>
+				<option value="A0001">A0001-管理者</option>
+				<option value="A0002">A0002-黃雅翎</option>
+				<option value="A0006">A0006-陳彥儒</option>
+				<option value="A0010">A0010-王聯流</option>
+				<option value="A0011">A0011-王曉明</option>
+				<option value="A0012">A0012-林曉華</option>
+				<option value="A0022">A0022-張家琪</option>
+				<option value="A0030">A0030-劉建軍</option>
+				<option value="A0031">A0031-邱澤</option>
+			</select>
+		</div>
+		<!-- 忘記密碼對話窗 -->
+		<div class="modal fade" id="forgotPasswordModal" tabindex="-1"
+			role="dialog" aria-labelledby="forgotPasswordModalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h2 class="modal-title" id="forgotPasswordModalLabel">密碼重設</h2>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form id="forgotPasswordForm">
+							<div class="form-group">
+								<label for="forgetempno">員工編號</label> <input type="text"
+									class="form-control" id="forgetempno" name="forgetempno"
+									required>
+							</div>
+							<div class="form-group">
+								<label for="idCardNo">身分證字號</label> <input type="text"
+									class="form-control" id="identityID" name="identityID" required>
+							</div>
+							<div class="form-group">
+								<label for="phoneNo">手機號碼</label> <input type="text"
+									class="form-control" id="phone" name="phone" required>
+							</div>
+							<hr />
+							<div class="form-group">
+								<label for="password1">新密碼</label> <input type="password"
+									class="form-control" id="password1" name="newpassword" required>
+							</div>
+							<div class="form-group">
+								<label for="password2">再次輸入</label> <input type="password"
+									class="form-control" id="password2" name="password2" required>
+							</div>
+							<div id="error-message" class="text-danger"></div>
+							<button type="button" class="btn btn-primary"
+								onclick="saveFormData(this)">密碼更新</button>
+							<button type="button" class="btn btn-primary"
+								onclick="enter(this)">一鍵輸入</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="overlay"></div>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script th:src="@{/js/sweetalert2.all.min.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script>
+	    function saveFormData(button) {
+	        var forgetempno = document.querySelector('input[name="forgetempno"]').value;
+	        var identityID = document.querySelector('input[name="identityID"]').value;
+	        var phone = document.querySelector('input[name="phone"]').value;
+	        var newpassword = document.querySelector('input[name="newpassword"]').value;
+	        var url = "http://localhost:8088/PSNEXUS/forgotPassword";
+	    	
+	        var password1 = document.getElementById("password1").value;
+	        var password2 = document.getElementById("password2").value;
+	    
+	        if (password1 != password2) {
+				Swal.fire({
+		            title: '新密碼不一致請重新輸入!!!',
+		            icon: 'error',
+		            showCancelButton: false,
+		            confirmButtonText: 'OK！'
+		        }).then((result) => {
+		            if (result.isConfirmed) {
+		                $form.submit();
+		            }
+		        });
+	            return;
+	        }
+	    
+	        const params = new URLSearchParams();
+	        params.append('forgetempno', forgetempno);
+	        params.append('identityID', identityID);
+	        params.append('phone', phone);
+	        params.append('newpassword', newpassword);
+	    
+	        axios.post(url, params)
+	        .then(response => {
+	            if (response.data.correctmsg) {
+					Swal.fire({
+			            title: '密碼重置成功!!',
+			            icon: 'success',
+			            showCancelButton: false,
+			            confirmButtonText: '重新登入！'
+			        }).then((result) => {
+			            if (result.isConfirmed) {
+			                $form.submit();
+			            }
+			        });
+	                $('#forgotPasswordModal').modal('hide');
+	            } else if (response.data.errormsg) {
+		            Swal.fire({
+			            title: '密碼重置失敗，請稍後再試!',
+			            icon: 'error',
+			            showCancelButton: false,
+			            confirmButtonText: 'OK！'
+			        }).then((result) => {
+			            if (result.isConfirmed) {
+			                $form.submit();
+			            }
+			        });
+	            }
+	        })
+	        .catch(error => {
+	            console.error('Error:', error);
+		            Swal.fire({
+			            title: '密碼重置失敗，請稍後再試!',
+			            icon: 'error',
+			            showCancelButton: false,
+			            confirmButtonText: 'OK！'
+			        }).then((result) => {
+			            if (result.isConfirmed) {
+			                $form.submit();
+			            }
+			        });
+			    
+	        });
+	    }
+
+
+		document.getElementById('password2').addEventListener('blur', function () {
+			var password1 = document.getElementById("password1").value;
+			var password2 = document.getElementById("password2").value;
+			var errorMessage = document.getElementById("error-message");
+			console.log(password1)
+			console.log(password2)
+			if (password1 !== password2) {
+				errorMessage.textContent = "密碼不一致，請重新輸入。";
+			} else {
+				errorMessage.textContent = "";
+			}
+		});
+		document.getElementById('password1').addEventListener('blur', function () {
+			var password1 = document.getElementById("password1").value;
+			var password2 = document.getElementById("password2").value;
+			var errorMessage = document.getElementById("error-message");
+			console.log(password1)
+			console.log(password2)
+			if (password1 !== password2) {
+				errorMessage.textContent = "密碼不一致，請重新輸入。";
+			} else {
+				errorMessage.textContent = "";
+			}
+		});     
+		
+		
+		function enter(button) {
+            document.querySelector('input[name="forgetempno"]').value = 'A0002';
+            document.querySelector('input[name="identityID"]').value = 'A223456789';
+            document.querySelector('input[name="phone"]').value = '0933246977';
+        }
+        
+        
+		function fetchempno(selectempno) {
+			const empno = selectempno.value;
+			if (empno) {
+				axios.post('http://localhost:8088/PSNEXUS/findEmpnoAndPassword', empno, {
+					headers: {
+						'Content-Type': 'text/plain'
+					}
+				})
+					.then(response => {
+						const empnoInput = document.querySelector('input[name="empno"]');
+						const passwordInput = document.querySelector('input[name="password"]');
+
+						empnoInput.value = empno;
+						passwordInput.value = response.data.password;
+					})
+					.catch(error => {
+						console.error('Error fetching emp:', error);
+					});
+			}
+		}
+	</script>
+</body>
+
+</html>

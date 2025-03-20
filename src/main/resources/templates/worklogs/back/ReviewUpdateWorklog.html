@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>審核工作日誌</title>
+	<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+
+	<style>
+		.left-side {
+			flex: 1;
+			margin-right: 20px;
+		}
+
+		.right-side {
+			flex: 2;
+			display: flex;
+			justify-content: flex-end;
+			align-items: flex-start;
+		}
+
+		h2 {
+			color: #333333;
+			margin-bottom: 20px;
+			font-size: 24px;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 20px 0;
+			table-layout: fixed;
+		}
+
+		th,
+		td {
+			padding: 12px;
+			border-bottom: 1px solid #dddddd;
+			text-align: center;
+			font-size: 16px;
+		}
+
+		.th {
+			background-color: #BBBFCA;
+			color: black;
+			white-space: nowrap;
+			text-align: center;
+			/* 表頭文字置中 */
+		}
+
+		input[type="text"] {
+			width: calc(100% - 24px);
+			padding: 10px;
+			border: 1px solid #cccccc;
+			border-radius: 4px;
+			background-color: #f4f4f9;
+			color: #333333;
+		}
+
+		.btn {
+			padding: 5px 8px;
+			text-decoration: none;
+			background-color: #007BFF;
+			color: white;
+			border-radius: 5px;
+			margin: 0 4px;
+			font-size: 14px;
+		}
+
+		.btn.HomePage {
+			background-color: #BBBFCA;
+		}
+
+		.btn.submit {
+			background-color: #808B97;
+		}
+
+		.navbar-container {
+			width: 100%;
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 1000;
+			/* 確保在最上方 */
+			color: white;
+			text-align: center;
+			padding: 0;
+		}
+
+		.navbar-container div {
+			color: white;
+		}
+
+		.button-group {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-top: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1"> <br>
+			<a th:href="@{/GetAllWorklogs}">管理日誌總表</a>
+			<a th:href="@{/ReviewAllWorklogs}">審核日誌總表</a>
+			<a th:href="@{/HistoricalAllWorklogs}">歷史日誌總表</a>
+			<a th:href="@{/InsertWorklog}">新增工作日誌</a>
+
+		</div>
+		<div id="content" class="container">
+			<div class="left-side">
+				<h2>審核工作日誌</h2>
+
+				<form th:object="${worklog}" method="post"
+					th:action="@{/ReviewUpdateWorklog1(worklogid=${worklog.worklogid})}">
+
+					<!-- 隱藏的員工編號字段 -->
+					<input type="hidden" name="employees.empno" th:value="${worklog.employees.empno}" />
+					<input type="hidden" name="department.deptno" th:value="${worklog.department.deptno}" />
+
+
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<td>工作日誌編號</td>
+								<td><input type="text" name="worklogid" th:value="${worklog.worklogid}" readonly></td>
+							</tr>
+							<tr>
+								<td>部門</td>
+								<td><input type="text" id="deptno" name="deptno" th:value="${worklog.department.deptno}+'-'+${worklog.department.deptname}"></td>
+							</tr>
+							<tr>
+								<td>員工</td>
+								<td><input type="text" id="empno" name="empno" th:value="${worklog.employees.empno}+'-'+${worklog.employees.name}">
+								</td>
+							</tr>
+							<tr>
+								<td>工作日期</td>
+								<td><input type="text" id="worklogdate" name="worklogdate"
+										th:value="${#dates.format(worklog.worklogdate, 'yyyy-MM-dd')}"></td>
+							</tr>
+							<tr>
+								<td>審核狀態</td>
+								<td><input type="hidden" id="reviewstatusHidden" name="reviewstatusHidden" /></td>
+							</tr>
+						</tbody>
+					</table>
+
+					<h2>審核工作項目</h2>
+					<table class="table table-bordered">
+						<thead>
+							<tr class="th">
+								<th style="width: 80px;">需求部門</th>
+								<th style="width: 80px;">工作類型</th>
+								<th style="width: 320px;">工作內容說明</th>
+								<th class="hours" style="width: 60px;">正常工時</th>
+								<th class="hours" style="width: 60px;">加班工時</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="item, itemStat : *{worklogItems}">
+								<td><input type="text" th:field="*{worklogItems[__${itemStat.index}__].deptname}"
+										th:value="${item.deptname}" /></td>
+								<td><input type="text" th:field="*{worklogItems[__${itemStat.index}__].jobType}"
+										th:value="${item.jobType}" /></td>
+								<td><input type="text" th:field="*{worklogItems[__${itemStat.index}__].jobDescription}"
+										th:value="${item.jobDescription}" /></td>
+								<td class="hours"><input type="text"
+										th:field="*{worklogItems[__${itemStat.index}__].regularHours}"
+										th:value="${item.regularHours}" /></td>
+								<td class="hours"><input type="text"
+										th:field="*{worklogItems[__${itemStat.index}__].overtimeHours}"
+										th:value="${item.overtimeHours}" /></td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="button-group">
+						<div>
+							<input type="hidden" id="action" name="action" value="" />
+							<input type="submit" value="同意核准" class="btn submit"
+								onclick="document.getElementById('action').value='approve'" />
+							<input type="submit" value="退回修改" class="btn submit"
+								onclick="document.getElementById('action').value='reject'" />
+						</div>
+						<a class="btn HomePage" th:href="@{/ReviewAllWorklogs}">回上一頁</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="~{layout/footer}"></div>
+</body>
+
+</html>

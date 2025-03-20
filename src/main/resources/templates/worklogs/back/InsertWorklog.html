@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>新增工作日誌</title>
+	<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<style>
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 20px 0;
+		}
+
+		th,
+		td {
+			padding: 12px;
+			border-bottom: 1px solid #dddddd;
+			font-size: 16px;
+		}
+
+		th {
+			background-color: #46A3FF;
+			color: white;
+			white-space: nowrap;
+		}
+
+		input[type="text"],
+		input[type="date"],
+		input[type="number"] {
+			width: calc(100% - 16px);
+			padding: 8px;
+			border: 1px solid #cccccc;
+			border-radius: 4px;
+			background-color: #f4f4f9;
+			color: #333333;
+		}
+
+		.btn {
+			padding: 5px 8px;
+			text-decoration: none;
+			background-color: #007BFF;
+			color: white;
+			border-radius: 5px;
+			margin: 0 4px;
+			font-size: 14px;
+		}
+
+		.btn.HomePage {
+			background-color: #84C1FF;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1"> <br>
+			<a th:href="@{/GetAllWorklogs}">管理日誌總表</a>
+			<a th:href="@{/ReviewAllWorklogs}">審核日誌總表</a>
+			<a th:href="@{/HistoricalAllWorklogs}">歷史日誌總表</a>
+			<a th:href="@{/InsertWorklog}">新增工作日誌</a>
+
+		</div>
+		<div id="content" class="container">
+			<h2>新增工作日誌</h2>
+			<form id="worklogForm" th:object="${worklogs}" method="post" th:action="@{/InsertWorklog1}"
+				onsubmit="return validateForm()">
+				<table class="table table-bordered">
+					<tbody>
+						<tr>
+							<td>部門</td>
+							<td><input type="text" id="deptno" name="deptno" th:field="${worklogs.department.deptname}" /></td>
+						</tr>
+						<tr>
+							<td>員工編號</td>
+							<td><input type="text" id="empno" name="empno" th:field="${worklogs.employees.empno}" /></td>
+						</tr>
+						<tr>
+							<td>工作日期</td>
+							<td><input type="date" id="worklogdate" name="worklogdate" th:field="${worklogs.worklogdate}" /></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<h2>工作項目</h2>
+				<h5>請至少填寫一項工作項目</h5>
+				<div id="worklogItemsContainer"></div>
+
+				<button type="button" class="btn btn-primary mb-3 d-block" onclick="addWorklogItem()">
+					<i class="fas fa-plus"></i> 項目
+				</button>
+				<button type="button" class="btn btn-secondary mb-3 d-block" onclick="generateFakeData()">一鍵生成</button>
+				<div class="d-flex justify-content-between">
+					<button type="submit" class="btn btn-success">新增</button>
+					<!-- <a href="#" th:href="@{/LoginInHomePage}" class="btn HomePage">回到主畫面</a> -->
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div th:replace="~{layout/footer}"></div>
+
+	<script th:inline="javascript">
+		var index = 0;
+
+		function addWorklogItem() {
+			var html = `
+        <div class="card mb-3">
+            <div class="card-header">工作項目</div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>需求部門</label>
+                    <input type="text" class="form-control" name="worklogItems[${index}].deptname" required>
+                </div>
+                <div class="form-group">
+                    <label>工作類型</label>
+                    <input type="text" class="form-control" name="worklogItems[${index}].jobType" required>
+                </div>
+                <div class="form-group">
+                    <label>工作內容說明</label>
+                    <input type="text" class="form-control" name="worklogItems[${index}].jobDescription" required>
+                </div>
+                <div class="form-group">
+                    <label>正常工時</label>
+                    <input type="number" step="0.5" class="form-control" name="worklogItems[${index}].regularHours" required>
+                </div>
+                <div class="form-group">
+                    <label>加班工時</label>
+                    <input type="number" step="0.5" class="form-control" name="worklogItems[${index}].overtimeHours" required>
+                </div>
+                <button type="button" class="btn btn-danger" onclick="removeWorklogItem(this)"><i class="fas fa-minus"></i> 項目</button>
+            </div>
+        </div>`;
+			$('#worklogItemsContainer').append(html);
+			index++;
+		}
+
+		function removeWorklogItem(button) {
+			$(button).closest('.card').remove();
+		}
+
+		//提醒欄位不得為空
+		function validateForm() {
+			let isValid = true;
+			$('#worklogForm input').each(function () {
+				if ($(this).val() === '') {
+					isValid = false;
+					$(this).css('border', '2px solid red');
+				} else {
+					$(this).css('border', '1px solid #cccccc');
+				}
+			});
+
+			if (!isValid) {
+				alert('請務必填寫所有欄位！');
+			}
+			return isValid;
+		}
+
+		// 一鍵生成假資料的部分
+		function generateFakeData() {
+			//document.getElementById('deptno').value = 'D05';
+			//document.getElementById('empno').value = 'A0001';
+			document.getElementById('worklogdate').value = '2024-08-06';
+
+			$('#worklogItemsContainer').empty();
+			index = 0;
+
+			var fakeItem = `
+        <div class="card mb-3">
+            <div class="card-header">工作項目</div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>需求部門</label>
+                    <input type="text" class="form-control" name="worklogItems[${index}].deptname" value="人力資源部門" required>
+                </div>
+                <div class="form-group">
+                    <label>工作類型</label>
+                    <input type="text" class="form-control" name="worklogItems[${index}].jobType" value="員工調查" required>
+                </div>
+                <div class="form-group">
+                    <label>工作內容說明</label>
+                    <input type="text" class="form-control" name="worklogItems[${index}].jobDescription" value="進行員工滿意度調查，收集反饋意見。" required>
+                </div>
+                <div class="form-group">
+                    <label>正常工時</label>
+                    <input type="number" step="0.5" class="form-control" name="worklogItems[${index}].regularHours" value="5.5" required>
+                </div>
+                <div class="form-group">
+                    <label>加班工時</label>
+                    <input type="number" step="0.5" class="form-control" name="worklogItems[${index}].overtimeHours" value="1.0" required>
+                </div>
+                <button type="button" class="btn btn-danger" onclick="removeWorklogItem(this)"><i class="fas fa-minus"></i> 刪除</button>
+            </div>
+        </div>`;
+			$('#worklogItemsContainer').append(fakeItem);
+			index++;
+		}
+
+		$(document).ready(function () {
+			addWorklogItem();
+		});
+	</script>
+
+</body>
+
+</html>

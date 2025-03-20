@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>員工調動資料</title>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" />
+
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+<style>
+html,body{
+    height: 97%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.wrap{
+    height: 100%;
+    width: 100%;
+}
+
+</style>
+</head>
+<body>
+
+	<div th:replace="~{layout/backEmpNavbar}"></div>
+	<div class="wrap">
+		<div class="nav1">
+			<br> <a th:href="@{/getAllEmployees}">所有員工資料</a> <a
+				th:href="@{/insertEmp}">新增員工資料</a> <a th:href="@{/getEmpsByCol}">查詢員工資料</a>
+			<a th:href="@{/familyMemberInsert}">新增親屬資料</a> <a
+				th:href="@{/departmentTransferInsert}">新增部門調動</a> <a
+				th:href="@{/alldepartmentTransfer}">所有部門調動</a>
+		</div>
+		<div id="content" class="container">
+			<div align="center">
+				<h2>調動部門資料</h2>
+				<table id="mytable" class="display text-center" style="width: 100%">
+					<thead>
+						<tr>
+							<th>部門調動編號</th>
+							<th>員工編號</th>
+							<th>調動日期</th>
+							<th>舊部門編號</th>
+							<th>新部門編號</th>
+							<th>職稱</th>
+							<!-- 
+						<th>修改</th>
+						<th>刪除</th> -->
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="deptTransfers : ${deptTransfers}">
+							<td th:text="${deptTransfers.deptTransferID}"></td>
+							<td th:text="${deptTransfers.empno}"></td>
+							<td th:text="${deptTransfers.transDate}"></td>
+							<td th:text="${deptTransfers.lastDeptno}"></td>
+							<td th:text="${deptTransfers.newDeptno}"></td>
+							<td th:text="${deptTransfers.newJob}"></td>
+							<!-- <td>
+						
+							<a th:href="@{/findUpdateEmpData(empno=${emp.empno})}"
+										class="btn btn-outline-success btn-sm">修改</a>
+						</td>
+						<td>
+							<form method="post" th:action="@{/deleteEmployee}">
+								<input name="empno" th:value="${emp.empno}" type="hidden" /> <input
+									name="_method" value="DELETE" type="hidden" /> <input
+									type="submit" value="刪除" class="btn btn-outline-danger btn-sm"
+									onclick="return confirm('確定刪除嗎???')" />
+							</form>
+						</td> -->
+						</tr>
+					</tbody>
+				</table>
+
+
+				<p>
+				<h3>
+					共<span th:text="${deptTransfers.size()}"></span>筆調動資料
+				</h3>
+			</div>
+		</div>
+</div>
+<div th:replace="~{layout/footer}"></div>
+<script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
+
+<script>
+	new DataTable('#mytable');
+</script>
+</body>
+</html>

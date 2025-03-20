@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- 表單: backFrom、表格：backSheet-->
+<link th:href="@{/css/backFrom.css}" rel="stylesheet" type="text/css">
+
+<!-- 專門給vscode讀取修改用，改完記得刪掉-->
+<!-- <link rel="stylesheet" href="../../../static/css/backFrom.css"> -->
+
+<!-- 使用fontawesome插件的話-->
+<link th:href="@{/fontawesome-free-5.7.2-web/css/all.css}"
+	rel="stylesheet" type="text/css">
+
+<title>修改薪資資料</title>
+
+
+<style>
+.hidden-row {
+	display: none;
+}
+
+.table-form td {
+	text-align: left;
+}
+</style>
+
+</head>
+
+<body>
+	<div th:replace="~{layout/backEmpnavbar}"></div>
+
+
+	<div class="wrap">
+		<div class="nav1">
+			<br> <a th:href="@{/getAllEmpSal.controller}">薪資管理系統</a> <a
+				th:href="@{/toInsertEmpSal}">新增薪資單</a> <a
+				th:href="@{/toInsertEmpSalBatch}">批次新增薪資單</a>
+
+		</div>
+
+		<div id="content" class="container">
+			<h2>修改薪資資料</h2>
+			<form id="empSalForm" th:action="@{/updateEmpSal}" method="post">
+
+				<table class="table-form">
+					<tr>
+						<td>資料編號：</td>
+						<td><input type="text" name="salno" th:value="${emp.salno}"
+							readonly></td>
+					</tr>
+					<tr>
+						<td>年度：</td>
+						<td><input type="text" name="year" th:value="${emp.year}"
+							required></td>
+
+						<td>月份：</td>
+						<td><select name="month">
+								<option value="01" th:selected="${emp.month == '01'}">1月</option>
+								<option value="02" th:selected="${emp.month == '02'}">2月</option>
+								<option value="03" th:selected="${emp.month == '03'}">3月</option>
+								<option value="04" th:selected="${emp.month == '04'}">4月</option>
+								<option value="05" th:selected="${emp.month == '05'}">5月</option>
+								<option value="06" th:selected="${emp.month == '06'}">6月</option>
+								<option value="07" th:selected="${emp.month == '07'}">7月</option>
+								<option value="08" th:selected="${emp.month == '08'}">8月</option>
+								<option value="09" th:selected="${emp.month == '09'}">9月</option>
+								<option value="10" th:selected="${emp.month == '10'}">10月</option>
+								<option value="11" th:selected="${emp.month == '11'}">11月</option>
+								<option value="12" th:selected="${emp.month == '12'}">12月</option>
+						</select></td>
+					</tr>
+					<tr>
+						<td>員工姓名：</td>
+						<td><input type="text" name="name" th:value="${emp.name}"
+							required></td>
+
+						<td>員工編號：</td>
+						<td><input type="text" name="empno" th:value="${emp.empno}"
+							readonly></td>
+					</tr>
+
+				</table>
+				<hr>
+				<table class="table-form">
+					<tr>
+						<td>發放金額：</td>
+						<td></td>
+						<td></td>
+						<td>扣除金額：</td>
+					<tr>
+						<td><label for="sal">本薪：</label></td>
+						<td><input type="text" name="sal" th:value="${emp.sal}"
+							required></td>
+							
+							<td>全薪假時數：</td>
+						<td><input type="number" name="fullpaidHours"
+							th:value="${emp.fullpaidHours}" readonly></td>
+					</tr>
+					<tr>
+						<td><label for="mgrAllowance">主管津貼：</label></td>
+						<td><input type="text" name="mgrAllowance"
+							th:value="${emp.mgrAllowance}" required></td>
+							
+							<td>半薪假時數：</td>
+						<td><input type="number" name="halfpaidHours"
+							th:value="${emp.halfpaidHours}" readonly></td>
+					</tr>
+
+					<tr>
+						<td>伙食津貼：</td>
+						<td><input type="text" name="foodAllowance"
+							th:value="${emp.foodAllowance}" required></td>
+							
+							<td>無薪假時數：</td>
+						<td><input type="number" name="unpaidHours"
+							th:value="${emp.unpaidHours}" readonly></td>
+					</tr>
+					
+					<tr>
+						<td>交通津貼：</td>
+						<td><input type="text" name="trafficAllowance"
+							th:value="${emp.trafficAllowance}" required></td>
+						
+
+						<td>缺勤扣薪：</td>
+						<td><input type="text" name="leavePay"
+							th:value="${emp.leavePay}" required></td>
+					</tr>
+					<tr>
+						<td>節日禮金：</td>
+						<td><input type="text" name="holidayAllowance"
+							th:value="${emp.holidayAllowance}" required></td>
+							
+						
+								<td>勞保費用：</td>
+						<td><input type="text" name="laborInsurance"
+							th:value="${emp.laborInsurance}" required></td>
+					</tr>
+
+					<tr>
+						<td>加班時數：</td>
+						<td><input type="text" name="totalOvertimeHours"
+							th:value="${emp.totalOvertimeHours}" readonly></td>
+						
+								<td>健保費用：</td>
+						<td><input type="text" name="healthInsurance"
+							th:value="${emp.healthInsurance}" required></td>
+					</tr>
+					<tr>
+						<td>加班費：</td>
+						<td><input type="text" name="overtimePay"
+							th:value="${emp.overtimePay}" required></td>
+							
+						
+					</tr>
+
+					
+					<tr>
+						<td>全勤獎金：</td>
+						<td><input type="text" name="attendanceBonus"
+							th:value="${emp.attendanceBonus}" required></td>
+						
+
+					</tr>
+
+					<tr style="display: none;">
+						<td>勞健保級距：</td>
+						<td><input type="number" name="laborIhealthLevelId"
+							th:value="${emp.laborIhealthLevelId}" step="0.01"></td>
+					</tr>
+
+					<tr>
+						
+
+						
+					</tr>
+					<tr>
+						
+					</tr>
+					<tr style="display: none;">
+						<td>公司負擔勞保：</td>
+						<td><input type="text" name="laborInsuranceCompany"
+							th:value="${emp.laborInsuranceCompany}"></td>
+					</tr>
+					<tr style="display: none;">
+						<td>公司負擔健保：</td>
+						<td><input type="text" name="healthInsuranceCompany"
+							th:value="${emp.healthInsuranceCompany}"></td>
+					</tr>
+
+
+
+					<tr>
+						
+
+						<td>請款：</td>
+						<td><input type="text" name="invoice"
+							th:value="${emp.invoice}" required></td>
+					</tr>
+					<tr class="hidden-row">
+						<td>發佈狀態：</td>
+						<td><input type="text" name="status" th:value="${emp.status}"></td>
+					</tr>
+
+
+				</table>
+
+				<div align="left" style="margin: 20px; margin-left: 180px;">
+
+
+					<input type="submit" value="提交修改" style="margin-right: 20px;">
+					<input type="button" value="上一頁" onclick="history.back();">
+
+
+				</div>
+
+			</form>
+
+		</div>
+	</div>
+
+
+
+
+
+	<div th:replace="~{layout/footer}"></div>
+</body>
+</html>

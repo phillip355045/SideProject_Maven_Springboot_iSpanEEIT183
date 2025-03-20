@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>請款申請資料</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fdf5e6;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .navbar-container {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            background-color: #007bff;
+        }
+        .content {
+            padding-top: 60px; /* 调整以适应导航栏高度 */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 90%; /* 让容器在较小屏幕上也能很好地显示 */
+            margin-top: 0; /* 减少上边距 */
+            text-align: left; /* 使文本左对齐 */
+        }
+        h5 {
+            color: #333;
+            text-align: center; /* 标题居中 */
+            font-weight: bold !important;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        input[type="text"], input[type="datetime-local"], select, input[type="file"], input[readonly] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+            outline: none;
+        }
+        input[readonly] {
+            background-color: #e9ecef;
+            color: #495057;
+            cursor: not-allowed;
+        }
+        .submit-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007bff;
+            font-size: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .hours-container {
+            display: flex;
+            align-items: center;
+        }
+        .hours-container input {
+            width: calc(100% - 50px);
+        }
+        .hours-container span {
+            margin-left: 10px;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .column {
+            flex: 1;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        .column:first-child {
+            padding-left: 0;
+        }
+        .column:last-child {
+            padding-right: 0;
+        }
+        .row .column label {
+            display: block;
+        }
+        .file-input-container {
+            display: flex;
+            align-items: center;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .autocomplete-items {
+            
+            border: none;
+            z-index: 99;
+            position: absolute;
+            left: 0;
+            right: 0;
+        }
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+        }
+        .autocomplete-item:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+<body>
+<div class="navbar-container container-fluid" th:replace="~{layout/empnavbar}"></div>
+<div class="content mt-5">
+    <div class="container-content mt-5">
+        <h5>請款申請資料</h5>
+        <form id="leaveForm" method="post" th:action="@{/GetUpdateInvoice}" enctype="multipart/form-data">
+            <input type="hidden" name="_method" value="put">
+            <input type="hidden" id="approvalNo1ID" name="approvalNo1ID" th:value="${invoice.approvalNo1ID}" />
+            <input type="hidden" id="approvalNo2ID" name="approvalNo2ID" th:value="${invoice.approvalNo2ID}" />
+            <input type="hidden" id="approvalNo3ID" name="approvalNo3ID" th:value="${invoice.approvalNo3ID}" />
+            <input type="hidden" name="invoiceID" th:value="${invoice.invoiceID}" readonly />
+            
+            
+            <div class="form-group">
+                    <label>員工編號:</label>
+                    <input type="text" id="empno" name="empno" th:value="${invoice.employee.empno}" class="form-control" />
+                    <div id="autocomplete-list-empno" class="autocomplete-items"></div>
+            </div>
+            
+            
+            <div class="form-group">
+                <label>請款金額:</label>
+                <input type="number" name="amount" th:value="${invoice.amount}" class="form-control" />
+            </div>
+            
+            <div class="form-group">
+                <label>請款事由:</label>
+                <input type="text" name="description" th:value="${invoice.description}" class="form-control" />
+            </div>
+            
+            <div class="form-group">
+                <label>付款時間:</label>
+                <input type="datetime-local" id="paymentDate" name="paymentDate" th:value="${invoice.paymentDate}" class="form-control"/>
+                <div id="paymentDateError" class="error-message"></div>
+            </div>
+            
+            <div class="form-group file-input-container">
+                <label>相關證明文件</label>
+                <input type="text" name="documents" th:value="${invoice.documents}" class="form-control"readonly />
+                <input type="file" name="file" id="photoInput" class="form-control">
+            </div>
+            
+                        <div class="d-grid gap-2">
+			  <button class="btn btn-primary" type="submit">確定</button>
+			 
+			  <a class="btn btn-success" th:href="@{/GetAllInvoice.front}">返回查詢頁面</a>
+			</div>
+        </form>
+
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+        // 函數：設置模糊查詢邏輯
+        function setupAutocomplete(inputId, listId, url) {
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
+
+            input.addEventListener('input', async () => {
+                const query = input.value;
+                if (!query) {
+                    list.innerHTML = '';
+                    return;
+                }
+
+                try {
+                    const response = await axios.get(url, { params: { query: query } });
+                    const employees = response.data;
+
+                    list.innerHTML = '';
+                    employees.forEach(employee => {
+                        const item = document.createElement('div');
+                        item.classList.add('autocomplete-item');
+                        item.textContent = `${employee.empno} - ${employee.name}`;
+                        item.addEventListener('click', () => {
+                            input.value = employee.empno; // 只填入員工編號
+                            list.innerHTML = '';
+                        });
+                        list.appendChild(item);
+                    });
+                } catch (error) {
+                    console.error('Error fetching employees:', error);
+                }
+            });
+
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Backspace' && input.value === '') {
+                    input.value = '';
+                    list.innerHTML = '';
+                }
+            });
+        }
+
+        // 為每個需要模糊查詢的欄位設置對應的事件監聽器
+        const url = "http://localhost:8088/PSNEXUS/GetEmployeesByEmpnoAndNameFuzzySearch";
+        setupAutocomplete('empno', 'autocomplete-list-empno', url);
+
+    });
+    
+</script>
+</body>
+</html>

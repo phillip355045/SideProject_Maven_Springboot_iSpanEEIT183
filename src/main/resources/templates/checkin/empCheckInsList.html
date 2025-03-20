@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>所有打卡資料</title>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" />
+<link th:href="@{/css/frontNavbar.css}" rel="stylesheet" type="text/css">
+<style>
+body {
+	background: url('images/cat4.jpg') no-repeat center center fixed;
+	background-size: cover;
+	background-position: center;
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	transition: margin-left 0.3s;
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: rgba(255, 255, 255, 0.8);
+	border-radius: 10px;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+	transition: margin-left 0.3s;
+}
+
+h2 {
+	color: #333;
+}
+</style>
+</head>
+<body>
+
+	<div th:replace="~{layout/empnavbar}"></div>
+	<div class="wrap">
+		<div class="container mt-3">
+			<h2 th:text="${session.name} + ' 打卡資料'" class="text-center"></h2>
+			<div class="d-flex justify-content-between align-items-center">
+				<button type="button" id="download-button"
+					class="btn btn-outline-secondary ms-auto">
+					下載檔案<i class="fa-solid fa-file-arrow-down ms-2"></i>
+				</button>
+			</div>
+			<table id="mytable" class="display text-center" style="width: 100%">
+				<thead>
+					<tr>
+						<th>日期</th>
+						<th>上班時間</th>
+						<th>下班時間</th>
+						<th>備註</th>
+						<th>請假</th>
+
+					</tr>
+				<tbody>
+					<tr th:each="checkin : ${checkIn}">
+						<td th:text="${checkin.checkInId.date}"></td>
+						<!-- th:class="${checkin.record == 1 or checkin.record == 3} ? 'red' : ''" -->
+						<td th:text="${checkin.workon}"></td>
+						<!-- th:class="${checkin.record == 2 or checkin.record == 3} ? 'red' : ''" -->
+						<td th:text="${checkin.workoff}"></td>
+						<!--<td th:text="${checkin.note}"></td>-->
+						<td th:if="${checkin.workon == null and checkin.workoff == null}">
+							無打卡紀錄，請確認是否請假</td>
+						<td
+							th:unless="${checkin.workon == null and checkin.workoff == null}"
+							th:text="${checkin.note}"></td>
+
+						<td><a class="btn btn-outline-success btn-sm"
+							th:href="@{/InsertLeaveRequest.front}">請假</a></td>
+
+					</tr>
+				</tbody>
+			</table>
+
+			<p>
+		</div>
+	</div>
+	<div th:replace="~{layout/footer}"></div>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
+	<script>
+		new DataTable('#mytable');
+		document.getElementById('download-button').addEventListener('click', function() {
+			window.location.href = '/PSNEXUS/downloadAccountCheckInData';
+		});
+	</script>
+</body>
+</html>
