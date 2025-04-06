@@ -7,17 +7,28 @@ Polarstar Nexus / 布告欄系統
 員工心情留言、公司公告、公司社團活動資訊
 
 ⚙️ 使用技術
-前端
-例：Thymeleaf/Javascript/HTML5/CSS3/jQuery/Bootstrap
+前端:
+Thymeleaf
+Javascript
+HTML5
+CSS3
+jQuery
+Bootstrap
 
-後端
-例：JDK17/Springboot/JPA/Hibernate
+後端:
+JDK17
+Springboot
+JSP
+JPA
+Hibernate
 
-資料庫
-例：SQL Server
+資料庫:
+SQL Server
 
-其他工具 / 技術
-例：REST API、Websocket
+其他工具 / 技術:
+Fetch API
+RESTful API
+WebSocket
 
 🚀 功能介紹
  發文 / 編輯 / 刪除文章
@@ -40,4 +51,4 @@ Polarstar Nexus / 布告欄系統
 <img width="934" alt="image" src="https://github.com/user-attachments/assets/99713ac7-9acb-41b1-88ba-dfd1c28334e6" />
  
 📄 授權 License
-範例：本專案採用 MIT 授權。
+本專案採用 Apache License 2.0 授權，詳情請參閱 LICENSE 檔案。
