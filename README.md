@@ -8,27 +8,27 @@ Polarstar Nexus / 布告欄系統
 
 ⚙️ 使用技術
 前端:
-Thymeleaf
-Javascript
-HTML5
-CSS3
-jQuery
-Bootstrap
+1. Thymeleaf
+2. Javascript
+3. HTML5
+4. CSS3
+5. jQuery
+6. Bootstrap
 
 後端:
-JDK17
-Springboot
-JSP
-JPA
-Hibernate
+1. JDK17
+2. Springboot
+3. JSP
+4. JPA
+5. Hibernate
 
 資料庫:
-SQL Server
+1. SQL Server
 
 其他工具 / 技術:
-Fetch API
-RESTful API
-WebSocket
+1. Fetch API
+2. RESTful API
+3. WebSocket
 
 🚀 功能介紹
  發文 / 編輯 / 刪除文章
