@@ -1,7 +1,7 @@
 # SideProject_Maven_Springboot_iSpanEEIT183\
 
 📘 專案名稱
-在這裡填寫你的專案名稱，例如：Polarstar Nexus / 布告欄系統
+Polarstar Nexus / 布告欄系統
 
 📖 專案簡介
 員工心情留言、公司公告、公司社團活動資訊
